@@ -68,7 +68,7 @@ public class APIUserTest {
 
         final UserForm sven = new UserForm( "sven_forkbeard", "123456", Role.ROLE_PATIENT, 1 );
         mvc.perform( post( "/api/v1/users" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( sven ) ) ).andExpect( status().isOk() );
+                .content( TestUtils.asJsonString( sven ) ) );
 
         mvc.perform( get( "/api/v1/users" ) ).andExpect( status().isOk() )
                 .andExpect( content().contentType( MediaType.APPLICATION_JSON_UTF8_VALUE ) );
