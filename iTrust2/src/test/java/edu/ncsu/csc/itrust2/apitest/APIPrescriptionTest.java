@@ -1,7 +1,9 @@
 package edu.ncsu.csc.itrust2.apitest;
 
 import static org.junit.Assert.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.text.ParseException;
@@ -20,6 +22,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import edu.ncsu.csc.itrust2.config.RootConfiguration;
@@ -67,9 +70,6 @@ public class APIPrescriptionTest {
         final JsonObject jsonObject = gson.fromJson( result.getResponse().getContentAsString(), JsonObject.class );
         assertEquals( "1234-5678-90", jsonObject.get( "code" ).getAsString() );
         assertEquals( "Viagra", jsonObject.get( "name" ).getAsString() );
-
-        // definitely need more thorough tests
-
     }
 
     /**
@@ -82,20 +82,51 @@ public class APIPrescriptionTest {
 
         final PrescriptionForm p1 = createPrescriptionForm( "34.1", "10/22/2017", "10/22/2018", "1234-5678-90", "antti",
                 "10" );
-        /*
-         * final MvcResult result = mvc.perform( post( "/api/v1/prescriptions"
-         * ).contentType( MediaType.APPLICATION_JSON ) .content(
-         * TestUtils.asJsonString( p1 ) ) ).andExpect( status().isOk()
-         * ).andReturn(); final JsonObject jsonObject = gson.fromJson(
-         * result.getResponse().getContentAsString(), JsonObject.class );
-         * assertEquals( "34.1", jsonObject.get( "dosage" ).getAsString() );
-         * assertEquals( "10/22/2017", jsonObject.get( "start" ).getAsString()
-         * ); assertEquals( "10/22/2018", jsonObject.get( "end" ).getAsString()
-         * );
-         */
-        p1.getDosage();
 
-        // definitely need more thorough tests
+        MvcResult result = mvc.perform( post( "/api/v1/prescriptions" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( p1 ) ) ).andExpect( status().isOk() ).andReturn();
+        JsonObject jsonObject = gson.fromJson( result.getResponse().getContentAsString(), JsonObject.class );
+        verifyPrescriptionJson( jsonObject, "antti", "34.1", "1508644800000", "1540180800000", "10", "1234-5678-90",
+                "Viagra" );
+        final String pId = jsonObject.get( "id" ).getAsString();
+
+        final PrescriptionForm p2 = createPrescriptionForm( "2.99", "9/22/2015", "3/20/2018", "1111-1111-11", "antti",
+                "16" );
+
+        result = mvc.perform( post( "/api/v1/prescriptions" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( p2 ) ) ).andExpect( status().isOk() ).andReturn();
+        jsonObject = gson.fromJson( result.getResponse().getContentAsString(), JsonObject.class );
+        verifyPrescriptionJson( jsonObject, "antti", "2.99", "1442894400000", "1521518400000", "16", "1111-1111-11",
+                "Oxicodon" );
+
+        result = mvc.perform( get( "/api/v1/prescriptions/antti" ).contentType( MediaType.APPLICATION_JSON ) )
+                .andExpect( status().isOk() ).andReturn();
+
+        final JsonArray jsonArray = gson.fromJson( result.getResponse().getContentAsString(), JsonArray.class );
+        final JsonObject jsonObj1 = jsonArray.get( jsonArray.size() - 2 ).getAsJsonObject();
+        verifyPrescriptionJson( jsonObj1, "antti", "34.1", "1508644800000", "1540180800000", "10", "1234-5678-90",
+                "Viagra" );
+
+        final JsonObject jsonObj2 = jsonArray.get( jsonArray.size() - 1 ).getAsJsonObject();
+        verifyPrescriptionJson( jsonObj2, "antti", "2.99", "1442894400000", "1521518400000", "16", "1111-1111-11",
+                "Oxicodon" );
+
+        result = mvc.perform( put( "/api/v1/prescriptions/renew/" + pId ).contentType( MediaType.APPLICATION_JSON ) )
+                .andExpect( status().isOk() ).andReturn();
+        jsonObject = gson.fromJson( result.getResponse().getContentAsString(), JsonObject.class );
+        verifyPrescriptionJson( jsonObject, "antti", "34.1", "1508644800000", "1540180800000", "9", "1234-5678-90",
+                "Viagra" );
+    }
+
+    private void verifyPrescriptionJson ( final JsonObject jsonObject, final String patient, final String dosage,
+            final String start, final String end, final String renewals, final String code, final String name ) {
+        assertEquals( patient, jsonObject.get( "patient" ).getAsString() );
+        assertEquals( dosage, jsonObject.get( "dosage" ).getAsString() );
+        assertEquals( start, jsonObject.get( "start" ).getAsString() );
+        assertEquals( end, jsonObject.get( "end" ).getAsString() );
+        assertEquals( renewals, jsonObject.get( "renewals" ).getAsString() );
+        assertEquals( code, jsonObject.get( "ndcCode" ).getAsJsonObject().get( "code" ).getAsString() );
+        assertEquals( name, jsonObject.get( "ndcCode" ).getAsJsonObject().get( "name" ).getAsString() );
     }
 
     /**

@@ -1,5 +1,6 @@
 package edu.ncsu.csc.itrust2.controllers.api;
 
+import java.text.ParseException;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -32,13 +33,13 @@ public class APIPrescriptionController extends APIController {
     /**
      * Get the prescriptions for a specified patient
      *
-     * @param patientId
-     *            patient to get prescriptions for
+     * @param id
+     *            id (username) of the patient to get prescriptions for
      * @return list of prescriptions for patient
      */
-    @GetMapping ( BASE_PATH + "/prescriptions/{patientId}" )
-    public List<Prescription> getPrescriptionsByPatient ( @PathVariable ( "id" ) final String patientId ) {
-        final Patient p = Patient.getPatient( patientId );
+    @GetMapping ( BASE_PATH + "/prescriptions/{id}" )
+    public List<Prescription> getPrescriptionsByPatient ( @PathVariable ( "id" ) final String id ) {
+        final Patient p = Patient.getPatient( id );
         return p.getPrescriptions();
     }
 
@@ -49,9 +50,10 @@ public class APIPrescriptionController extends APIController {
      * @param pf
      *            prescription form to create prescription with
      * @return ResponseEntity describing success or failure of operation
+     * @throws ParseException
      */
     @PostMapping ( BASE_PATH + "/prescriptions" )
-    public ResponseEntity createPrescription ( @Valid @RequestBody final PrescriptionForm pf ) {
+    public ResponseEntity createPrescription ( @Valid @RequestBody final PrescriptionForm pf ) throws ParseException {
         try {
             // create prescription and get patient
             final Prescription prescription = new Prescription( pf );
@@ -59,7 +61,6 @@ public class APIPrescriptionController extends APIController {
             if ( patient == null ) {
                 return new ResponseEntity( "Patient does not exist.", HttpStatus.BAD_REQUEST );
             }
-            prescription.save();
 
             // check if an office visit was specified
             final String visitId = pf.getOfficeVisitId();
@@ -71,6 +72,8 @@ public class APIPrescriptionController extends APIController {
 
             patient.addPrescription( prescription );
             patient.save();
+            prescription.save();
+
             return new ResponseEntity( prescription, HttpStatus.OK );
         }
         catch ( final Exception e ) {

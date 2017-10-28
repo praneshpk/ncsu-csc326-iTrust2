@@ -10,6 +10,9 @@
  */
 package edu.ncsu.csc.itrust2.mvc.config;
 
+import java.io.IOException;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +20,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.Ordered;
 import org.springframework.data.repository.support.DomainClassConverter;
 import org.springframework.format.support.FormattingConversionService;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -28,6 +33,14 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import edu.ncsu.csc.itrust2.models.persistent.Prescription;
 
 /**
  * Maintains a variety of global configurations needed by the Spring web
@@ -123,11 +136,89 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
 
     /**
      * Creates a DomainClassConverter from the mvcConversionService
-     * 
+     *
      * @return DomainClassConverter
      */
     @Bean
     public DomainClassConverter< ? > domainClassConverter () {
         return new DomainClassConverter<FormattingConversionService>( mvcConversionService );
+    }
+
+    /**
+     * Configure the message converters
+     * 
+     * @param converters
+     *            converter list to add custom converters to
+     */
+    @Override
+    public void configureMessageConverters ( final List<HttpMessageConverter< ? >> converters ) {
+        converters.add( createGsonHttpMessageConverter() );
+        super.configureMessageConverters( converters );
+    }
+
+    /**
+     * Get a GsonHttpMessageConverter for converting a Prescription to JSON
+     * 
+     * @return GsonHttpMessageConverter
+     */
+    private GsonHttpMessageConverter createGsonHttpMessageConverter () {
+        final Gson gson = new GsonBuilder().registerTypeAdapter( Prescription.class, new PrescriptionTypeAdapter() )
+                .create();
+
+        final GsonHttpMessageConverter gsonConverter = new GsonHttpMessageConverter();
+        gsonConverter.setGson( gson );
+
+        return gsonConverter;
+    }
+
+    /**
+     * Adapter class so that prescriptions can be written out without creating
+     * an infinite loop
+     *
+     * @author WillGlas
+     */
+    public class PrescriptionTypeAdapter extends TypeAdapter<Prescription> {
+        /**
+         * This method shouldn't ever need to be used
+         *
+         * @param reader
+         *            JsonReader
+         * @return null
+         */
+        @Override
+        public Prescription read ( final JsonReader reader ) throws IOException {
+            return null;
+        }
+
+        /**
+         * Write out the object
+         *
+         * @param writer
+         *            writer object
+         * @param obj
+         *            instance of Prescription
+         */
+        @Override
+        public void write ( final JsonWriter writer, final Prescription obj ) throws IOException {
+            if ( obj == null ) {
+                writer.nullValue();
+                return;
+            }
+            writer.beginObject();
+            writer.name( "id" ).value( obj.getId() );
+            writer.name( "patient" ).value( obj.getPatient().getSelf().getId() );
+            writer.name( "ndcCode" ).beginObject();
+            writer.name( "code" ).value( obj.getNdcCode().getId() );
+            writer.name( "name" ).value( obj.getNdcCode().getName() );
+            writer.endObject();
+            writer.name( "dosage" ).value( obj.getDosage() );
+            writer.name( "start" ).value( obj.getStart().getTime() );
+            writer.name( "end" ).value( obj.getEnd().getTime() );
+            writer.name( "renewals" ).value( obj.getRenewals() );
+            if ( obj.getOfficeVisit() != null ) {
+                writer.name( "officeVisit" ).value( obj.getOfficeVisit().getId() );
+            }
+            writer.endObject();
+        }
     }
 }

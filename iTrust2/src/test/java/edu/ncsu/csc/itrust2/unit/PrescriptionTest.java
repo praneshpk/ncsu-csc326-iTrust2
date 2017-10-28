@@ -44,7 +44,7 @@ public class PrescriptionTest {
      * @throws ParseException
      */
     @Test
-    public void testRenew () throws ParseException {
+    public void testPrescriptions () throws ParseException {
 
         final NDCCode c = new NDCCode( createCodeForm( "1111-1111-11", "Oxicodon" ) );
         c.save();
@@ -83,6 +83,12 @@ public class PrescriptionTest {
         p2.save();
         final Prescription persistedP2 = Prescription.getById( p2.getId() );
         assertFalse( persistedP2.renew() );
+
+        final String prescriptionJSON = p1.toString();
+        final String expectedJSON = "{\"prescription\":{\"id\":\"" + p1.getId()
+                + "\", \"patient\":\"antti\", \"officeVisit\":\"\", \"ndcCode\":\"1111-1111-11\", \"dosage\":\"10.1\", \"start\":\""
+                + p1.getStart().getTime() + "\", \"end\":\"" + p1.getEnd().getTime() + "\", \"renewals\":\"1\"}}";
+        assertEquals( expectedJSON, prescriptionJSON );
 
     }
 

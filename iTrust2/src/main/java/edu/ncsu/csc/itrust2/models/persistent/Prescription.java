@@ -95,6 +95,20 @@ public class Prescription extends DomainObject<Prescription> {
     private Patient     patient;
 
     /**
+     * Return JSON representation of prescription
+     *
+     * @return JSON-formatted string
+     */
+    /*
+     * @Override public String toString () { return "{\"id\":\"" + id +
+     * "\", \"patient\":\"" + patient.getSelf().getId() +
+     * "\", \"officeVisit\":\"" + ( officeVisit != null ? officeVisit.getId() :
+     * "" ) + "\", \"ndcCode\":\"" + ndcCode.getId() + "\", \"dosage\":\"" +
+     * dosage + "\", \"start\":\"" + start.getTime() + "\", \"end\":\"" +
+     * end.getTime() + "\", \"renewals\":\"" + renewals + "\"}"; }
+     */
+
+    /**
      * The office visit associated with the prescription - can be null
      */
     @ManyToOne
@@ -147,12 +161,20 @@ public class Prescription extends DomainObject<Prescription> {
             setId( Long.parseLong( formId ) );
         }
 
-        final Patient patient = Patient.getPatient( pf.getPatient() );
-        if ( patient == null ) {
+        final Patient p = Patient.getPatient( pf.getPatient() );
+        if ( p == null ) {
             throw new IllegalArgumentException( "Patient does not exist in the system." );
         }
-        setPatient( patient );
+        setPatient( p );
         setDosage( Double.parseDouble( pf.getDosage() ) );
+
+        if ( pf.getOfficeVisitId() != null ) {
+            final OfficeVisit o = OfficeVisit.getById( Long.parseLong( pf.getOfficeVisitId() ) );
+            if ( o == null ) {
+                throw new IllegalArgumentException( "OfficeVisit does not exist in the system." );
+            }
+            setOfficeVisit( o );
+        }
 
         final SimpleDateFormat sdf = new SimpleDateFormat( "MM/dd/yyyy", Locale.ENGLISH );
         final Date parsedStartDate = sdf.parse( pf.getStart() );
