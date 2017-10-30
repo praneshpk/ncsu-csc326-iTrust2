@@ -96,7 +96,7 @@ public class PasswordResetToken extends DomainObject<PasswordResetToken> {
     }
 
     /**
-     * Create a password reset token, save it, and return it
+     * Create a password reset token and return it
      *
      * @param email
      *            email of the user (possible that this field hasn't been
