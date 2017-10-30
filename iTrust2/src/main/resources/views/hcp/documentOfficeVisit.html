@@ -400,7 +400,9 @@
 				</tr>
 				<tr>
 					<td style="text-align:right;padding:5px"><b>State:</b></td>
-					<td><input type="text" name="systolic" ng-model="visit.state"/></td>
+					<td><select ng-model="visit.state">
+							<option name="state" ng-repeat="s in state" ng-value="state">{{s}}</option>
+					</select></td>
 				</tr>
 				<tr>
 					<td style="text-align:right;padding:5px"><b>Zip Code:</b></td>
