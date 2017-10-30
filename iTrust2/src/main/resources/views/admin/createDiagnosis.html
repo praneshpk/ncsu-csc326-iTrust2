@@ -1,0 +1,50 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="layout :: head(title=~{::title},links=~{})">
+<title>Create Diagnosis</title>
+</head>
+<body th:include="layout :: body" th:with="content=~{::content}">
+
+
+	<div th:fragment="content">
+		<h1>Edit ICD-10 Codes</h1>
+		<h3>Add or Update ICD-10 Codes</h3>
+		<form action="#" th:action="@{/admin/createDiagnosis}"
+			th:object="${DiagnosisForm}" method="post">
+			<table>
+
+				<tr>
+					<td>Description:</td>
+					<td><input type="text" th:field="*{description}" /></td>
+					<td th:if="${#fields.hasErrors('description')}" th:errors="*{description}">
+					Description is invalid</td>
+				</tr>
+
+				<tr>
+					<td>ICD-10 Code:</td>
+					<td><input type="text" th:field="*{code}" /></td>
+					<td th:if="${#fields.hasErrors('code')}" th:errors="*{code}">The ICD-10 code
+						is invalid</td>
+				</tr>
+
+				<tr>
+					<td><button type="submit" class="btn">Submit</button></td>
+				</tr>
+
+			</table>
+		</form>
+		<br>
+		<h3>Current iTrust2 ICD-10 Codes</h3>
+		<select size="5">
+		    <option value="1">Item #1</option>
+		    <option value="2">Item #2</option>
+		    <option value="3">Item #3</option>
+		    <option value="4">Item #4</option>
+		    <option value="5">Item #5</option>
+		    <option value="6">Item #6</option>
+		    <option value="7">Item #7</option>
+		    <option value="8">Item #8</option>
+		    <option value="9">Item #9</option>
+		</select>
+	</div>
+</body>
+</html>
