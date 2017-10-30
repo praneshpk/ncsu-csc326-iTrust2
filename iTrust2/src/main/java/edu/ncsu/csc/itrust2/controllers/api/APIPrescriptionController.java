@@ -66,6 +66,9 @@ public class APIPrescriptionController extends APIController {
             final String visitId = pf.getOfficeVisitId();
             if ( visitId != null && !visitId.equals( "" ) ) {
                 final OfficeVisit visit = OfficeVisit.getById( Long.parseLong( visitId ) );
+                if ( visit == null ) {
+                    return new ResponseEntity( "Office visit does not exist.", HttpStatus.BAD_REQUEST );
+                }
                 visit.addPrescription( prescription );
                 visit.save();
             }

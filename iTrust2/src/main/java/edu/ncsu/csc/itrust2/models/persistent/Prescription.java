@@ -95,20 +95,6 @@ public class Prescription extends DomainObject<Prescription> {
     private Patient     patient;
 
     /**
-     * Return JSON representation of prescription
-     *
-     * @return JSON-formatted string
-     */
-    /*
-     * @Override public String toString () { return "{\"id\":\"" + id +
-     * "\", \"patient\":\"" + patient.getSelf().getId() +
-     * "\", \"officeVisit\":\"" + ( officeVisit != null ? officeVisit.getId() :
-     * "" ) + "\", \"ndcCode\":\"" + ndcCode.getId() + "\", \"dosage\":\"" +
-     * dosage + "\", \"start\":\"" + start.getTime() + "\", \"end\":\"" +
-     * end.getTime() + "\", \"renewals\":\"" + renewals + "\"}"; }
-     */
-
-    /**
      * The office visit associated with the prescription - can be null
      */
     @ManyToOne
@@ -172,6 +158,9 @@ public class Prescription extends DomainObject<Prescription> {
             final OfficeVisit o = OfficeVisit.getById( Long.parseLong( pf.getOfficeVisitId() ) );
             if ( o == null ) {
                 throw new IllegalArgumentException( "OfficeVisit does not exist in the system." );
+            }
+            else if ( !o.getPatient().getId().equals( p.getSelf().getId() ) ) {
+                throw new IllegalArgumentException( "Patient id does not match office visit patient id." );
             }
             setOfficeVisit( o );
         }

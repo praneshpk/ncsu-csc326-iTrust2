@@ -28,6 +28,7 @@ import com.google.gson.JsonObject;
 import edu.ncsu.csc.itrust2.config.RootConfiguration;
 import edu.ncsu.csc.itrust2.forms.admin.CodeForm;
 import edu.ncsu.csc.itrust2.forms.hcp.PrescriptionForm;
+import edu.ncsu.csc.itrust2.models.persistent.OfficeVisit;
 import edu.ncsu.csc.itrust2.mvc.config.WebMvcConfiguration;
 
 /**
@@ -80,8 +81,12 @@ public class APIPrescriptionTest {
     @Test
     public void testCreatePrescription () throws Exception {
 
+        // Get an office visit that we can add a prescription to
+        final Long ovId = OfficeVisit.getForPatient( "antti" ).get( 0 ).getId();
+
         final PrescriptionForm p1 = createPrescriptionForm( "34.1", "10/22/2017", "10/22/2018", "1234-5678-90", "antti",
                 "10" );
+        p1.setOfficeVisitId( ovId + "" );
 
         MvcResult result = mvc.perform( post( "/api/v1/prescriptions" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( p1 ) ) ).andExpect( status().isOk() ).andReturn();
