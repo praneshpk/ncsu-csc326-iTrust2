@@ -13,16 +13,16 @@
 			<table>
 
 				<tr>
-					<td>Description:</td>
-					<td><input type="text" th:field="*{description}" /></td>
-					<td th:if="${#fields.hasErrors('description')}" th:errors="*{description}">
-					Description is invalid</td>
+					<td style="text-align:right;padding:5px">Name:</td>
+					<td><input type="text" th:field="*{name}" /></td>
+					<td th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
+					The name is invalid</td>
 				</tr>
 
 				<tr>
-					<td>ICD-10 Code:</td>
-					<td><input type="text" th:field="*{code}" /></td>
-					<td th:if="${#fields.hasErrors('code')}" th:errors="*{code}">The ICD-10 code
+					<td style="text-align:right;padding:5px">ICD-10 Code:</td>
+					<td><input type="text" th:field="*{icdCode}" /></td>
+					<td th:if="${#fields.hasErrors('icdCode')}" th:errors="*{icdCode}">The ICD-10 code
 						is invalid</td>
 				</tr>
 
@@ -34,7 +34,7 @@
 		</form>
 		<br>
 		<h3>Current iTrust2 ICD-10 Codes</h3>
-		<select size="5">
+		<select style="width: 250px;" size="5">
 		    <option value="1">Item #1</option>
 		    <option value="2">Item #2</option>
 		    <option value="3">Item #3</option>

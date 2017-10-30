@@ -118,7 +118,11 @@ public enum TransactionType {
     /**
      * Patient views basic health metrics for an office visit
      */
-    OFFICE_VISIT_PATIENT_VIEW ( 810, "Patient views basic health metrics for an office visit", true )
+    OFFICE_VISIT_PATIENT_VIEW ( 810, "Patient views basic health metrics for an office visit", true ),
+    /**
+     * Admin creates a diagnosis
+     */
+    CREATE_DIAGNOSIS ( 1000, "Update ICD-10 Codes", true )
 
     ;
 
