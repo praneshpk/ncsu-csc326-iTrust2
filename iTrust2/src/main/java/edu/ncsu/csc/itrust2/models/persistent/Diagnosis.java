@@ -20,7 +20,7 @@ import edu.ncsu.csc.itrust2.utils.DomainObjectCache;
  *
  */
 @Entity
-@Table ( name = "Diagnosis" )
+@Table ( name = "Diagnoses" )
 public class Diagnosis extends DomainObject<Hospital> implements Serializable {
 
     /**
@@ -35,11 +35,17 @@ public class Diagnosis extends DomainObject<Hospital> implements Serializable {
     static private DomainObjectCache<String, Diagnosis> cache            = new DomainObjectCache<String, Diagnosis>(
             Diagnosis.class );
 
+    /**
+     * Name of the diagnosis
+     */
     @NotEmpty
     @Length ( max = 255 )
     @Id
     private String                                      name;
 
+    /**
+     * ICD code that is associated with the diagnosis name
+     */
     @NotEmpty
     @Length ( max = 255 )
     private String                                      icdCode;
@@ -119,6 +125,8 @@ public class Diagnosis extends DomainObject<Hospital> implements Serializable {
     }
 
     /**
+     * Get the ICD code
+     *
      * @return the icdCode
      */
     public String getIcdCode () {
@@ -126,6 +134,8 @@ public class Diagnosis extends DomainObject<Hospital> implements Serializable {
     }
 
     /**
+     * Set the ICD code
+     *
      * @param icdCode
      *            the icdCode to set
      */
@@ -134,6 +144,8 @@ public class Diagnosis extends DomainObject<Hospital> implements Serializable {
     }
 
     /**
+     * Return the name
+     *
      * @return the name
      */
     public String getName () {
@@ -141,6 +153,8 @@ public class Diagnosis extends DomainObject<Hospital> implements Serializable {
     }
 
     /**
+     * Get the name
+     *
      * @param name
      *            the name to set
      */
@@ -150,10 +164,12 @@ public class Diagnosis extends DomainObject<Hospital> implements Serializable {
 
     /**
      * Retrieves the ID (Description) of this Hospital
+     *
+     * @return code
      */
     @Override
     public String getId () {
-        return getName();
+        return getIcdCode();
     }
 
 }
