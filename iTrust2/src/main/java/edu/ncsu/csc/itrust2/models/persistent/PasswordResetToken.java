@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -33,7 +35,7 @@ public class PasswordResetToken extends DomainObject<PasswordResetToken> {
     private Long                                               id;
 
     /**
-     * Unique String sequence
+     * UUID
      */
     @NotNull
     private String                                             token;
@@ -42,6 +44,8 @@ public class PasswordResetToken extends DomainObject<PasswordResetToken> {
      * User who requested password reset
      */
     @NotNull
+    @OneToOne
+    @JoinColumn ( name = "self_id" )
     private User                                               user;
 
     /**
