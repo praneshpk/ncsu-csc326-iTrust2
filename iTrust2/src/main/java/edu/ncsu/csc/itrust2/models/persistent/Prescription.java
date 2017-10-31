@@ -92,7 +92,7 @@ public class Prescription extends DomainObject<Prescription> {
     @NotNull
     @ManyToOne
     @JoinColumn ( name = "patient_id" )
-    private Patient     patient;
+    private User        patient;
 
     /**
      * The office visit associated with the prescription - can be null
@@ -151,7 +151,7 @@ public class Prescription extends DomainObject<Prescription> {
         if ( p == null ) {
             throw new IllegalArgumentException( "Patient does not exist in the system." );
         }
-        setPatient( p );
+        setPatient( p.getSelf() );
         setDosage( Double.parseDouble( pf.getDosage() ) );
 
         if ( pf.getOfficeVisitId() != null ) {
@@ -223,7 +223,7 @@ public class Prescription extends DomainObject<Prescription> {
      *
      * @return the patient
      */
-    public Patient getPatient () {
+    public User getPatient () {
         return patient;
     }
 
@@ -233,7 +233,7 @@ public class Prescription extends DomainObject<Prescription> {
      * @param patient
      *            the patient to set
      */
-    public void setPatient ( final Patient patient ) {
+    public void setPatient ( final User patient ) {
         this.patient = patient;
     }
 

@@ -146,7 +146,7 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
 
     /**
      * Configure the message converters
-     * 
+     *
      * @param converters
      *            converter list to add custom converters to
      */
@@ -158,7 +158,7 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
 
     /**
      * Get a GsonHttpMessageConverter for converting a Prescription to JSON
-     * 
+     *
      * @return GsonHttpMessageConverter
      */
     private GsonHttpMessageConverter createGsonHttpMessageConverter () {
@@ -206,7 +206,7 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
             }
             writer.beginObject();
             writer.name( "id" ).value( obj.getId() );
-            writer.name( "patient" ).value( obj.getPatient().getSelf().getId() );
+            writer.name( "patient" ).value( obj.getPatient().getId() );
             writer.name( "ndcCode" ).beginObject();
             writer.name( "code" ).value( obj.getNdcCode().getId() );
             writer.name( "name" ).value( obj.getNdcCode().getName() );

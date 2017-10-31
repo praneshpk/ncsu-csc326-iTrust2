@@ -64,7 +64,7 @@ public class PrescriptionTest {
         final Prescription persistedP = Prescription.getById( pid );
         assertEquals( "10.1", persistedP.getDosage() + "" );
         assertEquals( "1111-1111-11", persistedP.getNdcCode().getId() );
-        assertEquals( "antti", persistedP.getPatient().getSelf().getId() );
+        assertEquals( "antti", persistedP.getPatient().getId() );
         assertEquals( "20", persistedP.getRenewals() + "" );
         assertEquals( ovId, persistedP.getOfficeVisit().getId() );
 
