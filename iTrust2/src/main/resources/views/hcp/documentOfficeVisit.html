@@ -76,7 +76,7 @@
 								$http.get("/iTrust2/api/v1/patients").then(
 										function(response) {
 											$scope.patients = response.data;
-
+											console.log($scope.patients);
 										});
 
 								$http.get("/iTrust2/api/v1/appointmenttype")
