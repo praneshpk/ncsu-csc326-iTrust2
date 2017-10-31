@@ -54,10 +54,6 @@ public class PrescriptionTest {
         assertEquals( "1111-1111-11", persistedC.getId() );
         assertEquals( "Oxicodon", persistedC.getName() );
 
-        // Added to make sure an office visit exists for this user.
-        if ( OfficeVisit.getForPatient( "antti" ).size() == 0 ) {
-            return;
-        }
         final Long ovId = OfficeVisit.getForPatient( "antti" ).get( 0 ).getId();
 
         final Prescription p = new Prescription( createPrescriptionForm( "10.1", "10/19/2017", "10/31/2017",

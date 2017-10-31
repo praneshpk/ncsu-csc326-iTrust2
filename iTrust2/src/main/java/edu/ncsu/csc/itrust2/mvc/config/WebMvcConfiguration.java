@@ -206,7 +206,9 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
             }
             writer.beginObject();
             writer.name( "id" ).value( obj.getId() );
-            writer.name( "patient" ).value( obj.getPatient().getId() );
+            writer.name( "patient" ).beginObject();
+            writer.name( "self" ).value( obj.getPatient().getSelf().getId() );
+            writer.endObject();
             writer.name( "ndcCode" ).beginObject();
             writer.name( "code" ).value( obj.getNdcCode().getId() );
             writer.name( "name" ).value( obj.getNdcCode().getName() );

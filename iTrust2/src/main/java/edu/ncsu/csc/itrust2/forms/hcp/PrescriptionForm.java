@@ -2,8 +2,6 @@ package edu.ncsu.csc.itrust2.forms.hcp;
 
 import java.io.Serializable;
 
-import edu.ncsu.csc.itrust2.models.persistent.Prescription;
-
 /**
  * PrescriptionForm class
  *
@@ -25,7 +23,7 @@ public class PrescriptionForm implements Serializable {
     /** Id of prescription (if it already exists) */
     private String id;
 
-    /** Patient prescribed to */
+    /** Patient prescribed to (username) */
     private String patient;
 
     /** Dosage of prescription */
@@ -45,23 +43,6 @@ public class PrescriptionForm implements Serializable {
 
     /** OfficeVisit visit - can be null or empty string */
     private String officeVisitId;
-
-    /**
-     * Creates a PrescriptionForm object from the given prescription
-     * 
-     * @param p
-     *            Holds information to use to create the form
-     */
-    public PrescriptionForm ( final Prescription p ) {
-        setId( p.getId().toString() );
-        setPatient( p.getPatient().getUsername() );
-        setDosage( String.valueOf( p.getDosage() ) );
-        setStart( p.getStart().toString() );
-        setEnd( p.getStart().toString() );
-        setRenewals( String.valueOf( p.getRenewals() ) );
-        setNdcCode( p.getNdcCode().getName() );
-        setOfficeVisitId( p.getOfficeVisit().getId().toString() );
-    }
 
     /**
      * Get the id of the form

@@ -81,6 +81,10 @@ public class APIPrescriptionTest {
     @Test
     public void testCreatePrescription () throws Exception {
 
+        final CodeForm c1 = createCodeForm( "1111-1111-11", "Oxicodon" );
+        mvc.perform( post( "/api/v1/ndccodes" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( c1 ) ) ).andExpect( status().isOk() ).andReturn();
+
         // Get an office visit that we can add a prescription to
         final Long ovId = OfficeVisit.getForPatient( "antti" ).get( 0 ).getId();
 
@@ -125,7 +129,7 @@ public class APIPrescriptionTest {
 
     private void verifyPrescriptionJson ( final JsonObject jsonObject, final String patient, final String dosage,
             final String start, final String end, final String renewals, final String code, final String name ) {
-        assertEquals( patient, jsonObject.get( "patient" ).getAsString() );
+        assertEquals( patient, jsonObject.get( "patient" ).getAsJsonObject().get( "self" ).getAsString() );
         assertEquals( dosage, jsonObject.get( "dosage" ).getAsString() );
         assertEquals( start, jsonObject.get( "start" ).getAsString() );
         assertEquals( end, jsonObject.get( "end" ).getAsString() );
