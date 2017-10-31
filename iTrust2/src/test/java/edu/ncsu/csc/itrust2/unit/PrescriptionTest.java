@@ -64,7 +64,7 @@ public class PrescriptionTest {
         final Prescription persistedP = Prescription.getById( pid );
         assertEquals( "10.1", persistedP.getDosage() + "" );
         assertEquals( "1111-1111-11", persistedP.getNdcCode().getId() );
-        assertEquals( "antti", persistedP.getPatient().getId() );
+        assertEquals( "antti", persistedP.getPatient().getSelf().getId() );
         assertEquals( "20", persistedP.getRenewals() + "" );
         assertEquals( ovId, persistedP.getOfficeVisit().getId() );
 
@@ -100,10 +100,10 @@ public class PrescriptionTest {
 
         // Test renewing
         final Prescription p0 = new Prescription(
-                createPrescriptionForm( "10.1", "10/19/2017", "10/31/2017", "1111-1111-11", "antti", "1", null ) );
-        p0.save();
+                createPrescriptionForm( "10.1", "10/19/2017", "10/31/2019", "1111-1111-11", "antti", "1", null ) );
         assertTrue( p0.renew() );
         assertFalse( p0.renew() );
+        p0.save();
 
         final Prescription persistedP0 = Prescription.getById( p0.getId() );
         assertFalse( persistedP0.renew() );

@@ -78,7 +78,7 @@
 											<h4> <!-- https://stackoverflow.com/questions/32051486/how-to-call-javascript-function-on-radio-button-click-not-on-focus -->
 												<label><input type="radio" ng-model="$parent.selectedPrescriptionID"
 												ng-click="populateVisit()" name="name" value="{{prescription.id}}"
-												required="true" /> {{prescription.ndcCode.name}}</label>
+												required="true" /> {{prescription.ndcCode.name}} - {{prescription.formattedStart}}</label>
 											</h4>
 										</li>
 									</ul>
