@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="layout :: head(title=~{::title},links=~{})">
+<title>View Prescriptions</title>
+</head>
+<body th:include="layout :: body" th:with="content=~{::content}">
+
+	<div th:fragment="content">
+		<h1>View Prescriptions</h1>
+		<!-- 
+		<span th:if="${officevisits!=null and officevisits.size() == 0}">
+			No prescribed prescriptions found.</span>
+			
+		<div id="tableDiv" th:if="${officevisits!=null and officevisits.size() > 0}">
+			<form th:method="GET" th:action="@{/patient/viewPreviousAppointment}"
+				th:object="${viewPreviousAppointmentForm}" method="get">
+			<br>
+			<table th:style="'width: 80%;border-collapse: collapse;'">
+				<tr>
+					<th th:style="'border: 1px solid #dddddd;padding: 8px; text-align: center;'">Patient Name</th>
+					<th th:style="'border: 1px solid #dddddd;padding: 8px; text-align: center;'">Appointment Date</th>
+					<th th:style="'border: 1px solid #dddddd;padding: 8px; text-align: center;'">Appointment Type</th>
+					<th th:style="'border: 1px solid #dddddd;padding: 8px; text-align: center;'"></th>
+				</tr>
+				<tr th:each="visit : ${officevisits}">
+					<td th:text="${visit.patient}" th:style="'border: 1px solid #dddddd;padding: 8px; text-align: center;'"></td>
+					<td th:text="${visit.date}" th:style="'border: 1px solid #dddddd;padding: 8px; text-align: center;'"></td>
+					<td th:text="${visit.type}" th:style="'border: 1px solid #dddddd;padding: 8px; text-align: center;'"></td>
+					<td th:style="'border: 1px solid #dddddd;padding: 8px; text-align: center;'">
+						<input type=radio name="id" th:value="${visit.id}" checked ></input></td>
+				</tr>
+			</table>
+			<br>
+			<input type="submit" value="View Health Metrics" class="btn btn-default"></input>
+			</form>
+		</div>
+		 -->
+	</div>
+	
+</body>
+</html>
