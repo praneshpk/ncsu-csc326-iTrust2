@@ -110,7 +110,7 @@ public class APIPrescriptionController extends APIController {
      * @return ResponseEntity indicating success of operation and related
      *         information
      */
-    @PostMapping ( BASE_PATH + "ndccodes" )
+    @PostMapping ( BASE_PATH + "/ndccodes" )
     public ResponseEntity addNDCCode ( @Valid @RequestBody final CodeForm cf ) {
         try {
             // if ( NDCCode.getByCode( cf.getId() ) != null ) {
@@ -131,7 +131,7 @@ public class APIPrescriptionController extends APIController {
      *
      * @return list of NDCCode objects
      */
-    @GetMapping ( BASE_PATH + "ndccodes" )
+    @GetMapping ( BASE_PATH + "/ndccodes" )
     public List<NDCCode> getNDCCodes () {
         return NDCCode.getNDCCodes();
     }
