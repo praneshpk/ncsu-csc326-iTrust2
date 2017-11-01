@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -57,5 +58,24 @@ public class APIDiagnosisController extends APIController {
             return new ResponseEntity( "Could not validate or save the Diagnosis provided due to " + e.getMessage(),
                     HttpStatus.BAD_REQUEST );
         }
+    }
+
+    /**
+     * Retrieves the Diagnosis specified by the name provided
+     *
+     * @param id
+     *            The name of the diagnosis
+     * @return response
+     */
+    @GetMapping ( BASE_PATH + "/diagnosis/{id}" )
+    public ResponseEntity getDiagnosis ( @PathVariable ( "id" ) final String id ) {
+        final Diagnosis d = Diagnosis.getByName( id );
+        if ( null != d ) {
+            // TODO Change to Diagnosis logging
+            // LoggerUtil.log( TransactionType.VIEW_HOSPITAL, hospital.getName()
+            // );
+        }
+        return null == d ? new ResponseEntity( "No diagnosis found for name " + id, HttpStatus.NOT_FOUND )
+                : new ResponseEntity( d, HttpStatus.OK );
     }
 }
