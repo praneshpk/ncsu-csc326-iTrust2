@@ -445,9 +445,9 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
      *
      * @return the diagnoses
      */
-    public List<Diagnosis> getDiagnoses () {
-        return diagnosis;
-    }
+    /*
+     * public List<Diagnosis> getDiagnoses () { return diagnosis; }
+     */
 
     /**
      * Sets the diagnoses for this office visit.
@@ -455,9 +455,10 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
      * @param diagnosis
      *            the diagnoses to set
      */
-    public void setDiagnoses ( final List<Diagnosis> diagnosis ) {
-        this.diagnosis = diagnosis;
-    }
+    /*
+     * public void setDiagnoses ( final List<Diagnosis> diagnosis ) {
+     * this.diagnosis = diagnosis; }
+     */
 
     /**
      * Sets the diagnoses for this office visit.
@@ -465,9 +466,10 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
      * @param diagnosis
      *            the diagnoses to set
      */
-    public void addDiagnosis ( final Diagnosis diagnosis ) {
-        this.diagnosis.add( diagnosis );
-    }
+    /*
+     * public void addDiagnosis ( final Diagnosis diagnosis ) {
+     * this.diagnosis.add( diagnosis ); }
+     */
 
     /**
      * The patient of this office visit
@@ -535,7 +537,7 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
     /**
      * The diagnoses given to the patient
      */
-    private List<Diagnosis>    diagnosis;
+    // private List<Diagnosis> diagnosis;
 
     /**
      * Overrides the basic domain object save in order to save basic health

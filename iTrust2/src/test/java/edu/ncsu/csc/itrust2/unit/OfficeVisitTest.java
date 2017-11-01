@@ -58,7 +58,7 @@ public class OfficeVisitTest {
         form.setLdl( 10 );
         form.setPatientSmokingStatus( PatientSmokingStatus.CURRENT_BUT_UNKNOWN );
         form.setSystolic( 10 );
-        form.setTri( 10 );
+        form.setTri( 150 );
         form.setWeight( new Float( 10 ) );
         BasicHealthMetrics bhm = null;
         try {
