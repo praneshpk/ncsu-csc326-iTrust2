@@ -142,7 +142,7 @@
         <span style="color:red;">*</span>
         <select ng-model="prescription.name" required>
           <option value="" disabled selected>PRESCRIPTIONS</option>
-          <option ng-repeat="code in ndccodes"
+          <option ng-repeat="code in ndc"
                   value="{{code.id}}">
             {{code.name}}
           </option>
