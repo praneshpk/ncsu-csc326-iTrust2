@@ -72,9 +72,11 @@
                   
                   if(!($scope.prescription.dosage > 0)) {
                 	  	$scope.errorMsg += "Dosage must be a number greater than 0";
+                	  	return;
                   }
                	  else if ($scope.prescription.renewals <= 0) {
                	  		$scope.errorMsg += "Renewals must be a number greater than 0";
+               	  		return;
                	  }
                   console.log($scope.prescription);
                   
@@ -162,7 +164,7 @@
         <input type="text" ng-model="prescription.end" placeholder="End date (mm/dd/yyyy)" required/>
 
         <h4>Office Visits</h4>
-        <select ng-model="prescription.visit">
+        <select ng-model="prescription.officeVisitId">
           <option value="" disabled selected>OFFICE VISITS</option>
           <option ng-repeat="visit in visits | filter: prescription.patient.self.username"
                   value="{{visit.id}}">
