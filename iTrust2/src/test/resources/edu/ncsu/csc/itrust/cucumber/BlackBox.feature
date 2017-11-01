@@ -29,15 +29,36 @@ Examples:
     
 Scenario Outline: Valid Prescription edit
 	Given an admin has logged into the system
-	And the prescription with NDC code <ndcCode> and name <oldName> already exists
+	And the prescription with NDC code <ndcCode> and name <name> already exists
 	When an admin attempts to edit to code's name to <newName>
 	Then the prescription is successfully updated with the given information
 	
 Examples:
-    | ndcCode     | oldName                  | newName                 |
+    | ndcCode     | name                     | newName                 |
     |63323-459-09 | Heparin Sodium Injection | Heparin Sodium Solution |
     |0409-6509-01 | Vancomycin               | Bug Spray               |
     |0003-0857-22 | Happiness                | Dose of Reality         |
     
-Scenario Outline:   
-	
+Scenario Outline: Valid Prescription assignment
+	Given an HCP has logged into the system and a patient exists
+	And the prescription with NDC code <ndcCode> and name <name> already exists
+	When the HCP assigns a dosage of <dosage>, <renewals> renewals, a start date of <startDate> and end date of <endDate>
+	Then the prescription is successfully prescribed
+
+Examples:
+    | ndcCode      | name                     | dosage | renewals | startDate  | endDate    |
+    | 63323-459-29 | Sleep                    | 30     | 0        | 12/12/2017 | 12/12/2018 |
+    | 0409-6509-22 | Tea                      | 20     | 5        | 05/06/2018 | 10/6/2018  |
+    | 0003-0857-20 | Spoonful of Sugar        | 5      | 6        | 11/16/1995 | 11/16/2017 |             
+
+Scenario Outline: Invalid Prescription assignment
+	Given an HCP has logged into the system and a patient exists
+	And the prescription with NDC code <ndcCode> and name <name> already exists
+	When the HCP assigns a dosage of <dosage>, <renewals> renewals, a start date of <startDate> and end date of <endDate>
+	Then the prescription is NOT successfully prescribed
+
+Examples:
+    | ndcCode      | name                     | dosage | renewals | startDate  | endDate    |
+    | 63323-459-29 | Sleep                    | -3     | 0        | 12/12/2017 | 12/12/2018 |
+    | 0409-6509-22 | Tea                      | 20     | -5       | 05/06/2018 | 10/6/2018  |
+    | 0003-0857-20 | Spoonful of Sugar        | -5     | -5        | 11/16/19  | 11/16/2017 | 
