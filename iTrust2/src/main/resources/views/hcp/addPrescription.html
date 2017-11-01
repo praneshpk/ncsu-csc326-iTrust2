@@ -69,11 +69,13 @@
 
                 $scope.submit = function() {
                   $scope.errorMsg = "";
-                  $scope.prescription.hcp = /*[[${#httpServletRequest.remoteUser}]]*/null; /* Ugly hack; use this to retrieve the name of the HCP who is currently logged in.  This grabs it from Thymeleaf */
-                  $scope.prescription.status = "PENDING";
                   
-                  if(!($scope.prescription.dosage > 0))
-                	  	$scope.errorMsg += "Dosage must be a number greater than 0"
+                  if(!($scope.prescription.dosage > 0)) {
+                	  	$scope.errorMsg += "Dosage must be a number greater than 0";
+                  }
+               	  else if ($scope.prescription.renewals <= 0) {
+               	  		$scope.errorMsg += "Renewals must be a number greater than 0";
+               	  }
                   console.log($scope.prescription);
                   
                  
@@ -132,7 +134,7 @@
         <input type="text" ng-model="searchFilter.self.username" placeholder="Search..."/>
 
         <select ng-model="prescription.patient"
-                ng-options="patient.self.username for patient in patients | filter:searchFilter" required>
+                ng-options="patient.self.username as patient.self.username for patient in patients | filter:searchFilter" required>
           <option value="" disabled selected>PATIENTS</option>
         </select>
 
@@ -140,16 +142,19 @@
 
         <h4>Prescription</h4>
         <span style="color:red;">*</span>
-        <select ng-model="prescription.name" required>
+        <select ng-model="prescription.ndcCode" ng-options="code.code as code.name for code in ndc" required>
           <option value="" disabled selected>PRESCRIPTIONS</option>
-          <option ng-repeat="code in ndc"
+          <!-- <option ng-repeat="code in ndc"
                   value="{{code.id}}">
             {{code.name}}
-          </option>
+          </option>-->
         </select>
         <br />
         <span style="color:red;">*</span>
         <input type="text" ng-model="prescription.dosage" placeholder="Dosage (mg)" required/>
+		<br/>
+		<span style="color:red;">*</span>
+        <input type="text" ng-model="prescription.renewals" placeholder="Renewals" required/>
 		<br/>
 		<span style="color:red;">*</span>
         <input type="text" ng-model="prescription.start" placeholder="Start date (mm/dd/yyyy)" required/>

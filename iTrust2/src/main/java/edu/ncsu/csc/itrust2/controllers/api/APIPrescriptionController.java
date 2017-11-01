@@ -7,6 +7,7 @@ import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,10 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import edu.ncsu.csc.itrust2.forms.admin.CodeForm;
 import edu.ncsu.csc.itrust2.forms.hcp.PrescriptionForm;
+import edu.ncsu.csc.itrust2.models.enums.TransactionType;
 import edu.ncsu.csc.itrust2.models.persistent.NDCCode;
 import edu.ncsu.csc.itrust2.models.persistent.OfficeVisit;
 import edu.ncsu.csc.itrust2.models.persistent.Patient;
 import edu.ncsu.csc.itrust2.models.persistent.Prescription;
+import edu.ncsu.csc.itrust2.utils.LoggerUtil;
 
 /**
  * API controller to create and manage prescriptions
@@ -77,6 +80,9 @@ public class APIPrescriptionController extends APIController {
             patient.save();
             prescription.save();
 
+            LoggerUtil.log( TransactionType.PRESCRIPTION_CREATE,
+                    SecurityContextHolder.getContext().getAuthentication().getName(), patient.getSelf().getUsername() );
+
             return new ResponseEntity( prescription, HttpStatus.OK );
         }
         catch ( final Exception e ) {
@@ -95,10 +101,32 @@ public class APIPrescriptionController extends APIController {
     public ResponseEntity renewPrescription ( @PathVariable final Long id ) {
         final Prescription p = Prescription.getById( id );
         if ( p.renew() ) {
+            LoggerUtil.log( TransactionType.PRESCRIPTION_RENEW,
+                    SecurityContextHolder.getContext().getAuthentication().getName(),
+                    p.getPatient().getSelf().getUsername() );
             return new ResponseEntity( p, HttpStatus.OK );
         }
         else {
             return new ResponseEntity( "Could not renew prescription.", HttpStatus.CONFLICT );
+        }
+    }
+
+    /**
+     * Log that a prescription was viewed by a patient
+     *
+     * @param id
+     *            id of the prescription
+     * @return ResponseEntity detailing result of request
+     */
+    @PostMapping ( BASE_PATH + "/prescriptions/view/{id}" )
+    public ResponseEntity logPrescriptionViewed ( @PathVariable final Long id ) {
+        final Prescription p = Prescription.getById( id );
+        if ( p != null ) {
+            LoggerUtil.log( TransactionType.PRESCRIPTION_PATIENT_VIEW, p.getPatient().getSelf() );
+            return new ResponseEntity( HttpStatus.OK );
+        }
+        else {
+            return new ResponseEntity( HttpStatus.BAD_REQUEST );
         }
     }
 
@@ -119,6 +147,8 @@ public class APIPrescriptionController extends APIController {
             // }
             final NDCCode code = new NDCCode( cf );
             code.save();
+            LoggerUtil.log( TransactionType.NDC_LIST_UPDATED,
+                    SecurityContextHolder.getContext().getAuthentication().getName() );
             return new ResponseEntity( code, HttpStatus.OK );
         }
         catch ( final Exception e ) {
