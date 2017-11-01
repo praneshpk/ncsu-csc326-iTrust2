@@ -39,7 +39,10 @@
                   }
                   return num;
                 }
-
+				$scope.byPatient = function (item) {
+					if(item.patient.username == $scope.prescription.patient)
+						return item;
+				}
                 $http.get("/iTrust2/api/v1/patients").then(
                     function(response) {
                       $scope.patients = response.data;
@@ -146,10 +149,6 @@
         <span style="color:red;">*</span>
         <select ng-model="prescription.ndcCode" ng-options="code.code as code.name for code in ndc" required>
           <option value="" disabled selected>PRESCRIPTIONS</option>
-          <!-- <option ng-repeat="code in ndc"
-                  value="{{code.id}}">
-            {{code.name}}
-          </option>-->
         </select>
         <br />
         <span style="color:red;">*</span>
@@ -166,7 +165,7 @@
         <h4>Office Visits</h4>
         <select ng-model="prescription.officeVisitId">
           <option value="" disabled selected>OFFICE VISITS</option>
-          <option ng-repeat="visit in visits | filter: prescription.patient.self.username"
+          <option ng-repeat="visit in visits | filter: byPatient"
                   value="{{visit.id}}">
             {{visit.type}} on {{visit.formattedDate}} at {{getTime(visit.date)}}
           </option>
