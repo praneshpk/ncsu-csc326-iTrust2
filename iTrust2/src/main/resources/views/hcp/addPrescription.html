@@ -8,13 +8,11 @@
     <script th:inline="javascript">
       /* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
       /*<![CDATA[*/
-
       var app = angular.module('myApp', []);
       app
           .controller(
               'addPrescriptionCtrl',
               function($scope, $http) {
-
                 $scope.getTime = function getTime(date) {                 
                   var hour = date.hourOfDay;
                   var suffix;
@@ -26,31 +24,26 @@
                   }
                   return twoDigit(hour) + ":" + twoDigit(date.minute) + " " + suffix;
                 }
-
                 $scope.getDate = function getDate(date) {
                   /* The months start at 0... only the months.  So we have to add 1 to get the correct input.*/
                   month = date.month + 1;
                   return twoDigit(month) + "/" + twoDigit(date.dayOfMonth) + "/" + date.year;
                 }
-
                 function twoDigit(num) {
                   if (num < 10) {
                     return "0" + num;
                   }
                   return num;
                 }
-
                 $http.get("/iTrust2/api/v1/patients").then(
                     function(response) {
                       $scope.patients = response.data;
                       console.log($scope.patients);
                     });
-
                 $http.get("/iTrust2/api/v1/ndccodes")
                     .then(function(response) {
                       $scope.ndc = response.data;
                     });
-
                 $scope.noVisitSelected = true;
                 $scope.loadingVisits = true;
                 $http.get("/iTrust2/api/v1/officevisits").then(
@@ -64,9 +57,7 @@
                         $scope.visits[i].formattedDate = $scope.getDate($scope.visits[i].date);
                       }
                     });
-
                 console.log($scope);
-
                 $scope.submit = function() {
                   $scope.errorMsg = "";
                   $scope.prescription.hcp = /*[[${#httpServletRequest.remoteUser}]]*/null; /* Ugly hack; use this to retrieve the name of the HCP who is currently logged in.  This grabs it from Thymeleaf */
@@ -90,7 +81,6 @@
                   })
                 }
               });
-
       /*]]>*/
     </script>
 
