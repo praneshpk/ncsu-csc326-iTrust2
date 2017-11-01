@@ -10,7 +10,11 @@ import java.text.ParseException;
 import org.junit.Test;
 
 import edu.ncsu.csc.itrust2.forms.admin.CodeForm;
+import edu.ncsu.csc.itrust2.forms.hcp.OfficeVisitForm;
 import edu.ncsu.csc.itrust2.forms.hcp.PrescriptionForm;
+import edu.ncsu.csc.itrust2.models.enums.AppointmentType;
+import edu.ncsu.csc.itrust2.models.enums.HouseholdSmokingStatus;
+import edu.ncsu.csc.itrust2.models.enums.PatientSmokingStatus;
 import edu.ncsu.csc.itrust2.models.persistent.NDCCode;
 import edu.ncsu.csc.itrust2.models.persistent.OfficeVisit;
 import edu.ncsu.csc.itrust2.models.persistent.Prescription;
@@ -47,6 +51,28 @@ public class PrescriptionTest {
     @Test
     public void testPrescriptions () throws ParseException {
 
+        final OfficeVisitForm visit = new OfficeVisitForm();
+        visit.setDate( "4/16/2048" );
+        visit.setTime( "9:50 AM" );
+        visit.setHcp( "hcp" );
+        visit.setPatient( "antti" );
+        visit.setNotes( "Test office visit" );
+        visit.setType( AppointmentType.GENERAL_CHECKUP.toString() );
+        visit.setHospital( "General Hostpital" );
+        visit.setDiastolic( 10 );
+        visit.setSystolic( 10 );
+        visit.setHouseSmokingStatus( HouseholdSmokingStatus.INDOOR );
+        visit.setPatientSmokingStatus( PatientSmokingStatus.CURRENT_BUT_UNKNOWN );
+        visit.setHdl( 40 );
+        visit.setLdl( 150 );
+        visit.setTri( 150 );
+        visit.setHeight( new Float( 10.1 ) );
+        visit.setWeight( new Float( 10.1 ) );
+
+        /* Create the Office Visit */
+        final OfficeVisit ov = new OfficeVisit( visit );
+        ov.save();
+
         final NDCCode c = new NDCCode( createCodeForm( "1111-1111-11", "Oxicodon" ) );
         c.save();
 
@@ -70,8 +96,8 @@ public class PrescriptionTest {
 
         // Create prescription with non-matching patient and office-visit
         try {
-            new Prescription( createPrescriptionForm( "10.1", "10/19/2017", "10/31/2017", "1111-1111-11", "patient",
-                    "20", ovId + "" ) );
+            new Prescription( createPrescriptionForm( "10.1", "10/19/2017", "10/31/2017", "1111-1111-11",
+                    "patientTestPatient", "20", ovId + "" ) );
             fail( "Patient username did not match office visit patient." );
         }
         catch ( final IllegalArgumentException e ) {
@@ -80,8 +106,8 @@ public class PrescriptionTest {
 
         // Create prescription with invalid dates
         try {
-            new Prescription( createPrescriptionForm( "10.1", "10/31/2017", "10/29/2017", "1111-1111-11", "patient",
-                    "20", null ) );
+            new Prescription( createPrescriptionForm( "10.1", "10/31/2017", "10/29/2017", "1111-1111-11",
+                    "patientTestPatient", "20", null ) );
             fail( "Start date came after end date and no exception was thrown." );
         }
         catch ( final IllegalArgumentException e ) {
@@ -90,8 +116,8 @@ public class PrescriptionTest {
 
         // Create prescription with invalid code
         try {
-            new Prescription( createPrescriptionForm( "10.1", "10/20/2017", "10/29/2017", "8888-1111-11", "patient",
-                    "20", null ) );
+            new Prescription( createPrescriptionForm( "10.1", "10/20/2017", "10/29/2017", "8888-1111-11",
+                    "patientTestPatient", "20", null ) );
             fail( "Invalid NDC was used." );
         }
         catch ( final IllegalArgumentException e ) {
