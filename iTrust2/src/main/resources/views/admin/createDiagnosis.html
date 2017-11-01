@@ -25,15 +25,17 @@
 
 								$scope.submit = function() {
 									$scope.errorMsg = "";
-									$scope.diagnosis.name = null;
-									$scope.diagnosis.icdCode = null;
+									$scope.hasError = false;
+									$scope.hasMessage = false;
 									
 									if ($scope.diagnosis.name == null) {
-										$scope.errorMsg += "Please input a name\n";
+										$scope.errorMsg += "Please input a name. \n";
+										$scope.hasError = true;
 									}
 									
 									if ($scope.diagnosis.icdCode == null) {
-										$scope.errorMsg += "Please input an icd code\n";
+										$scope.errorMsg += "Please input an icd code.\n";
+										$scope.hasError = true;
 									}
 									
 
@@ -43,10 +45,12 @@
 										data : $scope.diagnosis
 									}).then(function(response) {
 										$scope.message="Diagnosis created successfully";
+										$scope.hasMessage = true;
 										console.log(response);
 									}, function(rejection) {
 										$scope.message="Error occurred creating diagnosis";
 										console.log(rejection);
+										$scope.hasMessage = true;
 									})
 								}
 							});
@@ -56,9 +60,9 @@
 
 
 
-		<div ng-app="myApp" ng-controller="addDiagnosisCtrl">
-			<div style="float:left;padding: 3%;height:75%;overflow-y:auto">
-				<h1>Edit ICD-10 Codes</h1>
+		<div ng-app="myApp" ng-controller="addDiagnosisCtrl as ctrl">
+			<h1>Edit ICD-10 Codes</h1>
+			<div style="float:left;padding: 3%">
 				<h3>Add or Update ICD-10 Code</h3>
 				<table>
 					<tr>
@@ -71,21 +75,20 @@
 					</tr>
 				</table>
 				
-				<button ng-click="submit" name="submit">Submit</button>
+				<br />
 				
+				<button ng-click="submit()" name="submit">Submit</button>
+				
+				<div name="errorMsg" ng-show="hasError">{{errorMsg}}</div>
+
+				<div name="success" ng-show="hasMessage">{{message}}</div>
+				
+				<br />
 				<br />
 				
 				<h3>Current iTrust2 ICD-10 Codes</h3>
-				<select style="width: 250px;" size="5">
-				    <option value="1">Item #1</option>
-				    <option value="2">Item #2</option>
-				    <option value="3">Item #3</option>
-				    <option value="4">Item #4</option>
-				    <option value="5">Item #5</option>
-				    <option value="6">Item #6</option>
-				    <option value="7">Item #7</option>
-				    <option value="8">Item #8</option>
-				    <option value="9">Item #9</option>
+				<select style="width: 300px;" size="15">
+				    <option  ng-repeat="d in diagnoses" name="diagnosis" value="{{d.name}} - {{d.icdCode}}">{{d.name}} - {{d.icdCode}}</option>
 				</select>
 				
 			</div>
