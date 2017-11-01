@@ -31,6 +31,19 @@ import edu.ncsu.csc.itrust2.utils.LoggerUtil;
 public class AdminUserController {
 
     /**
+     * This return the mapping for the update ndc codes page
+     * 
+     * @param model
+     *            data for the front end
+     * @return mapping
+     */
+    @RequestMapping ( value = "admin/updateNDC" )
+    @PreAuthorize ( "hasRole('ROLE_ADMIN')" )
+    public String updateNDC ( final Model model ) {
+        return "/admin/updateNDC";
+    }
+
+    /**
      * Add user
      *
      * @param model
