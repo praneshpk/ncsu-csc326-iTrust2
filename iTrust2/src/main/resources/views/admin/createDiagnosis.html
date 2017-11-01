@@ -3,48 +3,95 @@
 <title>Create Diagnosis</title>
 </head>
 <body th:include="layout :: body" th:with="content=~{::content}">
-
-
 	<div th:fragment="content">
-		<h1>Edit ICD-10 Codes</h1>
-		<h3>Add or Update ICD-10 Codes</h3>
-		<form action="#" th:action="@{/admin/createDiagnosis}"
-			th:object="${DiagnosisForm}" method="post">
-			<table>
 
-				<tr>
-					<td style="text-align:right;padding:5px">Name:</td>
-					<td><input type="text" th:field="*{name}" /></td>
-					<td th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
-					The name is invalid</td>
-				</tr>
+		<script th:inline="javascript">
+			/* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
+			/*<![CDATA[*/
 
-				<tr>
-					<td style="text-align:right;padding:5px">ICD-10 Code:</td>
-					<td><input type="text" th:field="*{icdCode}" /></td>
-					<td th:if="${#fields.hasErrors('icdCode')}" th:errors="*{icdCode}">The ICD-10 code
-						is invalid</td>
-				</tr>
+			var app = angular.module('myApp', []);
+			app
+					.controller(
+							'addDiagnosisCtrl',
+							function($scope, $http) {
+								
+								
+								$http.get("/iTrust2/api/v1/diagnoses").then(
+										function(response) {
+											$scope.diagnoses = response.data;
+										});
 
-				<tr>
-					<td><button type="submit" class="btn">Submit</button></td>
-				</tr>
+								console.log($scope);
 
-			</table>
-		</form>
-		<br>
-		<h3>Current iTrust2 ICD-10 Codes</h3>
-		<select style="width: 250px;" size="5">
-		    <option value="1">Item #1</option>
-		    <option value="2">Item #2</option>
-		    <option value="3">Item #3</option>
-		    <option value="4">Item #4</option>
-		    <option value="5">Item #5</option>
-		    <option value="6">Item #6</option>
-		    <option value="7">Item #7</option>
-		    <option value="8">Item #8</option>
-		    <option value="9">Item #9</option>
-		</select>
+								$scope.submit = function() {
+									$scope.errorMsg = "";
+									$scope.diagnosis.name = null;
+									$scope.diagnosis.icdCode = null;
+									
+									if ($scope.diagnosis.name == null) {
+										$scope.errorMsg += "Please input a name\n";
+									}
+									
+									if ($scope.diagnosis.icdCode == null) {
+										$scope.errorMsg += "Please input an icd code\n";
+									}
+									
+
+									$http({
+										method : 'POST',
+										url : '/iTrust2/api/v1/creatediagnosis',
+										data : $scope.diagnosis
+									}).then(function(response) {
+										$scope.message="Diagnosis created successfully";
+										console.log(response);
+									}, function(rejection) {
+										$scope.message="Error occurred creating diagnosis";
+										console.log(rejection);
+									})
+								}
+							});
+
+			/*]]>*/
+		</script>
+
+
+
+		<div ng-app="myApp" ng-controller="addDiagnosisCtrl">
+			<div style="float:left;padding: 3%;height:75%;overflow-y:auto">
+				<h1>Edit ICD-10 Codes</h1>
+				<h3>Add or Update ICD-10 Code</h3>
+				<table>
+					<tr>
+						<td style="text-align:right;padding:5px"><b>Name:</b></td>
+						<td><input type="text" name="name" ng-model="diagnosis.name" required="true"/></td>
+					</tr>
+					<tr>
+						<td style="text-align:right;padding:5px"><b>ICD-10 Code:</b></td>
+						<td><input type="text" name="name" ng-model="diagnosis.icdCode" required="true"/></td>
+					</tr>
+				</table>
+				
+				<button ng-click="submit" name="submit">Submit</button>
+				
+				<br />
+				
+				<h3>Current iTrust2 ICD-10 Codes</h3>
+				<select style="width: 250px;" size="5">
+				    <option value="1">Item #1</option>
+				    <option value="2">Item #2</option>
+				    <option value="3">Item #3</option>
+				    <option value="4">Item #4</option>
+				    <option value="5">Item #5</option>
+				    <option value="6">Item #6</option>
+				    <option value="7">Item #7</option>
+				    <option value="8">Item #8</option>
+				    <option value="9">Item #9</option>
+				</select>
+				
+			</div>
+
+		</div>
+
 	</div>
 </body>
 </html>

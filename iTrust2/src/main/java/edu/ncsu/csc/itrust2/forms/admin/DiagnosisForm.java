@@ -14,18 +14,18 @@ import edu.ncsu.csc.itrust2.models.persistent.Diagnosis;
 public class DiagnosisForm {
 
     /**
-     * ICD-10 code associated with the diagnosis
-     */
-    @NotEmpty
-    @Length ( max = 255 )
-    private String icdCode;
-
-    /**
      * Name associated with the diagnosis
      */
     @NotEmpty
     @Length ( max = 255 )
     private String name;
+
+    /**
+     * ICD-10 code associated with the diagnosis
+     */
+    @NotEmpty
+    @Length ( max = 255 )
+    private String icdCode;
 
     public DiagnosisForm () {
 
