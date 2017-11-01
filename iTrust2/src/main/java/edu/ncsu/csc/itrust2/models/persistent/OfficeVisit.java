@@ -441,6 +441,35 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
     }
 
     /**
+     * Gets the diagnoses for this office visit.
+     *
+     * @return the diagnoses
+     */
+    public List<Diagnosis> getDiagnoses () {
+        return diagnosis;
+    }
+
+    /**
+     * Sets the diagnoses for this office visit.
+     *
+     * @param diagnosis
+     *            the diagnoses to set
+     */
+    public void setDiagnoses ( final List<Diagnosis> diagnosis ) {
+        this.diagnosis = diagnosis;
+    }
+
+    /**
+     * Sets the diagnoses for this office visit.
+     *
+     * @param diagnosis
+     *            the diagnoses to set
+     */
+    public void addDiagnosis ( final Diagnosis diagnosis ) {
+        this.diagnosis.add( diagnosis );
+    }
+
+    /**
      * The patient of this office visit
      */
     @NotNull
@@ -502,6 +531,11 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
     @OneToOne
     @JoinColumn ( name = "appointment_id" )
     private AppointmentRequest appointment;
+
+    /**
+     * The diagnoses given to the patient
+     */
+    private List<Diagnosis>    diagnosis;
 
     /**
      * Overrides the basic domain object save in order to save basic health
