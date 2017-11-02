@@ -93,43 +93,43 @@ public class APIPrescriptionTest {
     public void testCreatePrescription () throws Exception {
 
         final PrescriptionForm p1 = createPrescriptionForm( "34.1", "10/22/2017", "10/22/2018", "1234-5678-90",
-                "patient", "10" );
+                "AliceThirteen", "10" );
 
         MvcResult result = mvc
                 .perform( post( "/api/v1/prescriptions" ).contentType( MediaType.APPLICATION_JSON )
                         .content( TestUtils.asJsonString( p1 ) ).with( csrf() ) )
                 .andExpect( status().isOk() ).andReturn();
         JsonObject jsonObject = gson.fromJson( result.getResponse().getContentAsString(), JsonObject.class );
-        verifyPrescriptionJson( jsonObject, "patient", "34.1", "1508644800000", "1540180800000", "10", "1234-5678-90",
-                "Viagra" );
+        verifyPrescriptionJson( jsonObject, "AliceThirteen", "34.1", "1508644800000", "1540180800000", "10",
+                "1234-5678-90", "Viagra" );
         final String pId = jsonObject.get( "id" ).getAsString();
 
-        final PrescriptionForm p2 = createPrescriptionForm( "2.99", "9/22/2015", "3/20/2018", "1111-1111-11", "patient",
-                "16" );
+        final PrescriptionForm p2 = createPrescriptionForm( "2.99", "9/22/2015", "3/20/2018", "1111-1111-11",
+                "AliceThirteen", "16" );
 
         result = mvc.perform( post( "/api/v1/prescriptions" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( p2 ) ) ).andExpect( status().isOk() ).andReturn();
         jsonObject = gson.fromJson( result.getResponse().getContentAsString(), JsonObject.class );
-        verifyPrescriptionJson( jsonObject, "patient", "2.99", "1442894400000", "1521518400000", "16", "1111-1111-11",
-                "Oxicodon" );
+        verifyPrescriptionJson( jsonObject, "AliceThirteen", "2.99", "1442894400000", "1521518400000", "16",
+                "1111-1111-11", "Oxicodon" );
 
-        result = mvc.perform( get( "/api/v1/prescriptions/patient" ).contentType( MediaType.APPLICATION_JSON ) )
+        result = mvc.perform( get( "/api/v1/prescriptions/AliceThirteen" ).contentType( MediaType.APPLICATION_JSON ) )
                 .andExpect( status().isOk() ).andReturn();
 
         final JsonArray jsonArray = gson.fromJson( result.getResponse().getContentAsString(), JsonArray.class );
         final JsonObject jsonObj1 = jsonArray.get( jsonArray.size() - 2 ).getAsJsonObject();
-        verifyPrescriptionJson( jsonObj1, "patient", "34.1", "1508644800000", "1540180800000", "10", "1234-5678-90",
-                "Viagra" );
+        verifyPrescriptionJson( jsonObj1, "AliceThirteen", "34.1", "1508644800000", "1540180800000", "10",
+                "1234-5678-90", "Viagra" );
 
         final JsonObject jsonObj2 = jsonArray.get( jsonArray.size() - 1 ).getAsJsonObject();
-        verifyPrescriptionJson( jsonObj2, "patient", "2.99", "1442894400000", "1521518400000", "16", "1111-1111-11",
-                "Oxicodon" );
+        verifyPrescriptionJson( jsonObj2, "AliceThirteen", "2.99", "1442894400000", "1521518400000", "16",
+                "1111-1111-11", "Oxicodon" );
 
         result = mvc.perform( put( "/api/v1/prescriptions/renew/" + pId ).contentType( MediaType.APPLICATION_JSON ) )
                 .andExpect( status().isOk() ).andReturn();
         jsonObject = gson.fromJson( result.getResponse().getContentAsString(), JsonObject.class );
-        verifyPrescriptionJson( jsonObject, "patient", "34.1", "1508644800000", "1540180800000", "9", "1234-5678-90",
-                "Viagra" );
+        verifyPrescriptionJson( jsonObject, "AliceThirteen", "34.1", "1508644800000", "1540180800000", "9",
+                "1234-5678-90", "Viagra" );
     }
 
     private void verifyPrescriptionJson ( final JsonObject jsonObject, final String patient, final String dosage,
