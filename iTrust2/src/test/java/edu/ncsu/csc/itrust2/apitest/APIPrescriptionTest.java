@@ -1,6 +1,7 @@
 package edu.ncsu.csc.itrust2.apitest;
 
 import static org.junit.Assert.assertEquals;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -13,6 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -28,7 +30,6 @@ import com.google.gson.JsonObject;
 import edu.ncsu.csc.itrust2.config.RootConfiguration;
 import edu.ncsu.csc.itrust2.forms.admin.CodeForm;
 import edu.ncsu.csc.itrust2.forms.hcp.PrescriptionForm;
-import edu.ncsu.csc.itrust2.models.persistent.OfficeVisit;
 import edu.ncsu.csc.itrust2.mvc.config.WebMvcConfiguration;
 
 /**
@@ -54,7 +55,10 @@ public class APIPrescriptionTest {
      */
     @Before
     public void setup () {
-        mvc = MockMvcBuilders.webAppContextSetup( context ).build();
+        mvc = MockMvcBuilders.webAppContextSetup( context )// .apply(
+                                                           // SecurityMockMvcConfigurers.springSecurity()
+                                                           // )
+                .build();
     }
 
     /**
@@ -63,14 +67,20 @@ public class APIPrescriptionTest {
      * @throws Exception
      */
     @Test
+    @WithMockUser ( username = "admin", authorities = { "ADMIN" } )
     public void testCreateNDCCode () throws Exception {
-
         final CodeForm c1 = createCodeForm( "1234-5678-90", "Viagra" );
-        final MvcResult result = mvc.perform( post( "/api/v1/ndccodes" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( c1 ) ) ).andExpect( status().isOk() ).andReturn();
+        final MvcResult result = mvc
+                .perform( post( "/api/v1/ndccodes" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( c1 ) ).with( csrf() ) )
+                .andExpect( status().isOk() ).andReturn();
         final JsonObject jsonObject = gson.fromJson( result.getResponse().getContentAsString(), JsonObject.class );
         assertEquals( "1234-5678-90", jsonObject.get( "code" ).getAsString() );
         assertEquals( "Viagra", jsonObject.get( "name" ).getAsString() );
+
+        final CodeForm c2 = createCodeForm( "1111-1111-11", "Oxicodon" );
+        mvc.perform( post( "/api/v1/ndccodes" ).contentType( MediaType.APPLICATION_JSON )
+                .content( TestUtils.asJsonString( c2 ) ).with( csrf() ) ).andExpect( status().isOk() ).andReturn();
     }
 
     /**
@@ -79,51 +89,46 @@ public class APIPrescriptionTest {
      * @throws Exception
      */
     @Test
+    @WithMockUser // ( username = "hcp", roles = { "HCP", "PATIENT" } )
     public void testCreatePrescription () throws Exception {
 
-        final CodeForm c1 = createCodeForm( "1111-1111-11", "Oxicodon" );
-        mvc.perform( post( "/api/v1/ndccodes" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( c1 ) ) ).andExpect( status().isOk() ).andReturn();
+        final PrescriptionForm p1 = createPrescriptionForm( "34.1", "10/22/2017", "10/22/2018", "1234-5678-90",
+                "patient", "10" );
 
-        // Get an office visit that we can add a prescription to
-        final Long ovId = OfficeVisit.getForPatient( "antti" ).get( 0 ).getId();
-
-        final PrescriptionForm p1 = createPrescriptionForm( "34.1", "10/22/2017", "10/22/2018", "1234-5678-90", "antti",
-                "10" );
-        p1.setOfficeVisitId( ovId + "" );
-
-        MvcResult result = mvc.perform( post( "/api/v1/prescriptions" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( p1 ) ) ).andExpect( status().isOk() ).andReturn();
+        MvcResult result = mvc
+                .perform( post( "/api/v1/prescriptions" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( p1 ) ).with( csrf() ) )
+                .andExpect( status().isOk() ).andReturn();
         JsonObject jsonObject = gson.fromJson( result.getResponse().getContentAsString(), JsonObject.class );
-        verifyPrescriptionJson( jsonObject, "antti", "34.1", "1508644800000", "1540180800000", "10", "1234-5678-90",
+        verifyPrescriptionJson( jsonObject, "patient", "34.1", "1508644800000", "1540180800000", "10", "1234-5678-90",
                 "Viagra" );
         final String pId = jsonObject.get( "id" ).getAsString();
 
-        final PrescriptionForm p2 = createPrescriptionForm( "2.99", "9/22/2015", "3/20/2018", "1111-1111-11", "antti",
+        final PrescriptionForm p2 = createPrescriptionForm( "2.99", "9/22/2015", "3/20/2018", "1111-1111-11", "patient",
                 "16" );
 
         result = mvc.perform( post( "/api/v1/prescriptions" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( p2 ) ) ).andExpect( status().isOk() ).andReturn();
         jsonObject = gson.fromJson( result.getResponse().getContentAsString(), JsonObject.class );
-        verifyPrescriptionJson( jsonObject, "antti", "2.99", "1442894400000", "1521518400000", "16", "1111-1111-11",
+        verifyPrescriptionJson( jsonObject, "patient", "2.99", "1442894400000", "1521518400000", "16", "1111-1111-11",
                 "Oxicodon" );
 
-        result = mvc.perform( get( "/api/v1/prescriptions/antti" ).contentType( MediaType.APPLICATION_JSON ) )
+        result = mvc.perform( get( "/api/v1/prescriptions/patient" ).contentType( MediaType.APPLICATION_JSON ) )
                 .andExpect( status().isOk() ).andReturn();
 
         final JsonArray jsonArray = gson.fromJson( result.getResponse().getContentAsString(), JsonArray.class );
         final JsonObject jsonObj1 = jsonArray.get( jsonArray.size() - 2 ).getAsJsonObject();
-        verifyPrescriptionJson( jsonObj1, "antti", "34.1", "1508644800000", "1540180800000", "10", "1234-5678-90",
+        verifyPrescriptionJson( jsonObj1, "patient", "34.1", "1508644800000", "1540180800000", "10", "1234-5678-90",
                 "Viagra" );
 
         final JsonObject jsonObj2 = jsonArray.get( jsonArray.size() - 1 ).getAsJsonObject();
-        verifyPrescriptionJson( jsonObj2, "antti", "2.99", "1442894400000", "1521518400000", "16", "1111-1111-11",
+        verifyPrescriptionJson( jsonObj2, "patient", "2.99", "1442894400000", "1521518400000", "16", "1111-1111-11",
                 "Oxicodon" );
 
         result = mvc.perform( put( "/api/v1/prescriptions/renew/" + pId ).contentType( MediaType.APPLICATION_JSON ) )
                 .andExpect( status().isOk() ).andReturn();
         jsonObject = gson.fromJson( result.getResponse().getContentAsString(), JsonObject.class );
-        verifyPrescriptionJson( jsonObject, "antti", "34.1", "1508644800000", "1540180800000", "9", "1234-5678-90",
+        verifyPrescriptionJson( jsonObject, "patient", "34.1", "1508644800000", "1540180800000", "9", "1234-5678-90",
                 "Viagra" );
     }
 

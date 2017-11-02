@@ -12,11 +12,17 @@ import org.junit.Test;
 import edu.ncsu.csc.itrust2.forms.admin.CodeForm;
 import edu.ncsu.csc.itrust2.forms.hcp.OfficeVisitForm;
 import edu.ncsu.csc.itrust2.forms.hcp.PrescriptionForm;
+import edu.ncsu.csc.itrust2.forms.hcp_patient.PatientForm;
 import edu.ncsu.csc.itrust2.models.enums.AppointmentType;
+import edu.ncsu.csc.itrust2.models.enums.BloodType;
+import edu.ncsu.csc.itrust2.models.enums.Ethnicity;
+import edu.ncsu.csc.itrust2.models.enums.Gender;
 import edu.ncsu.csc.itrust2.models.enums.HouseholdSmokingStatus;
 import edu.ncsu.csc.itrust2.models.enums.PatientSmokingStatus;
+import edu.ncsu.csc.itrust2.models.enums.State;
 import edu.ncsu.csc.itrust2.models.persistent.NDCCode;
 import edu.ncsu.csc.itrust2.models.persistent.OfficeVisit;
+import edu.ncsu.csc.itrust2.models.persistent.Patient;
 import edu.ncsu.csc.itrust2.models.persistent.Prescription;
 
 /**
@@ -51,11 +57,35 @@ public class PrescriptionTest {
     @Test
     public void testPrescriptions () throws ParseException {
 
+        if ( Patient.getPatient( "patient" ) == null ) {
+            final PatientForm form = new PatientForm();
+            form.setFirstName( "patient" );
+            form.setPreferredName( "patient" );
+            form.setLastName( "mcpatientface" );
+            form.setEmail( "bademail@ncsu.edu" );
+            form.setAddress1( "Some town" );
+            form.setAddress2( "Somewhere" );
+            form.setCity( "placecity" );
+            form.setState( State.AL.getName() );
+            form.setZip( "27606" );
+            form.setPhone( "111-111-1111" );
+            form.setDateOfBirth( "01/01/1901" );
+            form.setDateOfDeath( "01/01/2001" );
+            form.setCauseOfDeath( "Hit by a truck" );
+            form.setBloodType( BloodType.ABPos.getName() );
+            form.setEthnicity( Ethnicity.Asian.getName() );
+            form.setGender( Gender.Male.getName() );
+            form.setSelf( "patient" );
+
+            final Patient tp = new Patient( form );
+            tp.save();
+        }
+
         final OfficeVisitForm visit = new OfficeVisitForm();
         visit.setDate( "4/16/2048" );
         visit.setTime( "9:50 AM" );
         visit.setHcp( "hcp" );
-        visit.setPatient( "antti" );
+        visit.setPatient( "AliceThirteen" );
         visit.setNotes( "Test office visit" );
         visit.setType( AppointmentType.GENERAL_CHECKUP.toString() );
         visit.setHospital( "General Hostpital" );
@@ -80,24 +110,24 @@ public class PrescriptionTest {
         assertEquals( "1111-1111-11", persistedC.getId() );
         assertEquals( "Oxicodon", persistedC.getName() );
 
-        final Long ovId = OfficeVisit.getForPatient( "antti" ).get( 0 ).getId();
+        final Long ovId = OfficeVisit.getForPatient( "AliceThirteen" ).get( 0 ).getId();
 
         final Prescription p = new Prescription( createPrescriptionForm( "10.1", "10/19/2017", "10/31/2017",
-                "1111-1111-11", "antti", "20", ovId + "" ) );
+                "1111-1111-11", "AliceThirteen", "20", ovId + "" ) );
         p.save();
         final Long pid = p.getId();
 
         final Prescription persistedP = Prescription.getById( pid );
         assertEquals( "10.1", persistedP.getDosage() + "" );
         assertEquals( "1111-1111-11", persistedP.getNdcCode().getId() );
-        assertEquals( "antti", persistedP.getPatient().getSelf().getId() );
+        assertEquals( "AliceThirteen", persistedP.getPatient().getSelf().getId() );
         assertEquals( "20", persistedP.getRenewals() + "" );
         assertEquals( ovId, persistedP.getOfficeVisit().getId() );
 
         // Create prescription with non-matching patient and office-visit
         try {
             new Prescription( createPrescriptionForm( "10.1", "10/19/2017", "10/31/2017", "1111-1111-11",
-                    "patientTestPatient", "20", ovId + "" ) );
+                    "BobTheFourYearOld", "20", ovId + "" ) );
             fail( "Patient username did not match office visit patient." );
         }
         catch ( final IllegalArgumentException e ) {
@@ -107,7 +137,7 @@ public class PrescriptionTest {
         // Create prescription with invalid dates
         try {
             new Prescription( createPrescriptionForm( "10.1", "10/31/2017", "10/29/2017", "1111-1111-11",
-                    "patientTestPatient", "20", null ) );
+                    "BobTheFourYearOld", "20", null ) );
             fail( "Start date came after end date and no exception was thrown." );
         }
         catch ( final IllegalArgumentException e ) {
@@ -117,7 +147,7 @@ public class PrescriptionTest {
         // Create prescription with invalid code
         try {
             new Prescription( createPrescriptionForm( "10.1", "10/20/2017", "10/29/2017", "8888-1111-11",
-                    "patientTestPatient", "20", null ) );
+                    "AliceThirteen", "20", null ) );
             fail( "Invalid NDC was used." );
         }
         catch ( final IllegalArgumentException e ) {
@@ -125,8 +155,8 @@ public class PrescriptionTest {
         }
 
         // Test renewing
-        final Prescription p0 = new Prescription(
-                createPrescriptionForm( "10.1", "10/19/2017", "10/31/2019", "1111-1111-11", "antti", "1", null ) );
+        final Prescription p0 = new Prescription( createPrescriptionForm( "10.1", "10/19/2017", "10/31/2019",
+                "1111-1111-11", "AliceThirteen", "1", null ) );
         assertTrue( p0.renew() );
         assertFalse( p0.renew() );
         p0.save();
@@ -134,14 +164,14 @@ public class PrescriptionTest {
         final Prescription persistedP0 = Prescription.getById( p0.getId() );
         assertFalse( persistedP0.renew() );
 
-        final Prescription p1 = new Prescription(
-                createPrescriptionForm( "10.1", "10/19/2016", "10/31/2016", "1111-1111-11", "antti", "1", null ) );
+        final Prescription p1 = new Prescription( createPrescriptionForm( "10.1", "10/19/2016", "10/31/2016",
+                "1111-1111-11", "AliceThirteen", "1", null ) );
         p1.save();
         final Prescription persistedP1 = Prescription.getById( p1.getId() );
         assertFalse( persistedP1.renew() );
 
-        final Prescription p2 = new Prescription(
-                createPrescriptionForm( "10.1", "10/19/2200", "10/31/2200", "1111-1111-11", "antti", "1", null ) );
+        final Prescription p2 = new Prescription( createPrescriptionForm( "10.1", "10/19/2200", "10/31/2200",
+                "1111-1111-11", "AliceThirteen", "1", null ) );
         p2.save();
         final Prescription persistedP2 = Prescription.getById( p2.getId() );
         assertFalse( persistedP2.renew() );
