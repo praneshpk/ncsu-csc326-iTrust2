@@ -1,0 +1,135 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="layout :: head(title=~{::title},links=~{})">
+<title>Update NDC Codes</title>
+</head>
+<body th:include="layout :: body" th:with="content=~{::content}">
+	
+	<div th:fragment="content">
+		<script th:inline="javascript">
+			/* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
+			/*<![CDATA[*/
+
+			var app = angular.module('myApp', []);
+			app.controller(
+							'updateNDCCtrl',
+							function($scope, $http) {
+								
+								$scope.myself = /*[[${#httpServletRequest.remoteUser}]]*/null;
+								$scope.showAddMessage = false;
+								$scope.addMessage = "No message.";
+								$scope.showUpdateMessage = false;
+								$scope.updateMessage = "No message."
+								
+								$scope.getNDCCodes = function(){
+									$http.get("/iTrust2/api/v1/ndccodes").then(
+											function(response) {
+												$scope.ndccodes = response.data;
+											},
+								        	function(errResponse){
+								        		console.error('Error while getting NDC codes.');
+								        	});
+								}
+								
+								$scope.addNDC = function(){
+									
+									if ($scope.ndccode.id == "" || $scope.ndccode.id == null){
+										$scope.addMessage = "Please enter the NDC code.";
+										$scope.showAddMessage = true;
+										return;
+									}
+									
+									if ($scope.ndccode.name == "" || $scope.ndccode.name == null){
+										$scope.addMessage = "Please enter the name of the NDC code.";
+										$scope.showAddMessage = true;
+										return;
+									}
+										
+									
+									$http.post("/iTrust2/api/v1/ndccodes", $scope.ndccode).then(
+											function(response) {
+												$scope.addMessage = "Successfully updated. Refresh to see changes.";
+												$scope.showAddMessage = true;
+												$scope.ndccode.id = "";
+												$scope.ndccode.name = "";
+											},
+											function(errResponse) {
+												$scope.addMessage = "Error: Incorrect NDC code format.";
+												$scope.showAddMessage = true;
+											});
+								}
+								
+								$scope.updateNDC = function(){
+									
+									if ($scope.selectedNDC.id == "" || $scope.selectedNDC.id == null){
+										$scope.updateMessage = "Please select an NDC code.";
+										$scope.showUpdateMessage = true;
+										return;
+									}
+									
+									if ($scope.selectedNDC.name == "" || $scope.selectedNDC.name == null){
+										$scope.updateMessage = "Please enter the new name of the NDC code.";
+										$scope.showUpdateMessage = true;
+										return;
+									}
+										
+									
+									$http.post("/iTrust2/api/v1/ndccodes", $scope.selectedNDC).then(
+											function(response) {
+												$scope.updateMessage = "Successfully updated. Refresh to see changes.";
+												$scope.showUpdateMessage = true;
+												$scope.selectedNDC.id = "";
+												$scope.selectedNDC.name = "";
+											},
+											function(errResponse) {
+												$scope.updateMessage = "Error while updating NDC code.";
+												$scope.showUpdateMessage = true;
+											});
+								}
+								
+								$scope.getNDCCodes();
+								
+							});
+
+			/*]]>*/
+		</script>
+
+		<div ng-app="myApp" ng-controller="updateNDCCtrl">
+			
+			<div>
+			<h3>Add NDC Code</h3>
+			<p>NDC Code</p>
+			<input ng-model="ndccode.id" name = "codeInput"> </input>
+			<p>Name of NDC Code</p>
+			<input ng-model="ndccode.name" name = "nameInput"> </input>
+			</div>
+			
+			<button type="button" ng-click="addNDC()" name = "submitBtn">Add NDC Code</button>
+			
+			<div ng-show="showAddMessage">{{addMessage}}</div>
+			
+			<h3>NDC codes in iTrust2</h3>
+						<ul>
+							<li ng-repeat="currentNDC in ndccodes">
+								<label><input type="radio" ng-model="$parent.selectedNDC.id" name="selectedNDC"
+									value="{{currentNDC.code}}"/> {{currentNDC.code}} - {{currentNDC.name}}
+								</label>
+							</li>
+						</ul>
+						
+			<div ng-if="ndccodes.length == 0">None</div>
+			
+			<div>
+			<h3>Update Selected NDC Code</h3>
+			<p>New Name of NDC Code</p>
+			<input ng-model="selectedNDC.name" name = "updateNameInput"> </input>
+			</div>
+			
+			<button type="button" ng-click="updateNDC()" name = "submitUpdateBtn">Update NDC Code</button>
+			
+			<div ng-show="showUpdateMessage">{{updateMessage}}</div>
+
+			
+		</div>
+	</div>
+</body>
+</html>

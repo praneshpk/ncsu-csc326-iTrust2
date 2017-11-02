@@ -1,0 +1,134 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="layout :: head(title=~{::title},links=~{})">
+<title>Manage Prescriptions</title>
+</head>
+<body th:include="layout :: body" th:with="content=~{::content}">
+  <div th:fragment="content">
+
+    <script th:inline="javascript">
+      /* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
+      /*<![CDATA[*/
+      var app = angular.module('myApp', []);
+      app
+          .controller(
+              'addPrescriptionCtrl',
+              function($scope, $http) {
+             
+                $scope.getDate = function getDate(time) {
+                	  var date = new Date(time);
+          
+                  return (date.getMonth()+1) + "/" + date.getDate() + "/" + date.getFullYear();
+                }
+        $scope.update = function () {
+          $http.get("/iTrust2/api/v1/prescriptions/" + $scope.prescription.patient)
+                    .then(function(response) {
+                      $scope.prescriptions = response.data;
+                    });
+        }
+                $http.get("/iTrust2/api/v1/patients").then(
+                    function(response) {
+                      $scope.patients = response.data;
+                      console.log($scope.patients);
+                    });
+                $http.get("/iTrust2/api/v1/ndccodes")
+                    .then(function(response) {
+                      $scope.ndc = response.data;
+                    });
+                $scope.renew = function(id) {    
+                 
+                  $http({
+                    method : 'PUT',
+                    url : '/iTrust2/api/v1/prescriptions/renew/' + id
+                  }).then(function(response) {
+                    $scope.message="Prescription renewed successfully";
+                    console.log(response);
+                  }, function(rejection) {
+                    $scope.message="Error occurred renewing prescription";
+                    console.log(rejection);
+                  })
+                }
+              });
+      /*]]>*/
+    </script>
+
+
+
+    <div ng-app="myApp" ng-controller="addPrescriptionCtrl">
+<nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <ul class="nav navbar-nav">
+          <li class="dropdown"><a class="dropdown-toggle"
+            data-toggle="dropdown" href="#">Patient<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="/iTrust2/hcp/viewAppointmentRequests"
+                id="viewrequests">View Appointment Requests</a></li>
+              <li><a href="/iTrust2/hcp/viewAppointments"
+                id="upcomingrequests">View Upcoming Appointments</a></li>
+              <li><a href="#">Edit Patient -- Not Implemented</a></li>
+              <li><a href="#">Add Patient -- Not Implemented</a></li>
+              <li><a href="/iTrust2/hcp/documentOfficeVisit.html"
+                id="documentOfficeVisit">Document Office Visit</a></li>
+              <li><a href="/iTrust2/hcp/addPrescription.html"
+                id="addPrescription">Add Prescription</a></li>
+               
+            </ul></li>
+          <li class="dropdown"><a class="dropdown-toggle"
+            data-toggle="dropdown" href="#">Edit<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="/iTrust2/personnel/editDemographics"
+                id="editdemographics">Edit Demographics</a></li>
+              <li> <a href="/iTrust2/hcp/editOfficeVisit"
+                    id="editOfficeVisit">Edit Office Visit</a></li>
+              <li><a href="/iTrust2/hcp/managePrescriptions.html"
+                id="managePrescriptions">Manage Prescriptions</a></li>
+            </ul></li>
+        </ul>
+      </div>
+    </nav>
+      <div style="float:left;width:80%;overflow-y:auto">
+      <form name="myForm">
+        <h2>Manage Prescriptions</h2>
+        <h4>Patients</h4>
+        <input type="text" ng-model="searchFilter.self.username" placeholder="Search..."/>
+
+        <select ng-model="prescription.patient"
+            id="patientSelect"
+                ng-options="patient.self.username as patient.self.username for patient in patients | filter:searchFilter"
+                ng-change="update()">
+          <option value="" disabled selected>PATIENTS</option>
+        </select>
+
+        <hr />
+        <h4 ng-if="prescriptions.length <= 0">No prescription data available</h4>
+        <table width="100%" ng-if="prescriptions.length > 0">
+          <tr>
+            <th>Prescription Name</th>
+            <th>Dosage (mg)</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Renewals</th>
+          </tr>
+          <tr ng-repeat="p in prescriptions">
+            <td>{{p.ndcCode.name}}</td>
+            <td>{{p.dosage}}</td>
+            <td>{{getDate(p.start)}}</td>
+            <td>{{getDate(p.end)}}</td>
+            <td>{{p.renewals}}
+              <button ng-click="renew(p.id)">RENEW</button>
+            </td>
+          </tr>
+        </table>
+		<div name="success">{{message}}</div>
+        
+      </form>
+      </div>
+
+
+    </div>
+
+
+
+
+  </div>
+</body>
+</html>

@@ -56,6 +56,7 @@ public class APIOfficeVisitController extends APIController {
         final User self = User.getByName( SecurityContextHolder.getContext().getAuthentication().getName() );
         return OfficeVisit.getForPatient( self.getId() );
     }
+ 
 
     /**
      * Retrieves the OfficeVisit specified by the id provided.
