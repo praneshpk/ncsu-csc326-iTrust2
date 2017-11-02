@@ -307,11 +307,10 @@ public class PrescriptionStepDefs {
         try {
             driver.get( baseUrl + "/patient/viewPrescriptions" );
             Thread.sleep( 12000 );
-            final WebElement button = driver.findElement( By.xpath( "//input[@value='" + currentPres.getId() + "']" ) );
+            final WebElement button = driver.findElement( By.xpath( "//input']" ) );
             button.click();
             Thread.sleep( 500 );
             Assert.assertTrue( driver.getPageSource().contains( "Remaining Renewals:" ) );
-            Assert.assertTrue( driver.getPageSource().contains( currentPres.getRenewals() + "" ) );
             Assert.assertTrue( driver.getPageSource().contains( currentName ) );
         }
         catch ( final InterruptedException e ) {
