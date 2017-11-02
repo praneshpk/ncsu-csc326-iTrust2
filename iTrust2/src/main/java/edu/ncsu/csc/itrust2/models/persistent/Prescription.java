@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import edu.ncsu.csc.itrust2.forms.hcp.PrescriptionForm;
@@ -111,6 +112,7 @@ public class Prescription extends DomainObject<Prescription> {
     /**
      * The dosage of the medicine
      */
+    @Min ( 0 )
     private double      dosage;
 
     /**
@@ -126,6 +128,7 @@ public class Prescription extends DomainObject<Prescription> {
     /**
      * Number of renewals of the prescription
      */
+    @Min ( 0 )
     private int         renewals;
 
     /**
@@ -142,6 +145,11 @@ public class Prescription extends DomainObject<Prescription> {
      * @throws ParseException
      */
     public Prescription ( final PrescriptionForm pf ) throws ParseException {
+        final double dosage = Double.parseDouble( pf.getDosage() );
+        final int renewals = Integer.parseInt( pf.getRenewals() );
+        if ( renewals <= 0 || dosage <= 0 ) {
+            throw new IllegalArgumentException( "Invalid dosage or renewals." );
+        }
         final String formId = pf.getId();
         if ( formId != null && !formId.equals( "" ) ) {
             setId( Long.parseLong( formId ) );
@@ -152,7 +160,7 @@ public class Prescription extends DomainObject<Prescription> {
             throw new IllegalArgumentException( "Patient does not exist in the system." );
         }
         setPatient( p );
-        setDosage( Double.parseDouble( pf.getDosage() ) );
+        setDosage( dosage );
 
         if ( pf.getOfficeVisitId() != null ) {
             final OfficeVisit o = OfficeVisit.getById( Long.parseLong( pf.getOfficeVisitId() ) );
@@ -173,7 +181,7 @@ public class Prescription extends DomainObject<Prescription> {
         }
         setStart( parsedStartDate );
         setEnd( parsedEndDate );
-        setRenewals( Integer.parseInt( pf.getRenewals() ) );
+        setRenewals( renewals );
 
         final NDCCode code = NDCCode.getByCode( pf.getNdcCode() );
         if ( code == null ) {
