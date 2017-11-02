@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 
 import edu.ncsu.csc.itrust2.utils.DomainObjectCache;
@@ -40,7 +41,8 @@ public abstract class DomainObject <D extends DomainObject<D>> {
     protected static List< ? extends DomainObject> getAll ( final Class cls ) {
         final Session session = HibernateUtil.getSessionFactory().openSession();
         session.beginTransaction();
-        final List< ? extends DomainObject< ? >> requests = session.createCriteria( cls ).list();
+        final List< ? extends DomainObject< ? >> requests = session.createCriteria( cls )
+                .setResultTransformer( Criteria.DISTINCT_ROOT_ENTITY ).list();
         session.getTransaction().commit();
         session.close();
 
