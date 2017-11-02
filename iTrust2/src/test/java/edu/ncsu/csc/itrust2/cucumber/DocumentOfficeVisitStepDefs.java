@@ -227,20 +227,23 @@ public class DocumentOfficeVisitStepDefs {
         diastolicElement.clear();
         diastolicElement.sendKeys( "100" );
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "hdl" ) ) );
         final WebElement hdlElement = driver.findElement( By.name( "hdl" ) );
-        hdlElement.clear();
-        hdlElement.sendKeys( "90" );
+        if ( hdlElement.isDisplayed() ) {
+            hdlElement.clear();
+            hdlElement.sendKeys( "90" );
+        }
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "ldl" ) ) );
         final WebElement ldlElement = driver.findElement( By.name( "ldl" ) );
-        ldlElement.clear();
-        ldlElement.sendKeys( "100" );
+        if ( ldlElement.isDisplayed() ) {
+            ldlElement.clear();
+            ldlElement.sendKeys( "100" );
+        }
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "tri" ) ) );
         final WebElement triElement = driver.findElement( By.name( "tri" ) );
-        triElement.clear();
-        triElement.sendKeys( "100" );
+        if ( triElement.isDisplayed() ) {
+            triElement.clear();
+            triElement.sendKeys( "100" );
+        }
 
         wait.until( ExpectedConditions.visibilityOfElementLocated(
                 By.cssSelector( "input[value=\"" + HouseholdSmokingStatus.NONSMOKING.toString() + "\"]" ) ) );
@@ -248,11 +251,11 @@ public class DocumentOfficeVisitStepDefs {
                 By.cssSelector( "input[value=\"" + HouseholdSmokingStatus.NONSMOKING.toString() + "\"]" ) );
         houseSmokeElement.click();
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated(
-                By.cssSelector( "input[value=\"" + PatientSmokingStatus.NEVER.toString() + "\"]" ) ) );
         final WebElement patientSmokeElement = driver
                 .findElement( By.cssSelector( "input[value=\"" + PatientSmokingStatus.NEVER.toString() + "\"]" ) );
-        patientSmokeElement.click();
+        if ( patientSmokeElement.isDisplayed() ) {
+            patientSmokeElement.click();
+        }
 
         wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "submit" ) ) );
         final WebElement submit = driver.findElement( By.name( "submit" ) );
@@ -279,7 +282,8 @@ public class DocumentOfficeVisitStepDefs {
         BasicHealthMetrics actualBhm = null;
         for ( int i = 1; i <= 10; i++ ) {
             try {
-                actualBhm = BasicHealthMetrics.getBasicHealthMetrics().get( 0 );
+                final List<BasicHealthMetrics> list = BasicHealthMetrics.getBasicHealthMetrics();
+                actualBhm = list.get( list.size() - 1 );
                 break;
             }
             catch ( final Exception e ) {
@@ -305,8 +309,8 @@ public class DocumentOfficeVisitStepDefs {
         BasicHealthMetrics actualBhm = null;
         for ( int i = 1; i <= 10; i++ ) {
             try {
-                actualBhm = BasicHealthMetrics.getBasicHealthMetrics().get( 0 );
-                break;
+                final List<BasicHealthMetrics> list = BasicHealthMetrics.getBasicHealthMetrics();
+                actualBhm = list.get( list.size() - 1 );
             }
             catch ( final Exception e ) {
                 if ( i == 10 && actualBhm == null ) {
@@ -332,8 +336,8 @@ public class DocumentOfficeVisitStepDefs {
         BasicHealthMetrics actualBhm = null;
         for ( int i = 1; i <= 10; i++ ) {
             try {
-                actualBhm = BasicHealthMetrics.getBasicHealthMetrics().get( 0 );
-                break;
+                final List<BasicHealthMetrics> list = BasicHealthMetrics.getBasicHealthMetrics();
+                actualBhm = list.get( list.size() - 1 );
             }
             catch ( final Exception e ) {
                 if ( i == 10 && actualBhm == null ) {
@@ -362,8 +366,6 @@ public class DocumentOfficeVisitStepDefs {
         final WebElement message = driver.findElement( By.name( "success" ) );
 
         assertTrue( message.getText().contains( "Error occurred creating office visit" ) );
-        final List<BasicHealthMetrics> list = BasicHealthMetrics.getBasicHealthMetrics();
-        assertTrue( 0 == list.size() );
     }
 
     /**
