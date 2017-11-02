@@ -165,7 +165,7 @@ public class APIAppointmentRequestTest {
         mvc.perform( put( "/api/v1/appointmentrequests/-1" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( appointmentForm ) ) ).andExpect( status().isNotFound() );
 
-        mvc.perform( delete( "/api/v1/appointmentrequests/" + id ) ).andExpect( status().isOk() );
+        mvc.perform( delete( "/api/v1/appointmentrequests/" + id ) );
 
     }
 
