@@ -306,7 +306,7 @@ public class PrescriptionStepDefs {
     public void viewSuccess () {
         try {
             driver.get( baseUrl + "/patient/viewPrescriptions" );
-            Thread.sleep( 7000 );
+            Thread.sleep( 12000 );
             final WebElement button = driver.findElement( By.xpath( "//input[@value='" + currentPres.getId() + "']" ) );
             button.click();
             Thread.sleep( 500 );
