@@ -61,4 +61,8 @@ Examples:
     | ndcCode      | name                     | dosage | renewals | startDate  | endDate    |
     | 63323-459-29 | Sleep                    | -3     | 0        | 12/12/2017 | 12/12/2018 |
     | 0409-6509-22 | Tea                      | 20     | -5       | 05/06/2018 | 10/6/2018  |
-    | 0003-0857-20 | Spoonful of Sugar        | -5     | -5        | 11/16/19  | 11/16/2017 | 
+    | 0003-0857-20 | Spoonful of Sugar        | -5     | -5        | 11/16/19  | 11/16/2017 |
+    
+Scenario: Patient View Prescriptions
+	Given a patient has logged into the system and has a prescription assigned to them
+	Then they are able to view their prescriptions 

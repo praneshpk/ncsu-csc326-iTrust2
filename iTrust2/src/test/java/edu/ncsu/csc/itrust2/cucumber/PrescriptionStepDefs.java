@@ -2,6 +2,7 @@ package edu.ncsu.csc.itrust2.cucumber;
 
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Assert;
@@ -32,6 +33,8 @@ public class PrescriptionStepDefs {
 	  private String currentCode = "";
 	  private String currentName = "";
 	  private String newname = "";
+	  private Prescription currentPres;
+	  
 	  
 	  private void addUserHelper(String username, Role role) {
 	    	User u = User.getByName(username);
@@ -95,6 +98,55 @@ public class PrescriptionStepDefs {
 		      tim.setDateOfBirth( timBirth );
 		      tim.save();
 		  }
+	  }
+	  
+	  @Given("^a patient has logged into the system and has a prescription assigned to them$")
+	  public void ensurePatientExistance() {
+		  if(!driver.getPageSource().contains("TimTheOneYearOld")) {
+//			  final WebElement logout =  driver.findElement(By.id("logout"));
+//			  logout.click();
+			  addUserHelper("TimTheOneYearOld", Role.ROLE_ADMIN);
+			  if(Patient.getPatient("TimTheOneYearOld") == null) {
+				  final Patient tim = new Patient();
+			      final User timUser = new User( "TimTheOneYearOld",
+			                "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.", Role.ROLE_PATIENT, 1 );
+			      timUser.save();
+			      tim.setSelf( timUser );
+			      tim.setFirstName( "TimTheOneYearOld" );
+			      tim.setLastName( "Smith" );
+			      final Calendar timBirth = Calendar.getInstance();
+			      timBirth.add( Calendar.YEAR, -1 ); // tim is one year old
+			      tim.setDateOfBirth( timBirth );
+			      tim.save();
+			  }
+			  driver.get( baseUrl );
+			  final WebElement username = driver.findElement( By.name( "username" ) );
+			  username.clear();
+			  username.sendKeys( "TimTheOneYearOld" );
+			  final WebElement password = driver.findElement( By.name( "password" ) );
+			  password.clear();
+			  password.sendKeys( "123456" );
+			  final WebElement submit = driver.findElement( By.className( "btn" ) );
+			  submit.click();
+	    	}
+		  Patient p = Patient.getPatient("TimTheOneYearOld");
+		  if(p.getPrescriptions().isEmpty()) {
+			  Prescription pres = new Prescription();
+			  NDCCode code = new NDCCode();
+			  code.setCode("6443-469-29");
+			  code.setName("irritation");
+			  code.save();
+			  pres.setNdcCode(code);
+			  pres.setDosage(30.0);
+			  pres.setPatient(p);
+			  pres.setRenewals(5);
+			  pres.save();
+			  p.addPrescription(pres);
+			  p.save();
+		  }
+		  this.currentPres = p.getPrescriptions().get(0);
+		  this.currentName = p.getPrescriptions().get(0).getNdcCode().getName();
+		  this.currentCode = p.getPrescriptions().get(0).getNdcCode().getId();
 	  }
 	  
 	  @When("^an admin attempts to create a new prescription with the NDC code (.+) and name (.+)$")
@@ -172,7 +224,7 @@ public class PrescriptionStepDefs {
 			Thread.sleep(500);
 			Assert.assertTrue(driver.getPageSource().contains("Successfully updated. Refresh to see changes."));
 			driver.navigate().refresh();
-			Thread.sleep(500);
+			Thread.sleep(2000);
 			Assert.assertTrue(driver.getPageSource().contains(currentCode + " - " + currentName));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -228,5 +280,30 @@ public class PrescriptionStepDefs {
 				e.printStackTrace();
 			}
 	 }
+	 
+//	 @Then("^they are able to view their prescriptions$")
+//	 public void viewSuccess() {
+//		  try {
+//			driver.get(baseUrl + "patient/viewPrescriptions"); 
+//			Thread.sleep(2000);
+//			//Assert.assertTrue(driver.getPageSource().contains(this.currentPres.getNdcCode().getName()));
+//			//The line above and the one below -- it can't seem to find anything.
+//			WebElement button = driver.findElement(By.xpath("//input[@value='" + this.currentPres.getId() + "']"));
+//			button.click();
+//			Thread.sleep(500);
+//			Date start = this.currentPres.getStart();
+//			@SuppressWarnings("deprecation")
+//			String startDate = start.getMonth() + "\\" + start.getDay() + "\\" + start.getYear();
+//			Assert.assertTrue(driver.getPageSource().contains(startDate));
+//			Date end = this.currentPres.getEnd();
+//			@SuppressWarnings("deprecation")
+//			String endDate = end.getMonth() + "\\" + end.getDay() + "\\" + end.getYear();
+//			Assert.assertTrue(driver.getPageSource().contains(endDate));
+//			Assert.assertTrue(driver.getPageSource().contains("Remaining Renewals: " + this.currentPres.getRenewals()));
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	 }
 	
 }
