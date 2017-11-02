@@ -113,7 +113,7 @@ public class APIPrescriptionTest {
         verifyPrescriptionJson( jsonObject, "AliceThirteen", "2.99", "1442894400000", "1521518400000", "16",
                 "1111-1111-11", "Oxicodon" );
 
-        result = mvc.perform( get( "/api/v1/prescriptions/patient" ).contentType( MediaType.APPLICATION_JSON ) )
+        result = mvc.perform( get( "/api/v1/prescriptions/AliceThirteen" ).contentType( MediaType.APPLICATION_JSON ) )
                 .andExpect( status().isOk() ).andReturn();
 
         final JsonArray jsonArray = gson.fromJson( result.getResponse().getContentAsString(), JsonArray.class );
