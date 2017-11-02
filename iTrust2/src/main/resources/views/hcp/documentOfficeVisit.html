@@ -91,7 +91,18 @@
 										.then(function(response) {
 											$scope.patientsmoking = response.data;
 										});
-
+								$http.get("/iTrust2/api/v1/ethnicity")
+								.then(function(response) {
+									$scope.ethnicity = response.data;
+								});
+								$http.get("/iTrust2/api/v1/gender")
+								.then(function(response) {
+									$scope.gender = response.data;
+								});
+								$http.get("/iTrust2/api/v1/state")
+								.then(function(response) {
+									$scope.state = response.data;
+								});
 								$http.get("/iTrust2/api/v1/hospitals").then(
 										function(response) {
 											$scope.hospitals = response.data;
@@ -355,6 +366,84 @@
 									{{psmokes}}
 							</label></li>
 						</ul>
+					</td>
+				</tr>
+			</table>
+<h2>Patient Demographics</h2>
+<table>
+    				<tr>
+					<td style="text-align:right;padding:5px"><b>First Name:</b></td>
+					<td><input type="text" name="height" ng-model="visit.fName"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Last Name:</b></td>
+					<td><input type="text" name="weight" ng-model="visit.lName"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Preferred Name:</b></td>
+					<td><input type="text" name="head" ng-model="visit.pName"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Mother:</b></td>
+					<td><input type="text" name="systolic" ng-model="visit.mother"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Father:</b></td>
+					<td><input type="text" name="systolic" ng-model="visit.father"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Street Address 1:</b></td>
+					<td><input type="text" name="systolic" ng-model="visit.address1"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Street Address 2:</b></td>
+					<td><input type="text" name="systolic" ng-model="visit.address2"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>City:</b></td>
+					<td><input type="text" name="systolic" ng-model="visit.city"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>State:</b></td>
+					<td><select ng-model="visit.state">
+							<option name="state" ng-repeat="s in state" ng-value="state">{{s}}</option>
+					</select></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Zip Code:</b></td>
+					<td><input type="text" name="systolic" ng-model="visit.zipCode"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Phone Number:</b></td>
+					<td><input type="text" name="systolic" ng-model="visit.phoneNumber"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Date of Birth:</b></td>
+					<td><input type="text" name="systolic" ng-model="visit.dob"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Ethnicity:</b></td>
+					<td><select ng-model="visit.ethnicity">
+							<option name="ethnicity" ng-repeat="eth in ethnicity" ng-value="eth">{{eth}}</option>
+					</select></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Gender:</b></td>
+					<td><select ng-model="visit.gender">
+							<option name="gender" ng-repeat="gen in gender" ng-value="{{gen}}">{{gen}}</option>
+					</select></td>
+				</tr>
+			</table>
+<h2>Select Diagnosis</h2>
+			<table>
+    			<tr>
+					<td style="text-align:right;padding:5px">
+						<select name="diagnosis" multiple>
+						  <option value="item1">Needs backend to work...</option>
+						  <option value="item2">Needs backend to work...</option>
+						  <option value="item3">Needs backend to work...</option>
+						  <option value="item4">Needs backend to work...</option>
+						</select>
 					</td>
 				</tr>
 			</table>
