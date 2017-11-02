@@ -27,11 +27,25 @@ public class PrescriptionController {
      */
     @GetMapping ( "/hcp/addPrescription" )
     @PreAuthorize ( "hasRole('ROLE_HCP')" )
-    public String documentOfficeVisit ( final Model model ) {
+    public String addPrescription ( final Model model ) {
         model.addAttribute( "PrescriptionForm", new PrescriptionForm() );
         model.addAttribute( "officevisits", OfficeVisit.getOfficeVisits() );
         model.addAttribute( "patients", User.getPatients() );
         return "/hcp/addPrescription";
+    }
+
+    /**
+     * Returns the form page for a HCP to manage prescriptions
+     *
+     * @param model
+     *            The data for the front end
+     * @return Page to display to the user
+     */
+    @GetMapping ( "/hcp/managePrescriptions" )
+    @PreAuthorize ( "hasRole('ROLE_HCP')" )
+    public String managePrescriptions ( final Model model ) {
+        model.addAttribute( "patients", User.getPatients() );
+        return "/hcp/managePrescriptions";
     }
 
 }
