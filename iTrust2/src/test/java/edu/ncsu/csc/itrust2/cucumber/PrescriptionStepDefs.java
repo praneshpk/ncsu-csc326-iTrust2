@@ -307,7 +307,7 @@ public class PrescriptionStepDefs {
         try {
             driver.get( baseUrl + "/patient/viewPrescriptions" );
             Thread.sleep( 12000 );
-            final WebElement button = driver.findElement( By.xpath( "//input']" ) );
+            final WebElement button = driver.findElement( By.xpath( "(//input[@type='radio'])[last()]" ) );
             button.click();
             Thread.sleep( 500 );
             Assert.assertTrue( driver.getPageSource().contains( "Remaining Renewals:" ) );
