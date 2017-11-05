@@ -119,6 +119,8 @@
 									$scope.visit.hcp = /*[[${#httpServletRequest.remoteUser}]]*/null; /* Ugly hack; use this to retrieve the name of the HCP who is currently logged in.  This grabs it from Thymeleaf */
 									$scope.visit.status = "PENDING";
 									
+									console.log($scope);
+									
 									if ($scope.visit.type == null) {
 										$scope.errorMsg += "Please select a visit type\n";
 									}
@@ -187,8 +189,7 @@
 											$scope.errorMsg += "Triglycerides can be a number between 100 and 600\n"	
 										}
 									}
-
-									console.log($scope.visit);
+									console.log($scope);
 									$http({
 										method : 'POST',
 										url : '/iTrust2/api/v1/officevisits',
@@ -437,10 +438,11 @@
 <h2>Select Diagnosis</h2>
 			<table>
 				<tr>
-					<td style="text-align:left;padding:5px;width: 300px">
-						<select ng-model ="visit.diagnosis" size="15">                                
-					            <option name="diagnosis" ng-repeat="d in diagnoses" 
-					            	ng-value="{{d.name}}">{{d.name}} - {{d.icdCode}}</option>
+
+					<td style="text-align:left;padding:5px">
+						<select id="repeatDiagnoses" style="width:300px" ng-model ="visit.diagnosis" size="15">    
+								<option id="noDiagnosis" ng-value="" selected>--Select, if applicable--</option>                           
+					            <option id="diagnosis" ng-repeat="d in diagnoses" ng-value="{{d.name}}">{{d.name}} - {{d.icdCode}}</option>
 					    </select>
 					</td>
 				</tr>
