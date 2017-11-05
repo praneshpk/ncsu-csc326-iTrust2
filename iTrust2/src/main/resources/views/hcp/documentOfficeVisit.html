@@ -440,9 +440,8 @@
 				<tr>
 					<td style="text-align:left;padding:5px">
 						<select id="repeatDiagnoses" style="width:300px" ng-model ="visit.diagnosis" size="15">    
-								<option name="nodiagnosis" ng-value="" selected>--Select, if applicable--</option>                           
-					            <option name="diagnosis" ng-repeat="d in diagnoses" 
-					            	ng-value="{{d.name}}">{{d.name}} - {{d.icdCode}}</option>
+								<option id="noDiagnosis" ng-value="" selected>--Select, if applicable--</option>                           
+					            <option id="diagnosis" ng-repeat="d in diagnoses" ng-value="{{d.name}}">{{d.name}} - {{d.icdCode}}</option>
 					    </select>
 					</td>
 				</tr>
