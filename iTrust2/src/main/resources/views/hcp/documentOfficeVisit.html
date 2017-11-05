@@ -22,7 +22,7 @@
 								//ran when patient is selected
 								//validate birthdate here
 								$scope.patientSelect = function(patient) {
-									 if ($scope.visit.actualPatient == null && patient != null) {
+									 if (/*$scope.visit.actualPatient == null && */patient != null) {
 										 $scope.visit.actualPatient = patient;
 									 }
 									 if (patient == null) {
@@ -188,6 +188,7 @@
 										}
 									}
 
+									console.log($scope.visit);
 									$http({
 										method : 'POST',
 										url : '/iTrust2/api/v1/officevisits',
@@ -368,7 +369,7 @@
 					</td>
 				</tr>
 			</table>
-<h2>Patient Demographics</h2>
+<!--<h2>Patient Demographics</h2>
 <table>
     				<tr>
 					<td style="text-align:right;padding:5px"><b>First Name:</b></td>
@@ -432,11 +433,11 @@
 							<option name="gender" ng-repeat="gen in gender" ng-value="{{gen}}">{{gen}}</option>
 					</select></td>
 				</tr>
-			</table>
+			</table>-->
 <h2>Select Diagnosis</h2>
 			<table>
 				<tr>
-					<td style="text-align:right;padding:5px;width: 300px">
+					<td style="text-align:left;padding:5px;width: 300px">
 						<select ng-model ="visit.diagnosis" size="15">                                
 					            <option name="diagnosis" ng-repeat="d in diagnoses" 
 					            	ng-value="{{d.name}}">{{d.name}} - {{d.icdCode}}</option>

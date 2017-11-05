@@ -58,7 +58,7 @@ public class APIDiagnosisTest {
         mvc.perform( get( "/api/v1/diagnosis/name1" ) ).andExpect( status().isOk() )
                 .andExpect( content().contentType( MediaType.APPLICATION_JSON_UTF8_VALUE ) );
 
-        // Cannot create same hospital twice
+        // Cannot create same diagnosis twice
         mvc.perform( post( "/api/v1/creatediagnosis" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( d ) ) ).andExpect( status().isConflict() );
     }
