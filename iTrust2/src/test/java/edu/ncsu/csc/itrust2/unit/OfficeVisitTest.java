@@ -14,6 +14,7 @@ import edu.ncsu.csc.itrust2.models.enums.AppointmentType;
 import edu.ncsu.csc.itrust2.models.enums.HouseholdSmokingStatus;
 import edu.ncsu.csc.itrust2.models.enums.PatientSmokingStatus;
 import edu.ncsu.csc.itrust2.models.persistent.BasicHealthMetrics;
+import edu.ncsu.csc.itrust2.models.persistent.Diagnosis;
 import edu.ncsu.csc.itrust2.models.persistent.Hospital;
 import edu.ncsu.csc.itrust2.models.persistent.OfficeVisit;
 import edu.ncsu.csc.itrust2.models.persistent.Patient;
@@ -60,6 +61,7 @@ public class OfficeVisitTest {
         form.setSystolic( 10 );
         form.setTri( 150 );
         form.setWeight( new Float( 10 ) );
+
         BasicHealthMetrics bhm = null;
         try {
             bhm = new BasicHealthMetrics( form );
@@ -69,6 +71,27 @@ public class OfficeVisitTest {
         }
         of.setBasicHealthMetrics( bhm );
         assertEquals( bhm, of.getBasicHealthMetrics() );
+
+        Diagnosis d = Diagnosis.getDiagnoses().get( 0 );
+        // If no diagnosis exist in database then skip
+        if ( d == null ) {
+            final Diagnosis dCreated = new Diagnosis( "testName", "H101.1" );
+            dCreated.save();
+            d = Diagnosis.getDiagnoses().get( 0 );
+        }
+        if ( d != null ) {
+            final String diagnosisName = d.getName();
+            of.setDiagnosis( d );
+            assertEquals( d, of.getDiagnosis() );
+            form.setDiagnosis( diagnosisName );
+            assertEquals( d.getName(), diagnosisName );
+            // Test getting from db by the name
+            final Diagnosis dFinal = Diagnosis.getByName( diagnosisName );
+            if ( dFinal == null ) {
+                fail();
+            }
+
+        }
     }
 
 }

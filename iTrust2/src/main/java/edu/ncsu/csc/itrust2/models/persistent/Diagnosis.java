@@ -163,13 +163,13 @@ public class Diagnosis extends DomainObject<Hospital> implements Serializable {
     }
 
     /**
-     * Retrieves the ID (Description) of this Hospital
+     * Retrieves the ID (Description) of this Diagnosis
      *
      * @return code
      */
     @Override
     public String getId () {
-        return getIcdCode();
+        return getName();
     }
 
 }

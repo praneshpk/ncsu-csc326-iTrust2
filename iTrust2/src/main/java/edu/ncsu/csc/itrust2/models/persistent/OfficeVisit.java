@@ -526,6 +526,8 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
     /**
      * The diagnoses given to the patient
      */
+    @ManyToOne
+    @JoinColumn ( name = "diagnosis_id" )
     private Diagnosis          diagnosis;
 
     /**
