@@ -138,8 +138,9 @@ public enum TransactionType {
     /**
      * Prescription is renewed for a patient by an HCP
      */
-    PRESCRIPTION_RENEW ( 910, "Prescription is renewed for a patient", true )
+    PRESCRIPTION_RENEW ( 910, "Prescription is renewed for a patient", true ),
 
+    /**
      * Admin creates a diagnosis
      */
     CREATE_DIAGNOSIS ( 1000, "Update ICD-10 Codes", true )

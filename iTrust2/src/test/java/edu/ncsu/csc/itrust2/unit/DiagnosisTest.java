@@ -39,6 +39,6 @@ public class DiagnosisTest {
         final Diagnosis d1 = new Diagnosis( df );
         assertEquals( "name", d1.getName() );
         assertEquals( "H01.1", d1.getIcdCode() );
-        assertEquals( "H01.1", d1.getId() );
+        assertEquals( "name", d1.getId() );
     }
 }
