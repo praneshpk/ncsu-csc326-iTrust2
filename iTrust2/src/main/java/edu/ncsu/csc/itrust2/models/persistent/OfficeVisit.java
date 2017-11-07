@@ -472,6 +472,8 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
      */
     public void addPrescription ( final Prescription p ) {
         prescriptions.add( p );
+    }
+
     /**
      * Gets the diagnoses for this office visit.
      *
