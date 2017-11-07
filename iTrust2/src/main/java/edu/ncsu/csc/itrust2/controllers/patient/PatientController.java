@@ -54,6 +54,19 @@ public class PatientController {
     }
 
     /**
+     * Get html for viewing prescriptions
+     *
+     * @param model
+     *            Data from the front end
+     * @return The page for the patient to view their prescriptions
+     */
+    @GetMapping ( "/patient/viewPrescriptions" )
+    @PreAuthorize ( "hasRole('ROLE_PATIENT')" )
+    public String viewPrescriptions ( final Model model ) {
+        return "patient/viewPrescriptions";
+    }
+
+    /**
      * Provides the page for a User to view and edit their demographics
      *
      * @param model

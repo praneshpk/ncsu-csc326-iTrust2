@@ -120,6 +120,26 @@ public enum TransactionType {
      */
     OFFICE_VISIT_PATIENT_VIEW ( 810, "Patient views basic health metrics for an office visit", true ),
     /**
+     * Prescription created by HCP
+     */
+    PRESCRIPTION_CREATE ( 900, "Created prescription", true ),
+    /**
+     * Prescription added to an office visit
+     */
+    PRESCRIPTION_ADDED_OV ( 901, "Associated a prescription with an office visit", true ),
+    /**
+     * Prescription viewed by patient
+     */
+    PRESCRIPTION_PATIENT_VIEW ( 902, "Prescription viewed by patient", true ),
+    /**
+     * List of NDCs updated by admin
+     */
+    NDC_LIST_UPDATED ( 903, "List of NDCs updated by admin", true ),
+    /**
+     * Prescription is renewed for a patient by an HCP
+     */
+    PRESCRIPTION_RENEW ( 910, "Prescription is renewed for a patient", true )
+
      * Admin creates a diagnosis
      */
     CREATE_DIAGNOSIS ( 1000, "Update ICD-10 Codes", true )
