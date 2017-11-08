@@ -27,16 +27,27 @@ public class DiagnosisForm {
     @Length ( max = 255 )
     private String icdCode;
 
+    /**
+     * An empty constuctor for Hibernate
+     */
     public DiagnosisForm () {
 
     }
 
+    /**
+     * Creates the diagnosis form from an existing diagnosis
+     *
+     * @param d
+     *            the diagnosis to use
+     */
     public DiagnosisForm ( final Diagnosis d ) {
         setIcdCode( d.getIcdCode() );
         setName( d.getName() );
     }
 
     /**
+     * Returns the code of the diagnosis
+     *
      * @return the icdCode
      */
     public String getIcdCode () {
@@ -44,6 +55,8 @@ public class DiagnosisForm {
     }
 
     /**
+     * Sets the code of the diagnosis
+     *
      * @param icdCode
      *            the icdCode to set
      */
@@ -52,6 +65,8 @@ public class DiagnosisForm {
     }
 
     /**
+     * Returns the name of the diagnosis
+     *
      * @return the name
      */
     public String getName () {
@@ -59,8 +74,10 @@ public class DiagnosisForm {
     }
 
     /**
-     * @param description
-     *            the description to set
+     * Sets the name of the diagnosis
+     *
+     * @param name
+     *            the name to set
      */
     public void setName ( final String name ) {
         this.name = name;
