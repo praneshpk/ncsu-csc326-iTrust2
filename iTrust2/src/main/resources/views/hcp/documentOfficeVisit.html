@@ -38,6 +38,25 @@
 								    	 	$scope.twelveAndUp = true;
 								    	 	return;
 								     }
+								     console.log($scope);
+								     $scope.demographics = {};
+								     $scope.demographics.id = $scope.visit.actualPatient.id;
+								     $scope.demographics.self = $scope.visit.actualPatient.self.username;
+								     $scope.demographics.firstName = $scope.visit.actualPatient.firstName;
+								     $scope.demographics.lastName = $scope.visit.actualPatient.lastName;
+								     $scope.demographics.preferredName = $scope.visit.actualPatient.preferredName;
+								     $scope.demographics.mother = $scope.visit.actualPatient.mother_id;
+								     $scope.demographics.father = $scope.visit.actualPatient.father_id;
+								     $scope.demographics.address1 = $scope.visit.actualPatient.address1;
+								     $scope.demographics.address2 = $scope.visit.actualPatient.address2;
+								     $scope.demographics.city = $scope.visit.actualPatient.city;
+								     $scope.demographics.state = $scope.visit.actualPatient.state;
+								     $scope.demographics.zip = $scope.visit.actualPatient.zip;
+								     $scope.demographics.phone = $scope.visit.actualPatient.phone;
+								     $scope.demographics.dateOfBirth = $scope.visit.actualPatient.dateOfBirth.month + "/" + $scope.visit.actualPatient.dateOfBirth.dayOfMonth + "/" + $scope.visit.actualPatient.dateOfBirth.year;
+								     $scope.demographics.ethnicity = $scope.visit.actualPatient.ethnicity;
+								     $scope.demographics.gender = $scope.visit.actualPatient.gender;
+								     
 								     $scope.three = false;
 								     $scope.threeAndUp = false;
 								     $scope.twelveAndUp = false;
@@ -183,17 +202,29 @@
 											$scope.errorMsg += "Triglycerides can be a number between 100 and 600\n"	
 										}
 									}
+									
+									$scope.message = "";
 
 									$http({
 										method : 'POST',
 										url : '/iTrust2/api/v1/officevisits',
 										data : $scope.visit
 									}).then(function(response) {
-										$scope.message="Office visit created successfully";
+										$scope.message="Office visit created successfully.";
 										console.log(response);
 									}, function(rejection) {
-										$scope.message="Error occurred creating office visit";
+										$scope.message="Error occurred creating office visit.";
 										console.log(rejection);
+									})
+									
+									$http({
+										method: 'PUT',
+										url: '/iTrust2/api/v1/patients/' + $scope.visit.actualPatient.self.username,
+										data: $scope.demographics
+									}).then(function(response){
+										$scope.message+= " Demographics successfully updated."
+									}, function(rejection){
+										$scope.message = " Error occurred updating patient's demographics."
 									})
 								}
 							});
@@ -368,64 +399,64 @@
 <table>
     				<tr>
 					<td style="text-align:right;padding:5px"><b>First Name:</b></td>
-					<td><input type="text" name="height" ng-model="visit.fName"/></td>
+					<td><input type="text" id="firstName" ng-model="demographics.firstName"/></td>
 				</tr>
 				<tr>
 					<td style="text-align:right;padding:5px"><b>Last Name:</b></td>
-					<td><input type="text" name="weight" ng-model="visit.lName"/></td>
+					<td><input type="text" id="lastName" ng-model="demographics.lastName"/></td>
 				</tr>
 				<tr>
 					<td style="text-align:right;padding:5px"><b>Preferred Name:</b></td>
-					<td><input type="text" name="head" ng-model="visit.pName"/></td>
+					<td><input type="text" id="preferredName" ng-model="demographics.preferredName"/></td>
 				</tr>
 				<tr>
 					<td style="text-align:right;padding:5px"><b>Mother:</b></td>
-					<td><input type="text" name="systolic" ng-model="visit.mother"/></td>
+					<td><input type="text" id="mother" ng-model="demographics.mother_id"/></td>
 				</tr>
 				<tr>
 					<td style="text-align:right;padding:5px"><b>Father:</b></td>
-					<td><input type="text" name="systolic" ng-model="visit.father"/></td>
+					<td><input type="text" id="father" ng-model="demographics.father_id"/></td>
 				</tr>
 				<tr>
 					<td style="text-align:right;padding:5px"><b>Street Address 1:</b></td>
-					<td><input type="text" name="systolic" ng-model="visit.address1"/></td>
+					<td><input type="text" id="address1" ng-model="demographics.address1"/></td>
 				</tr>
 				<tr>
 					<td style="text-align:right;padding:5px"><b>Street Address 2:</b></td>
-					<td><input type="text" name="systolic" ng-model="visit.address2"/></td>
+					<td><input type="text" id="address2" ng-model="demographics.address2"/></td>
 				</tr>
 				<tr>
 					<td style="text-align:right;padding:5px"><b>City:</b></td>
-					<td><input type="text" name="systolic" ng-model="visit.city"/></td>
+					<td><input type="text" id="city" ng-model="demographics.city"/></td>
 				</tr>
 				<tr>
 					<td style="text-align:right;padding:5px"><b>State:</b></td>
-					<td><select ng-model="visit.state">
-							<option name="state" ng-repeat="s in state" ng-value="state">{{s}}</option>
+					<td><select ng-model="demographics.state">
+							<option id="state" ng-repeat="s in state" ng-value="s">{{s}}</option>
 					</select></td>
 				</tr>
 				<tr>
 					<td style="text-align:right;padding:5px"><b>Zip Code:</b></td>
-					<td><input type="text" name="systolic" ng-model="visit.zipCode"/></td>
+					<td><input type="text" id="zip" ng-model="demographics.zip"/></td>
 				</tr>
 				<tr>
 					<td style="text-align:right;padding:5px"><b>Phone Number:</b></td>
-					<td><input type="text" name="systolic" ng-model="visit.phoneNumber"/></td>
+					<td><input type="text" id="phone" ng-model="demographics.phone"/></td>
 				</tr>
 				<tr>
 					<td style="text-align:right;padding:5px"><b>Date of Birth:</b></td>
-					<td><input type="text" name="systolic" ng-model="visit.dob"/></td>
+					<td><input type="text" id="dateOfBirth" ng-model="demographics.dateOfBirth"/></td>
 				</tr>
 				<tr>
 					<td style="text-align:right;padding:5px"><b>Ethnicity:</b></td>
-					<td><select ng-model="visit.ethnicity">
-							<option name="ethnicity" ng-repeat="eth in ethnicity" ng-value="eth">{{eth}}</option>
+					<td><select ng-model="demographics.ethnicity">
+							<option id="ethnicity" ng-repeat="eth in ethnicity" ng-value="eth">{{eth}}</option>
 					</select></td>
 				</tr>
 				<tr>
 					<td style="text-align:right;padding:5px"><b>Gender:</b></td>
-					<td><select ng-model="visit.gender">
-							<option name="gender" ng-repeat="gen in gender" ng-value="{{gen}}">{{gen}}</option>
+					<td><select ng-model="demographics.gender">
+							<option id="gender" ng-repeat="gen in gender" ng-value="gen">{{gen}}</option>
 					</select></td>
 				</tr>
 			</table>
