@@ -19,6 +19,7 @@
 								$scope.threeAndUp = false;
 								$scope.twelveAndUp = false;
 								
+								
 								//ran when patient is selected
 								//validate birthdate here
 								$scope.patientSelect = function(patient) {
@@ -47,6 +48,7 @@
 								     $scope.demographics.preferredName = $scope.visit.actualPatient.preferredName;
 								     $scope.demographics.mother = $scope.visit.actualPatient.mother_id;
 								     $scope.demographics.father = $scope.visit.actualPatient.father_id;
+								     $scope.demographics.email = $scope.visit.actualPatient.email;
 								     $scope.demographics.address1 = $scope.visit.actualPatient.address1;
 								     $scope.demographics.address2 = $scope.visit.actualPatient.address2;
 								     $scope.demographics.city = $scope.visit.actualPatient.city;
@@ -54,6 +56,7 @@
 								     $scope.demographics.zip = $scope.visit.actualPatient.zip;
 								     $scope.demographics.phone = $scope.visit.actualPatient.phone;
 								     $scope.demographics.dateOfBirth = $scope.visit.actualPatient.dateOfBirth.month + "/" + $scope.visit.actualPatient.dateOfBirth.dayOfMonth + "/" + $scope.visit.actualPatient.dateOfBirth.year;
+								     $scope.demographics.bloodtype = $scope.visit.actualPatient.bloodType;
 								     $scope.demographics.ethnicity = $scope.visit.actualPatient.ethnicity;
 								     $scope.demographics.gender = $scope.visit.actualPatient.gender;
 								     
@@ -113,6 +116,10 @@
 								$http.get("/iTrust2/api/v1/ethnicity")
 								.then(function(response) {
 									$scope.ethnicity = response.data;
+								});
+								$http.get("/iTrust2/api/v1/bloodtype")
+								.then(function(response) {
+									$scope.bloodtype = response.data;
 								});
 								$http.get("/iTrust2/api/v1/gender")
 								.then(function(response) {
@@ -418,6 +425,10 @@
 					<td><input type="text" id="father" ng-model="demographics.father_id"/></td>
 				</tr>
 				<tr>
+					<td style="text-align:right;padding:5px"><b>Email:</b></td>
+					<td><input type="text" id="email" ng-model="demographics.email"/></td>
+				</tr>
+				<tr>
 					<td style="text-align:right;padding:5px"><b>Street Address 1:</b></td>
 					<td><input type="text" id="address1" ng-model="demographics.address1"/></td>
 				</tr>
@@ -446,6 +457,12 @@
 				<tr>
 					<td style="text-align:right;padding:5px"><b>Date of Birth:</b></td>
 					<td><input type="text" id="dateOfBirth" ng-model="demographics.dateOfBirth"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Blood Type:</b></td>
+					<td><select ng-model="demographics.bloodtype">
+							<option id="ethnicity" ng-repeat="bt in bloodtype" ng-value="bt">{{bt}}</option>
+					</select></td>
 				</tr>
 				<tr>
 					<td style="text-align:right;padding:5px"><b>Ethnicity:</b></td>
