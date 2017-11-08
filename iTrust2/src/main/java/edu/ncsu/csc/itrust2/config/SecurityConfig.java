@@ -59,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure ( final HttpSecurity http ) throws Exception {
 
-        final String[] patterns = new String[] { "/login*", "/forgotPassword*", "/changePassword*" };
+        final String[] patterns = new String[] { "/login*", "/forgotPassword*" };
 
         http.authorizeRequests().antMatchers( patterns ).anonymous().anyRequest().authenticated().and().formLogin()
                 .loginPage( "/login" ).defaultSuccessUrl( "/" ).and().csrf()
