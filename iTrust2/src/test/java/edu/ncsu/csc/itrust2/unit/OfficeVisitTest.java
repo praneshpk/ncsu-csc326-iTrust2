@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 
 import java.text.ParseException;
 import java.util.Calendar;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -72,7 +73,11 @@ public class OfficeVisitTest {
         of.setBasicHealthMetrics( bhm );
         assertEquals( bhm, of.getBasicHealthMetrics() );
 
-        Diagnosis d = Diagnosis.getDiagnoses().get( 0 );
+        final List<Diagnosis> diagnoses = Diagnosis.getDiagnoses();
+        Diagnosis d = null;
+        if ( diagnoses.size() > 0 ) {
+            d = Diagnosis.getDiagnoses().get( 0 );
+        }
         // If no diagnosis exist in database then skip
         if ( d == null ) {
             final Diagnosis dCreated = new Diagnosis( "testName", "H101.1" );

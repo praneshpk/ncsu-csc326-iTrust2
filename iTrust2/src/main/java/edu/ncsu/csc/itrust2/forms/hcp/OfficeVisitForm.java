@@ -136,7 +136,7 @@ public class OfficeVisitForm implements Serializable {
      * Smoking status of the patient.
      */
     private PatientSmokingStatus   patientSmokingStatus;
-
+  
     /**
      * Name of the diagnosis
      */
@@ -521,7 +521,7 @@ public class OfficeVisitForm implements Serializable {
     public void setPatientSmokingStatus ( final PatientSmokingStatus patientSmokingStatus ) {
         this.patientSmokingStatus = patientSmokingStatus;
     }
-
+  
     /**
      * Gets the Diagnosis of the OfficeVisit
      *
