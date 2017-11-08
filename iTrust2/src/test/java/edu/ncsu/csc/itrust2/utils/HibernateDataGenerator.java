@@ -1,5 +1,6 @@
 package edu.ncsu.csc.itrust2.utils;
 
+import java.text.ParseException;
 import java.util.Calendar;
 
 import org.hibernate.boot.MetadataSources;
@@ -7,8 +8,13 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.boot.spi.MetadataImplementor;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 
+import edu.ncsu.csc.itrust2.forms.hcp.OfficeVisitForm;
+import edu.ncsu.csc.itrust2.models.enums.HouseholdSmokingStatus;
+import edu.ncsu.csc.itrust2.models.enums.PatientSmokingStatus;
 import edu.ncsu.csc.itrust2.models.enums.Role;
+import edu.ncsu.csc.itrust2.models.persistent.Diagnosis;
 import edu.ncsu.csc.itrust2.models.persistent.Hospital;
+import edu.ncsu.csc.itrust2.models.persistent.OfficeVisit;
 import edu.ncsu.csc.itrust2.models.persistent.Patient;
 import edu.ncsu.csc.itrust2.models.persistent.User;
 
@@ -103,6 +109,70 @@ public class HibernateDataGenerator {
                 Role.ROLE_ADMIN, 1 );
         admin.save();
     }
+
+    /**
+     * Put a diagnosis in the database
+     * 
+     * @param name
+     *            of the diagnosis
+     * @param code
+     *            of the diagnosis
+     */
+    public static void generateDiagnosis ( String name, String code ) {
+
+        final Diagnosis d1 = new Diagnosis();
+        d1.setIcdCode( name );
+        d1.setName( code );
+        d1.save();
+    }
+
+    /**
+     * To put an office visit in the database
+     * 
+     * @param name
+     *            the name of the diagnosis
+     */
+    public static void generateOfficeVist ( String name ) {
+
+        final OfficeVisitForm ovf = new OfficeVisitForm();
+        ovf.setDate( "11/11/1111" );
+        ovf.setDiagnosis( name );
+        ovf.setDiastolic( 100 );
+        ovf.setHcp( "hcp" );
+        ovf.setHdl( 60 );
+        ovf.setHeight( (float) 100.21 );
+        ovf.setHospital( "hospital" );
+        ovf.setHouseSmokingStatus( HouseholdSmokingStatus.OUTDOOR );
+        ovf.setId( "1234567" );
+        ovf.setLdl( 100 );
+        ovf.setNotes( "Alive" );
+        ovf.setPatient( "patient" );
+        ovf.setPatientSmokingStatus( PatientSmokingStatus.EVERYDAY );
+        ovf.setPreScheduled( "true" );
+        ovf.setSystolic( 80 );
+        ovf.setTime( "10:00am" );
+        ovf.setTri( 200 );
+        ovf.setType( "Checkup" );
+        ovf.setWeight( (float) 1000.00 );
+
+        OfficeVisit ov;
+        try {
+            ov = new OfficeVisit( ovf );
+            ov.save();
+        }
+        catch ( NumberFormatException e ) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch ( ParseException e ) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 
+     */
 
     /**
      * Generate sample users for the iTrust2 system.
