@@ -3,8 +3,6 @@ package edu.ncsu.csc.itrust2.cucumber;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Random;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -39,13 +37,12 @@ public class DiagnosisStepDefs {
     @Autowired
     private WebApplicationContext context;
 
-    private final WebDriver       driver       = new HtmlUnitDriver( true );
-    private final String          baseUrl      = "http://localhost:8080/iTrust2";
+    private final WebDriver       driver  = new HtmlUnitDriver( true );
+    private final String          baseUrl = "http://localhost:8080/iTrust2";
 
-    private final String          hospitalName = "Hospital" + ( new Random() ).nextInt();
     BasicHealthMetrics            expectedBhm;
 
-    WebDriverWait                 wait         = new WebDriverWait( driver, 2 );
+    WebDriverWait                 wait    = new WebDriverWait( driver, 2 );
 
     @Given ( "^Facilities exist$" )
     public void personnelExists () throws Exception {
@@ -57,51 +54,18 @@ public class DiagnosisStepDefs {
 
         /* Make sure we create a Hospital and Patient record */
 
-        /* Create a Hospital */
-        driver.get( baseUrl );
-        WebElement username = driver.findElement( By.name( "username" ) );
-        username.clear();
-        username.sendKeys( "admin" );
-        WebElement password = driver.findElement( By.name( "password" ) );
-        password.clear();
-        password.sendKeys( "123456" );
-        WebElement submit = driver.findElement( By.className( "btn" ) );
-        submit.click();
-        ( (JavascriptExecutor) driver ).executeScript( "document.getElementById('addhospital').click();" );
-        try {
-            final WebElement name = driver.findElement( By.id( "name" ) );
-            name.clear();
-            name.sendKeys( hospitalName );
-
-            final WebElement address = driver.findElement( By.id( "address" ) );
-            address.clear();
-            address.sendKeys( "Bialystok" );
-
-            final WebElement state = driver.findElement( By.id( "state" ) );
-            final Select dropdown = new Select( state );
-            dropdown.selectByVisibleText( "NJ" );
-
-            final WebElement zip = driver.findElement( By.id( "zip" ) );
-            zip.clear();
-            zip.sendKeys( "10101" );
-        }
-        catch ( final Exception e ) {
-            /* Assume the hospital already exists & carry on */
-        }
-        finally {
-            driver.findElement( By.id( "logout" ) ).click();
-        }
+        HibernateDataGenerator.refreshDB();
 
         /* Create patient record */
 
         driver.get( baseUrl );
-        username = driver.findElement( By.name( "username" ) );
+        WebElement username = driver.findElement( By.name( "username" ) );
         username.clear();
         username.sendKeys( "patient" );
-        password = driver.findElement( By.name( "password" ) );
+        WebElement password = driver.findElement( By.name( "password" ) );
         password.clear();
         password.sendKeys( "123456" );
-        submit = driver.findElement( By.className( "btn" ) );
+        WebElement submit = driver.findElement( By.className( "btn" ) );
         submit.click();
         ( (JavascriptExecutor) driver ).executeScript( "document.getElementById('editdemographics').click();" );
         try {
@@ -309,12 +273,19 @@ public class DiagnosisStepDefs {
         submit.click();
     }
 
+    @When ( "^The HCP submits the office visit$" )
+    public void submitDiagnosis () {
+        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "submit" ) ) );
+        final WebElement submit = driver.findElement( By.name( "submit" ) );
+        submit.click();
+    }
+
     @When ( "^The patient navigated to the View Office Visits page$" )
     public void navigateViewOV () {
         ( (JavascriptExecutor) driver ).executeScript( "document.getElementById('viewOfficeVisits').click();" );
     }
 
-    @When ( "^The admin creates a diagnosis with the name (.+) and the code (.+)$" )
+    @When ( "^The admin creates a diagnosis with the name (.*) and the code (.*)$" )
     public void createDiagnosis ( final String diagnosisName, final String diagnosisCode ) {
 
         final WebElement nameOfDiagnosis = driver.findElement( By.name( "name" ) );
@@ -337,6 +308,18 @@ public class DiagnosisStepDefs {
 
     @Then ( "^The patient can successfully see their diagnosis of (.+)$" )
     public void seeCorrectDiagnosis ( final String correctDiagnosis ) {
+        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "11/11/2200" ) ) );
+        final WebElement visits = driver.findElement( By.name( "11/11/2200" ) );
+        visits.click();
+
+        try {
+            Thread.sleep( 500 );
+        }
+        catch ( InterruptedException e ) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
         assertTrue( driver.getPageSource().contains( correctDiagnosis ) );
     }
 
@@ -346,14 +329,28 @@ public class DiagnosisStepDefs {
         final WebElement message = driver.findElement( By.name( "success" ) );
 
         assertFalse( message.getText().contains( "Error occurred creating office visit" ) );
-
     }
 
     @Then ( "^The diagnosis is successfully added to the system$" )
     public void diagnosisCreationSuccessful () {
         try {
-            Thread.sleep( 5000 );
+            Thread.sleep( 500 );
             assertTrue( driver.getPageSource().contains( "Diagnosis created successfully" ) );
+
+        }
+        catch ( InterruptedException e ) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    @Then ( "^The diagnosis is not added to the system$" )
+    public void diagnosisCreationUnsuccessful () {
+        try {
+            Thread.sleep( 500 );
+            assertTrue( driver.getPageSource().contains( "Error occurred creating diagnosis" )
+                    || driver.getPageSource().contains( "Please input a name" )
+                    || driver.getPageSource().contains( "Please input an idc code" ) );
 
         }
         catch ( InterruptedException e ) {

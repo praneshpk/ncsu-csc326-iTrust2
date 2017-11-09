@@ -58,6 +58,13 @@ public class HibernateDataGenerator {
 
         // TODO we might need to add a delay here
 
+        final Hospital hosp = new Hospital( "General Hospital", "123 Main St", "12345", "NC" );
+        hosp.save();
+
+        final User admin = new User( "admin", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.",
+                Role.ROLE_ADMIN, 1 );
+        admin.save();
+
         final User hcp = new User( "hcp", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.", Role.ROLE_HCP,
                 1 );
         hcp.save();
@@ -101,13 +108,6 @@ public class HibernateDataGenerator {
         aliceBirth.add( Calendar.YEAR, -13 ); // alice is thirteen years old
         alice.setDateOfBirth( aliceBirth );
         alice.save();
-
-        final Hospital hosp = new Hospital( "General Hostpital", "123 Main St", "12345", "NC" );
-        hosp.save();
-
-        final User admin = new User( "admin", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.",
-                Role.ROLE_ADMIN, 1 );
-        admin.save();
     }
 
     /**
@@ -121,8 +121,8 @@ public class HibernateDataGenerator {
     public static void generateDiagnosis ( String name, String code ) {
 
         final Diagnosis d1 = new Diagnosis();
-        d1.setIcdCode( name );
-        d1.setName( code );
+        d1.setIcdCode( code );
+        d1.setName( name );
         d1.save();
     }
 
@@ -135,25 +135,23 @@ public class HibernateDataGenerator {
     public static void generateOfficeVist ( String name ) {
 
         final OfficeVisitForm ovf = new OfficeVisitForm();
-        ovf.setDate( "11/11/1111" );
-        ovf.setDiagnosis( name );
-        ovf.setDiastolic( 100 );
-        ovf.setHcp( "hcp" );
-        ovf.setHdl( 60 );
-        ovf.setHeight( (float) 100.21 );
-        ovf.setHospital( "hospital" );
-        ovf.setHouseSmokingStatus( HouseholdSmokingStatus.OUTDOOR );
-        ovf.setId( "1234567" );
-        ovf.setLdl( 100 );
-        ovf.setNotes( "Alive" );
         ovf.setPatient( "patient" );
-        ovf.setPatientSmokingStatus( PatientSmokingStatus.EVERYDAY );
-        ovf.setPreScheduled( "true" );
-        ovf.setSystolic( 80 );
-        ovf.setTime( "10:00am" );
+        ovf.setHcp( "hcp" );
+        ovf.setDate( "11/11/2200" );
+        ovf.setTime( "10:00 am" );
+        ovf.setType( "GENERAL_CHECKUP" );
+        ovf.setHospital( "General Hospital" );
+        ovf.setNotes( "Alive" );
+        ovf.setHeight( (float) 100.2 );
+        ovf.setWeight( (float) 100.1 );
+        ovf.setDiastolic( 100 );
+        ovf.setSystolic( 100 );
+        ovf.setHdl( 60 );
+        ovf.setLdl( 100 );
         ovf.setTri( 200 );
-        ovf.setType( "Checkup" );
-        ovf.setWeight( (float) 1000.00 );
+        ovf.setHouseSmokingStatus( HouseholdSmokingStatus.OUTDOOR );
+        ovf.setPatientSmokingStatus( PatientSmokingStatus.EVERYDAY );
+        ovf.setDiagnosis( name );
 
         OfficeVisit ov;
         try {

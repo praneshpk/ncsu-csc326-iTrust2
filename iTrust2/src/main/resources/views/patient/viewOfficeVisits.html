@@ -158,7 +158,7 @@
 								<ul>
 										<li ng-repeat="visit in visits"><h4> <!-- https://stackoverflow.com/questions/32051486/how-to-call-javascript-function-on-radio-button-click-not-on-focus -->
 												<label><input type="radio" ng-model="$parent.selectedVisitID"
-												ng-click="populateVisit()" name="name" value="{{visit.id}}"
+												ng-click="populateVisit()" name="{{visit.formattedDate}}" value="{{visit.id}}" id="{{visit.id}}"
 												required="true" />{{visit.type}} on {{visit.formattedDate}} at {{getTime(visit.date)}}</label>
 										</h4></li>
 									</ul>
