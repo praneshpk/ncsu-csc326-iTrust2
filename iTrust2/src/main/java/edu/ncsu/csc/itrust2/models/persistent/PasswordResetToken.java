@@ -13,6 +13,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import edu.ncsu.csc.itrust2.utils.DomainObjectCache;
 
 /**
@@ -102,26 +105,22 @@ public class PasswordResetToken extends DomainObject<PasswordResetToken> {
     /**
      * Create a password reset token and return it
      *
-     * @param email
-     *            email of the user (possible that this field hasn't been
-     *            entered)
+     * @param user
+     *            user to create reset token for
      *
-     * @return a PasswordResetToken
+     * @return the token String
      */
-    public static PasswordResetToken createToken ( final String email ) {
-        User user = null;
-        final List<Patient> patients = Patient.getWhere( "email = '" + email + "'" );
-        if ( !patients.isEmpty() ) {
-            user = patients.get( 0 ).getSelf();
-        }
-        else {
-            final List<Personnel> personnel = Personnel.getWhere( "email = '" + email + "'" );
-            user = personnel.isEmpty() ? null : personnel.get( 0 ).getSelf();
+    public static String generateToken ( final User user ) {
+        if ( user == null ) {
+            throw new IllegalArgumentException( "User cannot be null." );
         }
         final String uuid = UUID.randomUUID().toString();
         final Calendar exp = Calendar.getInstance();
         exp.add( Calendar.MINUTE, ALLOWED_MINS );
-        return user == null ? null : new PasswordResetToken( user, uuid, exp );
+        final PasswordEncoder pe = new BCryptPasswordEncoder();
+        final PasswordResetToken token = new PasswordResetToken( user, pe.encode( uuid ), exp );
+        token.save();
+        return uuid;
     }
 
     /**
