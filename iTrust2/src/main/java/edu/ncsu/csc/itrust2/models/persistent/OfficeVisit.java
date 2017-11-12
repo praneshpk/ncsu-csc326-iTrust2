@@ -2,6 +2,7 @@ package edu.ncsu.csc.itrust2.models.persistent;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
@@ -12,11 +13,13 @@ import java.util.stream.Collectors;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -201,6 +204,8 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
         }
         setHospital( Hospital.getByName( ovf.getHospital() ) );
         setBasicHealthMetrics( new BasicHealthMetrics( ovf ) );
+        setPrescriptions( new ArrayList<Prescription>() );
+        setDiagnosis( Diagnosis.getByName( ovf.getDiagnosis() ) );
 
         final Patient p = Patient.getPatient( patient );
         if ( p == null || p.getDateOfBirth() == null ) {
@@ -441,6 +446,54 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
     }
 
     /**
+     * Get the prescription
+     *
+     * @return prescription
+     */
+    public List<Prescription> getPrescriptions () {
+        return prescriptions;
+    }
+
+    /**
+     * Set the Prescription
+     *
+     * @param prescriptionList
+     *            prescription to set
+     */
+    public void setPrescriptions ( final List<Prescription> prescriptionList ) {
+        this.prescriptions = prescriptionList;
+    }
+
+    /**
+     * Add a prescription to the list
+     *
+     * @param p
+     *            prescription to add
+     */
+    public void addPrescription ( final Prescription p ) {
+        prescriptions.add( p );
+    }
+
+    /**
+     * Gets the diagnoses for this office visit.
+     *
+     * @return the diagnoses
+     */
+    public Diagnosis getDiagnosis () {
+        return diagnosis;
+    }
+
+    /**
+     * Sets the diagnoses for this office visit.
+     *
+     * @param diagnosis
+     *            the diagnoses to set
+     */
+    public void setDiagnosis ( final Diagnosis diagnosis ) {
+        this.diagnosis = diagnosis;
+    }
+
+    /**
      * The patient of this office visit
      */
     @NotNull
@@ -462,6 +515,12 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
     @OneToOne
     @JoinColumn ( name = "basichealthmetrics_id" )
     private BasicHealthMetrics basicHealthMetrics;
+
+    /**
+     * Field for prescription to be associated with office visit
+     */
+    @OneToMany ( fetch = FetchType.EAGER, mappedBy = "officeVisit" )
+    private List<Prescription> prescriptions;
 
     /**
      * The date of this office visit
@@ -502,6 +561,13 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
     @OneToOne
     @JoinColumn ( name = "appointment_id" )
     private AppointmentRequest appointment;
+
+    /**
+     * The diagnoses given to the patient
+     */
+    @ManyToOne
+    @JoinColumn ( name = "diagnosis_id" )
+    private Diagnosis          diagnosis;
 
     /**
      * Overrides the basic domain object save in order to save basic health

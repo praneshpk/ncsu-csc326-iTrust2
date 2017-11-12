@@ -1,0 +1,133 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="layout :: head(title=~{::title},links=~{})">
+<title>View Prescriptions</title>
+</head>
+<body th:include="layout :: body" th:with="content=~{::content}">
+	<div th:fragment="content">
+
+		<script th:inline="javascript">
+			/* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
+			/*<![CDATA[*/
+
+			var app = angular.module('myApp', []);
+			app
+					.controller(
+							'viewPrescriptionCtrl',
+							function($scope, $http) {
+								
+								$scope.getDate = function getDate(date) {
+									dateObj = new Date(date);
+									return twoDigit(dateObj.getMonth() + 1) + "/" + twoDigit(dateObj.getDate()) + "/" + dateObj.getFullYear();
+								}
+								
+								function twoDigit(num) {
+									if (num < 10) {
+										return "0" + num;
+									}
+									return num;
+								}
+								
+								$scope.myself = /*[[${#httpServletRequest.remoteUser}]]*/null;
+								
+								$scope.noPrescriptionSelected = true;
+								$scope.loadingPrescriptions = true;
+								$http.get("/iTrust2/api/v1/prescriptions/" + $scope.myself).then(
+										function(response) {
+											$scope.noPrescriptionSelected = true;
+											$scope.loadingPrescriptions = false;
+											$scope.prescriptions = response.data;
+											var prescriptionsLength = $scope.prescriptions.length;
+											for (var i = 0; i < prescriptionsLength; i++) {
+												$scope.prescriptions[i].formattedStart = $scope.getDate($scope.prescriptions[i].start);
+												$scope.prescriptions[i].formattedEnd = $scope.getDate($scope.prescriptions[i].end);
+												console.log($scope.prescriptions[i]);
+											}
+										});
+								
+								$scope.selectedPrescriptionID = null;
+								$scope.selectedPrescription = {};
+								
+								$scope.populateVisit = function () {
+									var prescriptionsLength = $scope.prescriptions.length;
+									$scope.noPrescriptionSelected = false;
+									for (var i = 0; i < prescriptionsLength; i++) {
+										if ($scope.prescriptions[i].id == $scope.selectedPrescriptionID) {
+											$scope.selectedPrescription.drugName = $scope.prescriptions[i].ndcCode.name;
+											$scope.selectedPrescription.start = $scope.prescriptions[i].formattedStart;
+											$scope.selectedPrescription.end = $scope.prescriptions[i].formattedEnd;
+											$scope.selectedPrescription.renewals = $scope.prescriptions[i].renewals;
+										}
+									}
+								}
+								
+							});
+
+			/*]]>*/
+		</script>
+		
+		<div ng-app="myApp" ng-controller="viewPrescriptionCtrl">
+			<nav class="navbar navbar-default">
+				<div class="container-fluid">
+					<ul class="nav navbar-nav">
+						<li class="dropdown"><a class="dropdown-toggle"
+							data-toggle="dropdown" href="#">Appointments<span
+								class="caret"></span></a>
+							<ul class="dropdown-menu">
+								<li><a href="/iTrust2/patient/requestAppointment"
+									id="requestappointment">Request Appointment</a></li>
+								<li><a href="/iTrust2/patient/viewAppointmentRequests"
+									id="viewrequests">View Appointment Requests</a></li>
+								<li><a href="/iTrust2/patient/viewOfficeVisits"
+									id="viewvisits">Past Office Visits</a></li>
+								<li><a href="/iTrust2/patient/viewPrescriptions"
+									id="viewprescriptions">View Prescriptions</a></li>
+							</ul></li>
+						<li class="dropdown"><a class="dropdown-toggle"
+							data-toggle="dropdown" href="#">Edit<span class="caret"></span></a>
+							<ul class="dropdown-menu">
+								<li><a href="/iTrust2/patient/editDemographics"
+									id="editdemographics">Edit Demographics</a></li>
+							</ul></li>
+					</ul>
+				</div>
+			</nav>
+			<!-- information on floats found here: https://stackoverflow.com/questions/6385293/simple-two-column-html-layout-without-using-tables -->
+			<div style="float:left;width:35%;height:75%;overflow-y:auto">
+									<h2>Prescriptions:</h2>
+									<h3 ng-show="loadingPrescriptions">Loading prescriptions, please wait...</h3>
+									<!--<h4>Search by date: <input type="text" ng-model="searchFilter.formattedDate"/></h4>-->
+									<ul>
+										<li ng-repeat="prescription in prescriptions">
+											<h4> <!-- https://stackoverflow.com/questions/32051486/how-to-call-javascript-function-on-radio-button-click-not-on-focus -->
+												<label><input type="radio" ng-model="$parent.selectedPrescriptionID"
+												ng-click="populateVisit()" value="{{prescription.id}}"
+												required="true" /> {{prescription.ndcCode.name}} - {{prescription.formattedStart}}</label>
+											</h4>
+										</li>
+									</ul>
+			</div>
+			<!-- information on vertical rule found here: https://stackoverflow.com/questions/571900/is-there-a-vr-vertical-rule-in-html  -->
+			<div style="float:left;width:65%;border-left:1px solid #bbb;padding: 3%;height:75%;overflow-y:auto">
+				<div ng-show="noPrescriptionSelected">
+					<h3>Please select a prescription to view detailed report.</h3>
+				</div>
+				<div ng-show="!noPrescriptionSelected">
+					<h2>Prescription Details</h2>
+					<table>
+							<!--<tr><td style="text-align:right;padding:5px"><b>Patient:</b></td><td> {{selectedPrescription.patient}}</td>
+							</tr>-->
+							<tr><td style="text-align:left;padding:5px"><b>Drug Name:</b></td><td> {{selectedPrescription.drugName}}</td>
+							</tr>
+							<tr><td style="text-align:left;padding:5px"><b>Start Date:</b></td><td> {{selectedPrescription.start}}</td>
+							</tr>
+							<tr><td style="text-align:left;padding:5px"><b>End Date:</b></td><td> {{selectedPrescription.end}}</td>
+							</tr>
+							<tr><td style="text-align:left;padding:5px"><b>Remaining Renewals:</b></td><td> {{selectedPrescription.renewals}}</td>
+							</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

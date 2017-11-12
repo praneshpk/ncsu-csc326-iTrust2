@@ -136,6 +136,11 @@ public class OfficeVisitForm implements Serializable {
      * Smoking status of the patient.
      */
     private PatientSmokingStatus   patientSmokingStatus;
+  
+    /**
+     * Name of the diagnosis
+     */
+    private String                 diagnosis;
 
     /**
      * Creates an OfficeVisitForm from the OfficeVisit provided
@@ -153,7 +158,7 @@ public class OfficeVisitForm implements Serializable {
         setNotes( ov.getNotes() );
         setId( ov.getId().toString() );
         setPreScheduled( ( (Boolean) ( ov.getAppointment() != null ) ).toString() );
-
+        setDiagnosis( ov.getDiagnosis().getName() );
     }
 
     /**
@@ -515,5 +520,24 @@ public class OfficeVisitForm implements Serializable {
      */
     public void setPatientSmokingStatus ( final PatientSmokingStatus patientSmokingStatus ) {
         this.patientSmokingStatus = patientSmokingStatus;
+    }
+  
+    /**
+     * Gets the Diagnosis of the OfficeVisit
+     *
+     * @return Diagnosis of the Visit
+     */
+    public String getDiagnosis () {
+        return this.diagnosis;
+    }
+
+    /**
+     * Sets the Diagnosis on the OfficeVisit
+     *
+     * @param diagnosis
+     *            Diagnosis to set on the visit
+     */
+    public void setDiagnosis ( final String diagnosis ) {
+        this.diagnosis = diagnosis;
     }
 }
