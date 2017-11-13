@@ -76,7 +76,7 @@ public enum Ethnicity implements Serializable{
      */
     public static Ethnicity parse ( final String ethnicityStr ) {
         for ( final Ethnicity ethnicity : values() ) {
-            if ( ethnicity.getName().equals( ethnicityStr ) ) {
+            if ( ethnicity.getName().equals( ethnicityStr ) || ethnicity.getName().replaceAll("\\s","").equals(ethnicityStr) ) {
                 return ethnicity;
             }
         }

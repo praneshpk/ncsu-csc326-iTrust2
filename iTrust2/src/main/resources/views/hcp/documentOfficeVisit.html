@@ -40,6 +40,7 @@
 								    	 	return;
 								     }
 								     console.log($scope);
+								     $scope.visit.originalPatient = Object.assign({}, $scope.visit.actualPatient);
 								     $scope.demographics = {};
 								     $scope.demographics.id = $scope.visit.actualPatient.id;
 								     $scope.demographics.self = $scope.visit.actualPatient.self.username;
@@ -56,7 +57,7 @@
 								     $scope.demographics.zip = $scope.visit.actualPatient.zip;
 								     $scope.demographics.phone = $scope.visit.actualPatient.phone;
 								     $scope.demographics.dateOfBirth = $scope.visit.actualPatient.dateOfBirth.month + "/" + $scope.visit.actualPatient.dateOfBirth.dayOfMonth + "/" + $scope.visit.actualPatient.dateOfBirth.year;
-								     $scope.demographics.bloodtype = $scope.visit.actualPatient.bloodType;
+								     $scope.demographics.bloodType = $scope.visit.actualPatient.bloodType;
 								     $scope.demographics.ethnicity = $scope.visit.actualPatient.ethnicity;
 								     $scope.demographics.gender = $scope.visit.actualPatient.gender;
 								     
@@ -119,7 +120,7 @@
 								});
 								$http.get("/iTrust2/api/v1/bloodtype")
 								.then(function(response) {
-									$scope.bloodtype = response.data;
+									$scope.bloodType = response.data;
 								});
 								$http.get("/iTrust2/api/v1/gender")
 								.then(function(response) {
@@ -135,14 +136,35 @@
 										});
 
 								console.log($scope);
-
+								
+								$scope.revert = function(){
+								     $scope.demographics.id = $scope.visit.originalPatient.id;
+								     $scope.demographics.self = $scope.visit.originalPatient.self.username;
+								     $scope.demographics.firstName = $scope.visit.originalPatient.firstName;
+								     $scope.demographics.lastName = $scope.visit.originalPatient.lastName;
+								     $scope.demographics.preferredName = $scope.visit.originalPatient.preferredName;
+								     $scope.demographics.mother = $scope.visit.originalPatient.mother_id;
+								     $scope.demographics.father = $scope.visit.originalPatient.father_id;
+								     $scope.demographics.email = $scope.visit.originalPatient.email;
+								     $scope.demographics.address1 = $scope.visit.originalPatient.address1;
+								     $scope.demographics.address2 = $scope.visit.originalPatient.address2;
+								     $scope.demographics.city = $scope.visit.originalPatient.city;
+								     $scope.demographics.state = $scope.visit.originalPatient.state;
+								     $scope.demographics.zip = $scope.visit.originalPatient.zip;
+								     $scope.demographics.phone = $scope.visit.originalPatient.phone;
+								     $scope.demographics.dateOfBirth = $scope.visit.originalPatient.dateOfBirth.month + "/" + $scope.visit.originalPatient.dateOfBirth.dayOfMonth + "/" + $scope.visit.originalPatient.dateOfBirth.year;
+								     $scope.demographics.bloodType = $scope.visit.originalPatient.bloodType;
+								     $scope.demographics.ethnicity = $scope.visit.originalPatient.ethnicity;
+								     $scope.demographics.gender = $scope.visit.originalPatient.gender;
+								}
+								
 								$scope.submit = function() {
 									$scope.errorMsg = "";
 									$scope.visit.hcp = /*[[${#httpServletRequest.remoteUser}]]*/null; /* Ugly hack; use this to retrieve the name of the HCP who is currently logged in.  This grabs it from Thymeleaf */
 									$scope.visit.status = "PENDING";
 									
 									if ($scope.visit.type == null) {
-										$scope.errorMsg += "Please select a visit type\n";
+										$scope.errorMsg += "Please select a visit type\n";	
 									}
 									
 									if ($scope.visit.type == null) {
@@ -210,6 +232,18 @@
 										}
 									}
 									
+									if($scope.demographics.firstName.length == 0){$scope.errorMsg += "Patient's first name cannot be blank.\n"}
+									if($scope.demographics.lastName.length == 0){$scope.errorMsg += "Patient's last name cannot be blank.\n"}
+									if($scope.demographics.email.length == 0){$scope.errorMsg += "Patient's email address cannot be blank.\n"}
+									if($scope.demographics.address1.length == 0){$scope.errorMsg+= "Patient's address 1 cannot be blank.\n"}
+									if($scope.demographics.city.length == 0){$scope.errorMsg+= "Patient's city name cannot be blank.\n"}
+									if($scope.demographics.zip.length == 0){$scope.errorMsg+= "Patient's zip code cannot be blank.\n"}
+									if($scope.demographics.phone.length == 0){$scope.errorMsg+= "Patient's phone number cannot be blank.\n"}
+									if($scope.demographics.address1.length == 0){$scope.errorMsg+= "Patient's address 1 cannot be blank.\n"}
+									if(/(\d{1,2})\/(\d{1,2})\/(\d{4})/.test($scope.demographics.dateOfBirth) == false){
+										$scope.errorMsg += "Please input patient's date of birth as valid date (MM/dd/yyyy)"}
+									
+									if($scope.errorMsg.length == 0){	
 									$scope.message = "";
 
 									$http({
@@ -217,10 +251,10 @@
 										url : '/iTrust2/api/v1/officevisits',
 										data : $scope.visit
 									}).then(function(response) {
-										$scope.message="Office visit created successfully.";
+										$scope.message+="Office visit created successfully.\n";
 										console.log(response);
 									}, function(rejection) {
-										$scope.message="Error occurred creating office visit.";
+										$scope.errorMsg+="Error occurred creating office visit.\n";
 										console.log(rejection);
 									})
 									
@@ -229,12 +263,14 @@
 										url: '/iTrust2/api/v1/patients/' + $scope.visit.actualPatient.self.username,
 										data: $scope.demographics
 									}).then(function(response){
-										$scope.message+= " Demographics successfully updated."
+										$scope.message+= "Demographics successfully updated.\n"
 									}, function(rejection){
-										$scope.message = " Error occurred updating patient's demographics."
+										$scope.errorMsg = "Error occurred updating patient's demographics.\n"
 									})
+									}
 								}
 							});
+							
 
 			/*]]>*/
 		</script>
@@ -460,8 +496,8 @@
 				</tr>
 				<tr>
 					<td style="text-align:right;padding:5px"><b>Blood Type:</b></td>
-					<td><select ng-model="demographics.bloodtype">
-							<option id="ethnicity" ng-repeat="bt in bloodtype" ng-value="bt">{{bt}}</option>
+					<td><select ng-model="demographics.bloodType">
+							<option id="bloodType" ng-repeat="bt in bloodType" ng-value="bt">{{bt}}</option>
 					</select></td>
 				</tr>
 				<tr>
@@ -475,6 +511,9 @@
 					<td><select ng-model="demographics.gender">
 							<option id="gender" ng-repeat="gen in gender" ng-value="gen">{{gen}}</option>
 					</select></td>
+				</tr>
+				<tr>
+				<button ng-click="revert()" name="revert">Restore Original Patient Demographics</button>
 				</tr>
 			</table>
 <h2>Select Diagnosis</h2>
@@ -496,7 +535,7 @@
 			<button ng-click="submit()" name="submit">Submit Office
 				Visit</button>
 
-			<div name="errorMsg"><pre>{{errorMsg}}</pre></div>
+			<div name="errorMsg">{{errorMsg}}</div>
 
 			<div name="success">{{message}}</div>
 			</div>

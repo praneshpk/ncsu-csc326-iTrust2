@@ -202,6 +202,10 @@ public class Patient extends DomainObject<Patient> implements Serializable {
         setGender( Gender.parse( form.getGender() ) );
 
         setId( form.getId() );
+        if(getSelf() != null) {
+        	cache.put( getSelf().getUsername(), this );
+        }
+        
     }
 
     /**
