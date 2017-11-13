@@ -42,12 +42,6 @@ public class APIEnumController extends APIController {
     @GetMapping ( BASE_PATH + "/bloodtype" )
     public List<BloodType> getBloodTypes () {
         return Arrays.asList( BloodType.values() );
-//    	BloodType[] enums = BloodType.values();
-//    	String[] names = new String[enums.length];
-//    	for(int i = 0; i < names.length; i++) {
-//    		names[i] = enums[i].getName();
-//    	}
-//    	return Arrays.asList(names);
     }
 
     /**

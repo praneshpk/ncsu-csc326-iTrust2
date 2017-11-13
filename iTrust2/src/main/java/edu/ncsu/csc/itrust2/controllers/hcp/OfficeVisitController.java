@@ -85,6 +85,10 @@ public class OfficeVisitController {
             req.save();
             LoggerUtil.log( TransactionType.OFFICE_VISIT_CREATE, form.getHcp(), form.getPatient(),
                     form.getHcp() + " created basic health metrics for " + form.getPatient() );
+            if ( form.getDiagnosis() != null ) {
+                LoggerUtil.log( TransactionType.HCP_ADD_DIAGNOSIS, form.getHcp(), form.getPatient(),
+                        form.getHcp() + " added a diagnosis for " + form.getPatient() );
+            }
             return "hcp/documentOfficeVisitResult";
         }
     }

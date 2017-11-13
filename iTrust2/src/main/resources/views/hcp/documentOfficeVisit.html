@@ -23,7 +23,7 @@
 								//ran when patient is selected
 								//validate birthdate here
 								$scope.patientSelect = function(patient) {
-									 if ($scope.visit.actualPatient == null && patient != null) {
+									 if (/*$scope.visit.actualPatient == null && */patient != null) {
 										 $scope.visit.actualPatient = patient;
 									 }
 									 if (patient == null) {
@@ -99,7 +99,7 @@
 								$http.get("/iTrust2/api/v1/patients").then(
 										function(response) {
 											$scope.patients = response.data;
-
+											console.log($scope.patients);
 										});
 
 								$http.get("/iTrust2/api/v1/appointmenttype")
@@ -134,6 +134,10 @@
 										function(response) {
 											$scope.hospitals = response.data;
 										});
+								$http.get("/iTrust2/api/v1/diagnoses").then(
+										function(response) {
+											$scope.diagnoses = response.data;
+										});
 
 								console.log($scope);
 								
@@ -162,6 +166,8 @@
 									$scope.errorMsg = "";
 									$scope.visit.hcp = /*[[${#httpServletRequest.remoteUser}]]*/null; /* Ugly hack; use this to retrieve the name of the HCP who is currently logged in.  This grabs it from Thymeleaf */
 									$scope.visit.status = "PENDING";
+									
+									console.log($scope);
 									
 									if ($scope.visit.type == null) {
 										$scope.errorMsg += "Please select a visit type\n";	
@@ -245,7 +251,7 @@
 									
 									if($scope.errorMsg.length == 0){	
 									$scope.message = "";
-
+                    
 									$http({
 										method : 'POST',
 										url : '/iTrust2/api/v1/officevisits',
@@ -279,31 +285,36 @@
 
 		<div ng-app="myApp" ng-controller="documentOfficeVisitCtrl">
 <nav class="navbar navbar-default">
-			<div class="container-fluid">
-				<ul class="nav navbar-nav">
-					<li class="dropdown"><a class="dropdown-toggle"
-						data-toggle="dropdown" href="#">Patient<span class="caret"></span></a>
-						<ul class="dropdown-menu">
-							<li><a href="/iTrust2/hcp/viewAppointmentRequests"
-								id="viewrequests">View Appointment Requests</a></li>
-							<li><a href="/iTrust2/hcp/viewAppointments"
-								id="upcomingrequests">View Upcoming Appointments</a></li>
-							<li><a href="#">Edit Patient -- Not Implemented</a></li>
-							<li><a href="#">Add Patient -- Not Implemented</a></li>
-							<li><a href="/iTrust2/hcp/documentOfficeVisit.html"
-								id="documentOfficeVisit">Document Office Visit</a></li>
-						</ul></li>
-					<li class="dropdown"><a class="dropdown-toggle"
-						data-toggle="dropdown" href="#">Edit<span class="caret"></span></a>
-						<ul class="dropdown-menu">
-							<li><a href="/iTrust2/personnel/editDemographics"
-								id="editdemographics">Edit Demographics</a></li>
-							<li> <a href="/iTrust2/hcp/editOfficeVisit"
-							      id="editOfficeVisit">Edit Office Visit</a></li>
-						</ul></li>
-				</ul>
-			</div>
-		</nav>
+      <div class="container-fluid">
+        <ul class="nav navbar-nav">
+          <li class="dropdown"><a class="dropdown-toggle"
+            data-toggle="dropdown" href="#">Patient<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="/iTrust2/hcp/viewAppointmentRequests"
+                id="viewrequests">View Appointment Requests</a></li>
+              <li><a href="/iTrust2/hcp/viewAppointments"
+                id="upcomingrequests">View Upcoming Appointments</a></li>
+              <li><a href="#">Edit Patient -- Not Implemented</a></li>
+              <li><a href="#">Add Patient -- Not Implemented</a></li>
+              <li><a href="/iTrust2/hcp/documentOfficeVisit.html"
+                id="documentOfficeVisit">Document Office Visit</a></li>
+              <li><a href="/iTrust2/hcp/addPrescription.html"
+                id="addPrescription">Add Prescription</a></li>
+               
+            </ul></li>
+          <li class="dropdown"><a class="dropdown-toggle"
+            data-toggle="dropdown" href="#">Edit<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="/iTrust2/personnel/editDemographics"
+                id="editdemographics">Edit Demographics</a></li>
+              <li> <a href="/iTrust2/hcp/editOfficeVisit"
+                    id="editOfficeVisit">Edit Office Visit</a></li>
+              <li><a href="/iTrust2/hcp/managePrescriptions.html"
+                id="managePrescriptions">Manage Prescriptions</a></li>
+            </ul></li>
+        </ul>
+      </div>
+    </nav>
 			<div style="float:left;width:30%;height:75%;overflow-y:auto">
 			<h2>Patients:</h2>
 			<!-- info on filtering taken from here: https://www.w3schools.com/angular/angular_filters.asp
@@ -518,14 +529,17 @@
 			</table>
 <h2>Select Diagnosis</h2>
 			<table>
-    			<tr>
-					<td style="text-align:right;padding:5px">
-						<select name="diagnosis" multiple>
-						  <option value="item1">Needs backend to work...</option>
-						  <option value="item2">Needs backend to work...</option>
-						  <option value="item3">Needs backend to work...</option>
-						  <option value="item4">Needs backend to work...</option>
-						</select>
+				<tr>
+
+					<td style="text-align:left;padding:5px">
+						<!-- <select id="repeatDiagnoses" style="width:300px" ng-model ="visit.diagnosis" size="15">    
+								<option id="noDiagnosis" ng-value="" selected>--Select, if applicable--</option>                           
+					            <option id="diagnosis" ng-repeat="d in diagnoses" ng-value="{{d.name}}">{{d.name}} - {{d.icdCode}}</option>
+					    </select> -->
+					    <select id="repeatDiagnoses" style="width:300px" ng-model="visit.diagnosis" 
+					    	ng-options="d.name as d.name + ' - ' + d.icdCode for d in diagnoses" size="15">
+					    	<option value="">--Select option, if applicable--</option>
+					    </select>
 					</td>
 				</tr>
 			</table>
@@ -540,13 +554,7 @@
 			<div name="success">{{message}}</div>
 			</div>
 
-
-
-
 		</div>
-
-
-
 
 	</div>
 </body>

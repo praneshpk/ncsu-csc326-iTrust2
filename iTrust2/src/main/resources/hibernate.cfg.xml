@@ -24,10 +24,13 @@
 		<mapping class="edu.ncsu.csc.itrust2.models.persistent.AppointmentRequest" />
 		<mapping class="edu.ncsu.csc.itrust2.models.persistent.User" />
 		<mapping class="edu.ncsu.csc.itrust2.models.persistent.OfficeVisit" />
+		<mapping class="edu.ncsu.csc.itrust2.models.persistent.Diagnosis" />
 		<mapping class="edu.ncsu.csc.itrust2.models.persistent.Hospital" />
 		<mapping class="edu.ncsu.csc.itrust2.models.persistent.Patient" />
 		<mapping class="edu.ncsu.csc.itrust2.models.persistent.Personnel" />
 		<mapping class="edu.ncsu.csc.itrust2.models.persistent.BasicHealthMetrics" />
+		<mapping class="edu.ncsu.csc.itrust2.models.persistent.Prescription" />
+		<mapping class="edu.ncsu.csc.itrust2.models.persistent.NDCCode" />
 
 
 	</session-factory>
