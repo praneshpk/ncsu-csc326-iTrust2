@@ -23,7 +23,6 @@ import edu.ncsu.csc.itrust2.config.RootConfiguration;
 import edu.ncsu.csc.itrust2.models.enums.HouseholdSmokingStatus;
 import edu.ncsu.csc.itrust2.models.enums.PatientSmokingStatus;
 import edu.ncsu.csc.itrust2.models.persistent.BasicHealthMetrics;
-import edu.ncsu.csc.itrust2.models.persistent.OfficeVisit;
 import edu.ncsu.csc.itrust2.mvc.config.WebMvcConfiguration;
 import edu.ncsu.csc.itrust2.utils.HibernateDataGenerator;
 
@@ -43,8 +42,6 @@ public class EditPatientDemographicsStepDefs {
 
     @Given ( "^All the Facilities exist$" )
     public void personnelExists () throws Exception {
-        OfficeVisit.deleteAll( OfficeVisit.class );
-        BasicHealthMetrics.deleteAll( BasicHealthMetrics.class );
 
         // All tests can safely assume the existence of the 'hcp', 'admin', and
         // 'patient' users
