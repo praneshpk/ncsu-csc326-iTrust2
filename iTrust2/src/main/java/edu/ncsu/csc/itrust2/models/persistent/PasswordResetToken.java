@@ -13,6 +13,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -117,14 +121,47 @@ public class PasswordResetToken extends DomainObject<PasswordResetToken> {
         final String uuid = UUID.randomUUID().toString();
         final Calendar exp = Calendar.getInstance();
         exp.add( Calendar.MINUTE, ALLOWED_MINS );
-        final PasswordEncoder pe = new BCryptPasswordEncoder();
-        final PasswordResetToken token = new PasswordResetToken( user, pe.encode( uuid ), exp );
+        final PasswordResetToken token = new PasswordResetToken( user, uuid, exp );
         token.save();
         return uuid;
     }
 
     /**
-     * Private constructor for reset tokens
+     * Validate a token
+     *
+     * @param token
+     *            token to validate
+     * @param username
+     *            user to validate
+     * @return whether or not the token was validated
+     */
+    public static boolean validateToken ( final String token, final String username ) {
+        final User user = User.getByName( username );
+        final PasswordEncoder pe = new BCryptPasswordEncoder();
+        final List<PasswordResetToken> tokens = getWhere( "self_id = '" + username + "'" );
+        if ( !tokens.isEmpty() ) {
+            for ( final PasswordResetToken current : tokens ) {
+                if ( pe.matches( token, current.getToken() )
+                        && current.getExpiration().after( Calendar.getInstance() ) ) {
+                    final Authentication request = new UsernamePasswordAuthenticationToken( user.getUsername(), null,
+                            AuthorityUtils.createAuthorityList( user.getRole().toString() ) );
+                    SecurityContextHolder.getContext().setAuthentication( request );
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Empty constructor
+     */
+    public PasswordResetToken () {
+    }
+
+    /**
+     * constructor for reset tokens
      *
      * @param user
      *            user requesting reset
@@ -133,9 +170,10 @@ public class PasswordResetToken extends DomainObject<PasswordResetToken> {
      * @param expiration
      *            expiration time of token
      */
-    private PasswordResetToken ( final User user, final String token, final Calendar expiration ) {
+    public PasswordResetToken ( final User user, final String token, final Calendar expiration ) {
         this.user = user;
-        this.token = token;
+        final PasswordEncoder pe = new BCryptPasswordEncoder();
+        this.token = pe.encode( token );
         this.expiration = expiration;
     }
 

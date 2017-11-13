@@ -17,13 +17,19 @@ import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import edu.ncsu.csc.itrust2.forms.PasswordResetForm;
+import edu.ncsu.csc.itrust2.forms.ChangePasswordForm;
+import edu.ncsu.csc.itrust2.forms.EmailForm;
+import edu.ncsu.csc.itrust2.forms.ResetPasswordForm;
 import edu.ncsu.csc.itrust2.models.persistent.PasswordResetToken;
 import edu.ncsu.csc.itrust2.models.persistent.Patient;
 import edu.ncsu.csc.itrust2.models.persistent.Personnel;
@@ -38,6 +44,7 @@ import edu.ncsu.csc.itrust2.models.persistent.User;
 @Controller
 @SuppressWarnings ( { "rawtypes", "unchecked" } )
 public class ForgotPasswordController {
+
     /**
      * Returns the forgot my password page
      *
@@ -63,6 +70,68 @@ public class ForgotPasswordController {
     }
 
     /**
+     * Set the user's password
+     *
+     * @param pForm
+     *            form containing password
+     * @return ResponseEntity detailing success of transaction
+     */
+    @PostMapping ( "/password/reset" )
+    public ResponseEntity reset ( @Valid @RequestBody final ResetPasswordForm pForm ) {
+        final String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        final User user = User.getByName( username );
+        final PasswordEncoder pe = new BCryptPasswordEncoder();
+        user.setPassword( pe.encode( pForm.getPassword() ) );
+        user.save();
+        return new ResponseEntity( user, HttpStatus.OK );
+    }
+
+    /**
+     * Set the user's password
+     *
+     * @param pForm
+     *            form containing password
+     * @return ResponseEntity detailing success of transaction
+     */
+    @PostMapping ( "/password/change" )
+    public ResponseEntity change ( @Valid @RequestBody final ChangePasswordForm pForm ) {
+        final String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        final User user = User.getByName( username );
+        final PasswordEncoder pe = new BCryptPasswordEncoder();
+        if ( pe.matches( pForm.getOldPassword(), user.getPassword() ) ) {
+            user.setPassword( pe.encode( pForm.getNewPassword() ) );
+            user.save();
+            return new ResponseEntity( user, HttpStatus.OK );
+        }
+        else {
+            return new ResponseEntity( "Incorrect old password.", HttpStatus.BAD_REQUEST );
+        }
+    }
+
+    /**
+     * Returns the forgot my password page
+     *
+     * @param model
+     *            Data from the front end
+     * @param id
+     *            username
+     * @param token
+     *            token for user
+     * @return Page to display to the user
+     */
+    @GetMapping ( "/validate" )
+    public String validate ( final Model model, @RequestParam ( "id" ) final String id,
+            @RequestParam ( "token" ) final String token ) {
+        final boolean valid = PasswordResetToken.validateToken( token, id );
+        if ( valid ) {
+            return "/resetPassword";
+        }
+        else {
+            return "/accessdenied";
+        }
+    }
+
+    /**
      * Send a password reset email to the specified email
      *
      * @param request
@@ -73,7 +142,7 @@ public class ForgotPasswordController {
      */
     @PostMapping ( "/passwordrecovery" )
     public ResponseEntity passwordRecovery ( final HttpServletRequest request,
-            @Valid @RequestBody final PasswordResetForm pForm ) {
+            @Valid @RequestBody final EmailForm pForm ) {
         final String email = pForm.getEmail();
         final User user = getUserByEmail( email );
         if ( user == null ) {
@@ -87,10 +156,11 @@ public class ForgotPasswordController {
             Transport.send( msg );
         }
         catch ( final Exception e ) {
+            System.out.print( "Email failed to send." );
             return new ResponseEntity( "Email failed to send: " + e.getMessage(), HttpStatus.CONFLICT );
         }
 
-        return new ResponseEntity( "Email sent.", HttpStatus.OK );
+        return new ResponseEntity( HttpStatus.OK );
     }
 
     /**
@@ -113,7 +183,7 @@ public class ForgotPasswordController {
     private MimeMessage createEmail ( final Session session, final User user, final String token,
             final String recipientEmail ) throws AddressException, MessagingException {
         // ideally the context path shouldn't be hardcoded
-        final String link = "http://localhost:8080/iTrust2/changePassword?id=" + user.getId() + "&token=" + token;
+        final String link = "http://localhost:8080/iTrust2/validate?id=" + user.getId() + "&token=" + token;
         final MimeMessage msg = new MimeMessage( session );
         msg.setFrom( new InternetAddress( "iTrustSupTeam@gmail.com" ) );
         msg.addRecipient( RecipientType.TO, new InternetAddress( recipientEmail ) );
