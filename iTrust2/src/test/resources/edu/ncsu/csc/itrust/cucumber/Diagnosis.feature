@@ -46,17 +46,13 @@ Examples:
 	| Hit face with phone while laying on bed | F43 |
 	| Didn't brush teeth for 17 years | T65 |
 	
-Scenario Outline: Don't Give Diagnosis
+Scenario: Don't Give Diagnosis
 	Given Facilities exist
 	Given The user is logged in to iTrust2 as HCP
 	Given HCP navigated to the Document Office Visit page
 	Given HCP filled in information on the office visit
 	When The HCP submits the office visit
 	Then Office visit is documented successfully
-	
-Examples:
-	|	|
-	|	|
 
 Scenario Outline: View Diagnosis
 	Given Facilities exist
