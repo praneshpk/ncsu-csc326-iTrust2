@@ -23,15 +23,46 @@
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
+<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
 
 <style type="text/css">
 /* Sticky footer styles
       -------------------------------------------------- */
+*:active {
+	cursor: url(resources/img/cursor.png), auto;
+}
 html, body {
 	height: 100%;
+	line-height: 1.5;
+	font-family: 'Montserrat', sans-serif;
 	/* The html and body elements cannot have any padding or margin. */
 }
-
+section {
+	height:100vh;
+	text-align:center;
+}
+section.main {
+	background-image: url(resources/img/doctors_photo.jpg) ;
+	background-size: cover;
+}
+.login {
+	position:absolute;
+	top:0; bottom: 0; left:0; right:0;
+	margin: auto;
+	height: 500px;
+	width: 600px;
+	padding: 50px;
+	border-radius: 15px;
+	background-color:rgba(255, 255, 255, 0.95);
+}
+.login input {
+	width:80%;
+	padding:12px;
+	margin: 5px;
+}
+legend {
+	padding: 20px;
+}
 /* Wrapper for page content to push down footer */
 #wrap {
 	min-height: 100%;
@@ -73,9 +104,6 @@ html, body {
 	text-align: center;
 }
 
-a {
-	color: green;
-}
 
 .navbar-form {
 	margin-left: 1em;
