@@ -197,7 +197,7 @@ public class DiagnosisStepDefs {
         notes.clear();
         notes.sendKeys( "Patient appears pretty much alive" );
 
-        final WebElement patient = driver.findElement( By.name( "name" ) );
+        final WebElement patient = driver.findElement( By.name( "patient" ) );
         patient.click();
 
         final WebElement type = driver.findElement( By.name( "type" ) );
@@ -208,7 +208,7 @@ public class DiagnosisStepDefs {
 
         final WebElement date = driver.findElement( By.name( "date" ) );
         date.clear();
-        date.sendKeys( "12/19/2027" );
+        date.sendKeys( "12/19/2050" );
 
         final WebElement time = driver.findElement( By.name( "time" ) );
         time.clear();

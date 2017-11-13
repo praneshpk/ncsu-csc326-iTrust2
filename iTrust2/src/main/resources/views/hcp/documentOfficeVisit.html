@@ -334,6 +334,84 @@
 			<!-- information on vertical rule found here: https://stackoverflow.com/questions/571900/is-there-a-vr-vertical-rule-in-html  -->
 		<div style="float:left;width:70%;border-left:1px solid #bbb;padding: 3%;height:75%;overflow-y:auto">
 			<h2>Patient: {{visit.actualPatient.self.username}}</h2>
+			<h2>Demographics</h2>
+<table>
+    				<tr>
+					<td style="text-align:right;padding:5px"><b>First Name:</b></td>
+					<td><input type="text" id="firstName" ng-model="demographics.firstName"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Last Name:</b></td>
+					<td><input type="text" id="lastName" ng-model="demographics.lastName"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Preferred Name:</b></td>
+					<td><input type="text" id="preferredName" ng-model="demographics.preferredName"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Mother:</b></td>
+					<td><input type="text" id="mother" ng-model="demographics.mother_id"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Father:</b></td>
+					<td><input type="text" id="father" ng-model="demographics.father_id"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Email:</b></td>
+					<td><input type="text" id="email" ng-model="demographics.email"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Street Address 1:</b></td>
+					<td><input type="text" id="address1" ng-model="demographics.address1"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Street Address 2:</b></td>
+					<td><input type="text" id="address2" ng-model="demographics.address2"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>City:</b></td>
+					<td><input type="text" id="city" ng-model="demographics.city"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>State:</b></td>
+					<td><select ng-model="demographics.state">
+							<option id="state" ng-repeat="s in state" ng-value="s">{{s}}</option>
+					</select></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Zip Code:</b></td>
+					<td><input type="text" id="zip" ng-model="demographics.zip"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Phone Number:</b></td>
+					<td><input type="text" id="phone" ng-model="demographics.phone"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Date of Birth:</b></td>
+					<td><input type="text" id="dateOfBirth" ng-model="demographics.dateOfBirth"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Blood Type:</b></td>
+					<td><select ng-model="demographics.bloodType">
+							<option id="bloodType" ng-repeat="bt in bloodType" ng-value="bt">{{bt}}</option>
+					</select></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Ethnicity:</b></td>
+					<td><select ng-model="demographics.ethnicity">
+							<option id="ethnicity" ng-repeat="eth in ethnicity" ng-value="eth">{{eth}}</option>
+					</select></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Gender:</b></td>
+					<td><select ng-model="demographics.gender">
+							<option id="gender" ng-repeat="gen in gender" ng-value="gen">{{gen}}</option>
+					</select></td>
+				</tr>
+				<tr>
+				<button ng-click="revert()" name="revert">Restore Original Patient Demographics</button>
+				</tr>
+			</table>
 			<h2>Primary Office Visit Data</h2>
 			<table>
 				<tr>
@@ -447,84 +525,6 @@
 							</label></li>
 						</ul>
 					</td>
-				</tr>
-			</table>
-<h2>Patient Demographics</h2>
-<table>
-    				<tr>
-					<td style="text-align:right;padding:5px"><b>First Name:</b></td>
-					<td><input type="text" id="firstName" ng-model="demographics.firstName"/></td>
-				</tr>
-				<tr>
-					<td style="text-align:right;padding:5px"><b>Last Name:</b></td>
-					<td><input type="text" id="lastName" ng-model="demographics.lastName"/></td>
-				</tr>
-				<tr>
-					<td style="text-align:right;padding:5px"><b>Preferred Name:</b></td>
-					<td><input type="text" id="preferredName" ng-model="demographics.preferredName"/></td>
-				</tr>
-				<tr>
-					<td style="text-align:right;padding:5px"><b>Mother:</b></td>
-					<td><input type="text" id="mother" ng-model="demographics.mother_id"/></td>
-				</tr>
-				<tr>
-					<td style="text-align:right;padding:5px"><b>Father:</b></td>
-					<td><input type="text" id="father" ng-model="demographics.father_id"/></td>
-				</tr>
-				<tr>
-					<td style="text-align:right;padding:5px"><b>Email:</b></td>
-					<td><input type="text" id="email" ng-model="demographics.email"/></td>
-				</tr>
-				<tr>
-					<td style="text-align:right;padding:5px"><b>Street Address 1:</b></td>
-					<td><input type="text" id="address1" ng-model="demographics.address1"/></td>
-				</tr>
-				<tr>
-					<td style="text-align:right;padding:5px"><b>Street Address 2:</b></td>
-					<td><input type="text" id="address2" ng-model="demographics.address2"/></td>
-				</tr>
-				<tr>
-					<td style="text-align:right;padding:5px"><b>City:</b></td>
-					<td><input type="text" id="city" ng-model="demographics.city"/></td>
-				</tr>
-				<tr>
-					<td style="text-align:right;padding:5px"><b>State:</b></td>
-					<td><select ng-model="demographics.state">
-							<option id="state" ng-repeat="s in state" ng-value="s">{{s}}</option>
-					</select></td>
-				</tr>
-				<tr>
-					<td style="text-align:right;padding:5px"><b>Zip Code:</b></td>
-					<td><input type="text" id="zip" ng-model="demographics.zip"/></td>
-				</tr>
-				<tr>
-					<td style="text-align:right;padding:5px"><b>Phone Number:</b></td>
-					<td><input type="text" id="phone" ng-model="demographics.phone"/></td>
-				</tr>
-				<tr>
-					<td style="text-align:right;padding:5px"><b>Date of Birth:</b></td>
-					<td><input type="text" id="dateOfBirth" ng-model="demographics.dateOfBirth"/></td>
-				</tr>
-				<tr>
-					<td style="text-align:right;padding:5px"><b>Blood Type:</b></td>
-					<td><select ng-model="demographics.bloodType">
-							<option id="bloodType" ng-repeat="bt in bloodType" ng-value="bt">{{bt}}</option>
-					</select></td>
-				</tr>
-				<tr>
-					<td style="text-align:right;padding:5px"><b>Ethnicity:</b></td>
-					<td><select ng-model="demographics.ethnicity">
-							<option id="ethnicity" ng-repeat="eth in ethnicity" ng-value="eth">{{eth}}</option>
-					</select></td>
-				</tr>
-				<tr>
-					<td style="text-align:right;padding:5px"><b>Gender:</b></td>
-					<td><select ng-model="demographics.gender">
-							<option id="gender" ng-repeat="gen in gender" ng-value="gen">{{gen}}</option>
-					</select></td>
-				</tr>
-				<tr>
-				<button ng-click="revert()" name="revert">Restore Original Patient Demographics</button>
 				</tr>
 			</table>
 <h2>Select Diagnosis</h2>
