@@ -22,7 +22,7 @@
 								//ran when patient is selected
 								//validate birthdate here
 								$scope.patientSelect = function(patient) {
-									 if ($scope.visit.actualPatient == null && patient != null) {
+									 if (/*$scope.visit.actualPatient == null && */patient != null) {
 										 $scope.visit.actualPatient = patient;
 									 }
 									 if (patient == null) {
@@ -76,7 +76,7 @@
 								$http.get("/iTrust2/api/v1/patients").then(
 										function(response) {
 											$scope.patients = response.data;
-
+											console.log($scope.patients);
 										});
 
 								$http.get("/iTrust2/api/v1/appointmenttype")
@@ -91,10 +91,25 @@
 										.then(function(response) {
 											$scope.patientsmoking = response.data;
 										});
-
+								$http.get("/iTrust2/api/v1/ethnicity")
+								.then(function(response) {
+									$scope.ethnicity = response.data;
+								});
+								$http.get("/iTrust2/api/v1/gender")
+								.then(function(response) {
+									$scope.gender = response.data;
+								});
+								$http.get("/iTrust2/api/v1/state")
+								.then(function(response) {
+									$scope.state = response.data;
+								});
 								$http.get("/iTrust2/api/v1/hospitals").then(
 										function(response) {
 											$scope.hospitals = response.data;
+										});
+								$http.get("/iTrust2/api/v1/diagnoses").then(
+										function(response) {
+											$scope.diagnoses = response.data;
 										});
 
 								console.log($scope);
@@ -103,6 +118,8 @@
 									$scope.errorMsg = "";
 									$scope.visit.hcp = /*[[${#httpServletRequest.remoteUser}]]*/null; /* Ugly hack; use this to retrieve the name of the HCP who is currently logged in.  This grabs it from Thymeleaf */
 									$scope.visit.status = "PENDING";
+									
+									console.log($scope);
 									
 									if ($scope.visit.type == null) {
 										$scope.errorMsg += "Please select a visit type\n";
@@ -172,7 +189,7 @@
 											$scope.errorMsg += "Triglycerides can be a number between 100 and 600\n"	
 										}
 									}
-
+									console.log($scope);
 									$http({
 										method : 'POST',
 										url : '/iTrust2/api/v1/officevisits',
@@ -207,6 +224,8 @@
 							<li><a href="#">Add Patient -- Not Implemented</a></li>
 							<li><a href="/iTrust2/hcp/documentOfficeVisit.html"
 								id="documentOfficeVisit">Document Office Visit</a></li>
+              <li><a href="/iTrust2/hcp/addPrescription.html"
+                id="addPrescription">Add Prescription</a></li>
 						</ul></li>
 					<li class="dropdown"><a class="dropdown-toggle"
 						data-toggle="dropdown" href="#">Edit<span class="caret"></span></a>
@@ -217,6 +236,8 @@
 							      id="editOfficeVisit">Edit Office Visit</a></li>
 							<li><a href="/iTrust2/changePassword"
 								id="changepassword">Change Password</a></li>
+              <li><a href="/iTrust2/hcp/managePrescriptions.html"
+                id="managePrescriptions">Manage Prescriptions</a></li>
 						</ul></li>
 				</ul>
 			</div>
@@ -352,6 +373,87 @@
 									{{psmokes}}
 							</label></li>
 						</ul>
+					</td>
+				</tr>
+			</table>
+<!--<h2>Patient Demographics</h2>
+<table>
+    				<tr>
+					<td style="text-align:right;padding:5px"><b>First Name:</b></td>
+					<td><input type="text" name="height" ng-model="visit.fName"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Last Name:</b></td>
+					<td><input type="text" name="weight" ng-model="visit.lName"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Preferred Name:</b></td>
+					<td><input type="text" name="head" ng-model="visit.pName"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Mother:</b></td>
+					<td><input type="text" name="systolic" ng-model="visit.mother"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Father:</b></td>
+					<td><input type="text" name="systolic" ng-model="visit.father"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Street Address 1:</b></td>
+					<td><input type="text" name="systolic" ng-model="visit.address1"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Street Address 2:</b></td>
+					<td><input type="text" name="systolic" ng-model="visit.address2"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>City:</b></td>
+					<td><input type="text" name="systolic" ng-model="visit.city"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>State:</b></td>
+					<td><select ng-model="visit.state">
+							<option name="state" ng-repeat="s in state" ng-value="{{s}}">{{s}}</option>
+					</select></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Zip Code:</b></td>
+					<td><input type="text" name="systolic" ng-model="visit.zipCode"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Phone Number:</b></td>
+					<td><input type="text" name="systolic" ng-model="visit.phoneNumber"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Date of Birth:</b></td>
+					<td><input type="text" name="systolic" ng-model="visit.dob"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Ethnicity:</b></td>
+					<td><select ng-model="visit.ethnicity">
+							<option name="ethnicity" ng-repeat="eth in ethnicity" ng-value="{{eth}}">{{eth}}</option>
+					</select></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Gender:</b></td>
+					<td><select ng-model="visit.gender">
+							<option name="gender" ng-repeat="gen in gender" ng-value="{{gen}}">{{gen}}</option>
+					</select></td>
+				</tr>
+			</table>-->
+<h2>Select Diagnosis</h2>
+			<table>
+				<tr>
+
+					<td style="text-align:left;padding:5px">
+						<!-- <select id="repeatDiagnoses" style="width:300px" ng-model ="visit.diagnosis" size="15">    
+								<option id="noDiagnosis" ng-value="" selected>--Select, if applicable--</option>                           
+					            <option id="diagnosis" ng-repeat="d in diagnoses" ng-value="{{d.name}}">{{d.name}} - {{d.icdCode}}</option>
+					    </select> -->
+					    <select id="repeatDiagnoses" style="width:300px" ng-model="visit.diagnosis" 
+					    	ng-options="d.name as d.name + ' - ' + d.icdCode for d in diagnoses" size="15">
+					    	<option value="">--Select option, if applicable--</option>
+					    </select>
 					</td>
 				</tr>
 			</table>
