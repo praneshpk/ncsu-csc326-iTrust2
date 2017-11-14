@@ -194,7 +194,7 @@ public class DiagnosisStepDefs {
         notes.clear();
         notes.sendKeys( "Patient appears pretty much alive" );
 
-        final WebElement patient = driver.findElement( By.name( "patient" ) );
+        final WebElement patient = driver.findElement( By.name( "name" ) );
         patient.click();
 
         final WebElement type = driver.findElement( By.name( "type" ) );
