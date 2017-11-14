@@ -52,7 +52,7 @@ public class APIDiagnosisTest {
      */
     @Test
     public void testDiagnosisAPI () throws Exception {
-        final Diagnosis d = new Diagnosis( "name1", "H1.1" );
+        final Diagnosis d = new Diagnosis( "name1", "H40.0" );
         mvc.perform( post( "/api/v1/creatediagnosis" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( d ) ) );
         mvc.perform( get( "/api/v1/diagnosis/name1" ) ).andExpect( status().isOk() )

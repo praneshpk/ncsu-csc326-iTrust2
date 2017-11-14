@@ -21,19 +21,17 @@
 											$scope.diagnoses = response.data;
 										});
 
-								console.log($scope);
-
 								$scope.submit = function() {
 									$scope.errorMsg = "";
 									$scope.hasError = false;
 									$scope.hasMessage = false;
 									
-									if ($scope.diagnosis.name == null) {
+									if ($scope.diagnosis.name == null || $scope.diagnosis.name == "") {
 										$scope.errorMsg += "Please input a name. \n";
 										$scope.hasError = true;
 									}
 									
-									if ($scope.diagnosis.icdCode == null) {
+									if ($scope.diagnosis.icdCode == null || $scope.diagnosis.icdCode == "") {
 										$scope.errorMsg += "Please input an icd code.\n";
 										$scope.hasError = true;
 									}
@@ -44,11 +42,11 @@
 										url : '/iTrust2/api/v1/creatediagnosis',
 										data : $scope.diagnosis
 									}).then(function(response) {
-										$scope.message="Diagnosis created successfully";
+										$scope.message="Successfully updated. Refresh to see changes.";
 										$scope.hasMessage = true;
 										console.log(response);
 									}, function(rejection) {
-										$scope.message="Error occurred creating diagnosis";
+										$scope.message="Error: Incorrect ICD-10 code format or code already exists.";
 										console.log(rejection);
 										$scope.hasMessage = true;
 									})
