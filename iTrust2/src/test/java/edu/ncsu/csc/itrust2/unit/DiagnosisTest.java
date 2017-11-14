@@ -40,7 +40,7 @@ public class DiagnosisTest {
         final Diagnosis d1 = new Diagnosis( df );
         assertEquals( "name", d1.getName() );
         assertEquals( "H40.0", d1.getIcdCode() );
-        assertEquals( "name", d1.getId() );
+        assertEquals( "H40.0", d1.getId() );
     }
 
     /**

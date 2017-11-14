@@ -30,11 +30,6 @@ public class Diagnosis extends DomainObject<Hospital> implements Serializable {
     private static final long                           serialVersionUID = 1L;
 
     /**
-     * Regular expression used to validate ICD-10 codes
-     */
-    private final String                                icdRegEx         = "([A-TV-Z][0-9][A-Z0-9](\\.?[A-Z0-9]{0,4})?)";
-
-    /**
      * In-memory cache that will store instances of the Hospital to avoid
      * retrieval trips to the database.
      */
@@ -46,7 +41,6 @@ public class Diagnosis extends DomainObject<Hospital> implements Serializable {
      */
     @NotEmpty
     @Length ( max = 255 )
-    @Id
     private String                                      name;
 
     /**
@@ -54,6 +48,7 @@ public class Diagnosis extends DomainObject<Hospital> implements Serializable {
      */
     @NotEmpty
     @Length ( max = 255 )
+    @Id
     private String                                      icdCode;
 
     /**
@@ -63,7 +58,7 @@ public class Diagnosis extends DomainObject<Hospital> implements Serializable {
      *            a DiagnosisForm to convert to a diagnosis
      */
     public Diagnosis ( final DiagnosisForm form ) {
-        if ( Pattern.matches( icdRegEx, form.getIcdCode() ) ) {
+        if ( Pattern.matches( "([A-TV-Z][0-9][A-Z0-9](\\.?[A-Z0-9]{0,4})?)", form.getIcdCode() ) ) {
             setIcdCode( form.getIcdCode() );
             setName( form.getName() );
         }
@@ -81,7 +76,7 @@ public class Diagnosis extends DomainObject<Hospital> implements Serializable {
      *            the icdCode to be added
      */
     public Diagnosis ( final String name, final String icdCode ) {
-        if ( Pattern.matches( icdRegEx, icdCode ) ) {
+        if ( Pattern.matches( "([A-TV-Z][0-9][A-Z0-9](\\.?[A-Z0-9]{0,4})?)", icdCode ) ) {
             setName( name );
             setIcdCode( icdCode );
         }
@@ -91,18 +86,18 @@ public class Diagnosis extends DomainObject<Hospital> implements Serializable {
     }
 
     /**
-     * Retrieve a Diagnosis from the database or in-memory cache by name.
+     * Retrieve a Diagnosis from the database or in-memory cache by id.
      *
-     * @param name
-     *            Name of the Diagnosis to retrieve
+     * @param code
+     *            Icd-10 code of the Diagnosis to retrieve
      * @return The Diagnosis found, or null if none was found.
      */
-    public static Diagnosis getByName ( final String name ) {
-        Diagnosis diagnosis = cache.get( name );
+    public static Diagnosis getByCode ( final String code ) {
+        Diagnosis diagnosis = cache.get( code );
         if ( null == diagnosis ) {
             try {
-                diagnosis = getWhere( " name = '" + name + "'" ).get( 0 );
-                cache.put( name, diagnosis );
+                diagnosis = getWhere( " name = '" + code + "'" ).get( 0 );
+                cache.put( code, diagnosis );
             }
             catch ( final Exception e ) {
                 // Exception ignored
@@ -185,7 +180,7 @@ public class Diagnosis extends DomainObject<Hospital> implements Serializable {
      */
     @Override
     public String getId () {
-        return getName();
+        return getIcdCode();
     }
 
 }

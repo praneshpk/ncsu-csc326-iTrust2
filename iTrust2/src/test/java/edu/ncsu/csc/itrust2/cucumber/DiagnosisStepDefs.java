@@ -56,13 +56,13 @@ public class DiagnosisStepDefs {
         /* Create patient record */
 
         driver.get( baseUrl );
-        WebElement username = driver.findElement( By.name( "username" ) );
+        final WebElement username = driver.findElement( By.name( "username" ) );
         username.clear();
         username.sendKeys( "patient" );
-        WebElement password = driver.findElement( By.name( "password" ) );
+        final WebElement password = driver.findElement( By.name( "password" ) );
         password.clear();
         password.sendKeys( "123456" );
-        WebElement submit = driver.findElement( By.className( "btn" ) );
+        final WebElement submit = driver.findElement( By.className( "btn" ) );
         submit.click();
         ( (JavascriptExecutor) driver ).executeScript( "document.getElementById('editdemographics').click();" );
         try {
@@ -165,19 +165,19 @@ public class DiagnosisStepDefs {
 
     /**
      * Puts a diagnosis in the database
-     * 
+     *
      * @param name
      *            of the diagnosis
      * @param code
      *            of the diagnosis
      */
     @Given ( "^The diagnosis exists with the name (.+) and the code (.+)" )
-    public void insetDiagnosis ( String name, String code ) {
+    public void insetDiagnosis ( final String name, final String code ) {
         HibernateDataGenerator.generateDiagnosis( name, code );
     }
 
     @Given ( "^An office visit has been created with a diagnosis of (.+)$" )
-    public void createOfficeVisit ( String name ) {
+    public void createOfficeVisit ( final String name ) {
         HibernateDataGenerator.generateOfficeVist( name );
     }
 
@@ -285,16 +285,17 @@ public class DiagnosisStepDefs {
     @When ( "^The admin creates a diagnosis with the name (.*) and the code (.*)$" )
     public void createDiagnosis ( final String diagnosisName, final String diagnosisCode ) {
 
-        final WebElement nameOfDiagnosis = driver.findElement( By.name( "name" ) );
+        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "nameInput" ) ) );
+        final WebElement nameOfDiagnosis = driver.findElement( By.name( "nameInput" ) );
         nameOfDiagnosis.clear();
         nameOfDiagnosis.sendKeys( diagnosisName );
 
-        final WebElement codeOfDiagnosis = driver.findElement( By.name( "code" ) );
+        final WebElement codeOfDiagnosis = driver.findElement( By.name( "codeInput" ) );
         codeOfDiagnosis.clear();
         codeOfDiagnosis.sendKeys( diagnosisCode );
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "submit" ) ) );
-        final WebElement submit = driver.findElement( By.name( "submit" ) );
+        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "submitBtn" ) ) );
+        final WebElement submit = driver.findElement( By.name( "submitBtn" ) );
         submit.click();
     }
 
@@ -312,7 +313,7 @@ public class DiagnosisStepDefs {
         try {
             Thread.sleep( 500 );
         }
-        catch ( InterruptedException e ) {
+        catch ( final InterruptedException e ) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -332,10 +333,10 @@ public class DiagnosisStepDefs {
     public void diagnosisCreationSuccessful () {
         try {
             Thread.sleep( 500 );
-            assertTrue( driver.getPageSource().contains( "Diagnosis created successfully" ) );
+            assertTrue( driver.getPageSource().contains( "Successfully updated." ) );
 
         }
-        catch ( InterruptedException e ) {
+        catch ( final InterruptedException e ) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -345,12 +346,12 @@ public class DiagnosisStepDefs {
     public void diagnosisCreationUnsuccessful () {
         try {
             Thread.sleep( 500 );
-            assertTrue( driver.getPageSource().contains( "Error occurred creating diagnosis" )
+            assertTrue( driver.getPageSource().contains( "Error" )
                     || driver.getPageSource().contains( "Please input a name" )
                     || driver.getPageSource().contains( "Please input an idc code" ) );
 
         }
-        catch ( InterruptedException e ) {
+        catch ( final InterruptedException e ) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
