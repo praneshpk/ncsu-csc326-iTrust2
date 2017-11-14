@@ -17,6 +17,10 @@ import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -70,6 +74,19 @@ public class ForgotPasswordController {
     }
 
     /**
+     * Returns the reset password page
+     *
+     * @param model
+     *            Data from the front end
+     * @return Page to display to the user
+     */
+    @GetMapping ( "/resetPassword" )
+    @PreAuthorize ( "hasAuthority('CHANGE_PASSWORD_PRIVILEGE')" )
+    public String resetPassword ( final Model model ) {
+        return "/resetPassword";
+    }
+
+    /**
      * Set the user's password
      *
      * @param pForm
@@ -119,12 +136,16 @@ public class ForgotPasswordController {
      *            token for user
      * @return Page to display to the user
      */
-    @GetMapping ( "/validate" )
+    @GetMapping ( "/password/validate" )
     public String validate ( final Model model, @RequestParam ( "id" ) final String id,
             @RequestParam ( "token" ) final String token ) {
         final boolean valid = PasswordResetToken.validateToken( token, id );
         if ( valid ) {
-            return "/resetPassword";
+            final User user = User.getByName( id );
+            final Authentication request = new UsernamePasswordAuthenticationToken( user.getUsername(), null,
+                    AuthorityUtils.createAuthorityList( user.getRole().toString(), "CHANGE_PASSWORD_PRIVILEGE" ) );
+            SecurityContextHolder.getContext().setAuthentication( request );
+            return "redirect:/resetPassword";
         }
         else {
             return "/accessdenied";
@@ -140,7 +161,7 @@ public class ForgotPasswordController {
      *            contains email to recover
      * @return a response entity detailing success of operation
      */
-    @PostMapping ( "/passwordrecovery" )
+    @PostMapping ( "/password/passwordrecovery" )
     public ResponseEntity passwordRecovery ( final HttpServletRequest request,
             @Valid @RequestBody final EmailForm pForm ) {
         final String email = pForm.getEmail();
@@ -156,7 +177,6 @@ public class ForgotPasswordController {
             Transport.send( msg );
         }
         catch ( final Exception e ) {
-            System.out.print( "Email failed to send." );
             return new ResponseEntity( "Email failed to send: " + e.getMessage(), HttpStatus.CONFLICT );
         }
 
@@ -183,7 +203,7 @@ public class ForgotPasswordController {
     private MimeMessage createEmail ( final Session session, final User user, final String token,
             final String recipientEmail ) throws AddressException, MessagingException {
         // ideally the context path shouldn't be hardcoded
-        final String link = "http://localhost:8080/iTrust2/validate?id=" + user.getId() + "&token=" + token;
+        final String link = "http://localhost:8080/iTrust2/password/validate?id=" + user.getId() + "&token=" + token;
         final MimeMessage msg = new MimeMessage( session );
         msg.setFrom( new InternetAddress( "iTrustSupTeam@gmail.com" ) );
         msg.addRecipient( RecipientType.TO, new InternetAddress( recipientEmail ) );

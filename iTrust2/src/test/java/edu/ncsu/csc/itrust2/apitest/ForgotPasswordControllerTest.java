@@ -2,6 +2,7 @@ package edu.ncsu.csc.itrust2.apitest;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Calendar;
@@ -86,7 +87,7 @@ public class ForgotPasswordControllerTest {
         // **TEST** Test the password recovery endpoint
         final EmailForm rForm = new EmailForm();
         rForm.setEmail( "badmemoryhcp@gmail.com" );
-        mvc.perform( post( "/passwordrecovery" ).contentType( MediaType.APPLICATION_JSON )
+        mvc.perform( post( "/password/passwordrecovery" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( rForm ) ) ).andExpect( status().isOk() );
 
         // **TEST** Test the validate endpoint
@@ -96,7 +97,9 @@ public class ForgotPasswordControllerTest {
         final PasswordResetToken token = new PasswordResetToken( u, "token", c );
         token.save();
 
-        mvc.perform( get( "/validate" ).param( "id", "pwtest" ).param( "token", "token" ) ).andExpect( status().isOk() )
-                .andReturn();
+        mvc.perform( get( "/password/validate" ).param( "id", "pwtest" ).param( "token", "token" ) )
+                .andExpect( redirectedUrl( "/resetPassword" ) ).andReturn();
+
+        mvc.perform( get( "/resetPassword" ) ).andExpect( status().isOk() );
     }
 }

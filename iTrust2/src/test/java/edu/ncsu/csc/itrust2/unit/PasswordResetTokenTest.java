@@ -21,10 +21,10 @@ public class PasswordResetTokenTest {
     @Test
     public void testCreatePasswordResetToken () {
         // Test the correct user is found for various roles
-        final User user = User.getByName( "antti" );
+        final User user = User.getByName( "patient" );
         final String t = PasswordResetToken.generateToken( user );
         assertNotNull( t );
 
-        assertTrue( PasswordResetToken.validateToken( t, "antti" ) );
+        assertTrue( PasswordResetToken.validateToken( t, "patient" ) );
     }
 }

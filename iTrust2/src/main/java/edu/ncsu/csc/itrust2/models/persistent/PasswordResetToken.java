@@ -13,10 +13,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -107,7 +103,7 @@ public class PasswordResetToken extends DomainObject<PasswordResetToken> {
     }
 
     /**
-     * Create a password reset token and return it
+     * Create a password reset token and return the UUID
      *
      * @param user
      *            user to create reset token for
@@ -136,16 +132,13 @@ public class PasswordResetToken extends DomainObject<PasswordResetToken> {
      * @return whether or not the token was validated
      */
     public static boolean validateToken ( final String token, final String username ) {
-        final User user = User.getByName( username );
         final PasswordEncoder pe = new BCryptPasswordEncoder();
         final List<PasswordResetToken> tokens = getWhere( "self_id = '" + username + "'" );
         if ( !tokens.isEmpty() ) {
-            for ( final PasswordResetToken current : tokens ) {
+            for ( int i = tokens.size() - 1; i >= 0; i-- ) {
+                final PasswordResetToken current = tokens.get( i );
                 if ( pe.matches( token, current.getToken() )
                         && current.getExpiration().after( Calendar.getInstance() ) ) {
-                    final Authentication request = new UsernamePasswordAuthenticationToken( user.getUsername(), null,
-                            AuthorityUtils.createAuthorityList( user.getRole().toString() ) );
-                    SecurityContextHolder.getContext().setAuthentication( request );
                     return true;
                 }
             }
