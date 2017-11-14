@@ -2,6 +2,7 @@ package edu.ncsu.csc.itrust2.models.persistent;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -27,6 +28,11 @@ public class Diagnosis extends DomainObject<Hospital> implements Serializable {
      * Used for serializing the object.
      */
     private static final long                           serialVersionUID = 1L;
+
+    /**
+     * Regular expression used to validate ICD-10 codes
+     */
+    private final String                                icdRegEx         = "([A-TV-Z][0-9][A-Z0-9](\\.?[A-Z0-9]{0,4})?)";
 
     /**
      * In-memory cache that will store instances of the Hospital to avoid
@@ -57,8 +63,13 @@ public class Diagnosis extends DomainObject<Hospital> implements Serializable {
      *            a DiagnosisForm to convert to a diagnosis
      */
     public Diagnosis ( final DiagnosisForm form ) {
-        setIcdCode( form.getIcdCode() );
-        setName( form.getName() );
+        if ( Pattern.matches( icdRegEx, form.getIcdCode() ) ) {
+            setIcdCode( form.getIcdCode() );
+            setName( form.getName() );
+        }
+        else {
+            throw new IllegalArgumentException( "The ICD-10 code did not match the required format." );
+        }
     }
 
     /**
@@ -70,8 +81,13 @@ public class Diagnosis extends DomainObject<Hospital> implements Serializable {
      *            the icdCode to be added
      */
     public Diagnosis ( final String name, final String icdCode ) {
-        setName( name );
-        setIcdCode( icdCode );
+        if ( Pattern.matches( icdRegEx, icdCode ) ) {
+            setName( name );
+            setIcdCode( icdCode );
+        }
+        else {
+            throw new IllegalArgumentException( "The ICD-10 code did not match the required format." );
+        }
     }
 
     /**
