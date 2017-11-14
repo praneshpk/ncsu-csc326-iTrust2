@@ -34,10 +34,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import edu.ncsu.csc.itrust2.forms.ChangePasswordForm;
 import edu.ncsu.csc.itrust2.forms.EmailForm;
 import edu.ncsu.csc.itrust2.forms.ResetPasswordForm;
+import edu.ncsu.csc.itrust2.models.enums.TransactionType;
 import edu.ncsu.csc.itrust2.models.persistent.PasswordResetToken;
 import edu.ncsu.csc.itrust2.models.persistent.Patient;
 import edu.ncsu.csc.itrust2.models.persistent.Personnel;
 import edu.ncsu.csc.itrust2.models.persistent.User;
+import edu.ncsu.csc.itrust2.utils.LoggerUtil;
 
 /**
  * Controller for Forgot Password
@@ -100,6 +102,7 @@ public class ForgotPasswordController {
         final PasswordEncoder pe = new BCryptPasswordEncoder();
         user.setPassword( pe.encode( pForm.getPassword() ) );
         user.save();
+        LoggerUtil.log( TransactionType.RESET_PASSWORD, user );
         return new ResponseEntity( user, HttpStatus.OK );
     }
 
@@ -118,6 +121,7 @@ public class ForgotPasswordController {
         if ( pe.matches( pForm.getOldPassword(), user.getPassword() ) ) {
             user.setPassword( pe.encode( pForm.getNewPassword() ) );
             user.save();
+            LoggerUtil.log( TransactionType.CHANGE_PASSWORD, user );
             return new ResponseEntity( user, HttpStatus.OK );
         }
         else {
