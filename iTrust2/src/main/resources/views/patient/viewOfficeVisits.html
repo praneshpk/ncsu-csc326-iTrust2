@@ -4,7 +4,6 @@
 </head>
 <body th:include="layout :: body" th:with="content=~{::content}">
 	<div th:fragment="content">
-
 		<script th:inline="javascript">
 			/* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
 			/*<![CDATA[*/
