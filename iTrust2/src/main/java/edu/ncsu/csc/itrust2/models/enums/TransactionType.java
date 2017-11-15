@@ -142,6 +142,18 @@ public enum TransactionType {
     /**
      * HCP adds a diagnosis
      */
+    CREATE_DIAGNOSIS ( 1000, "Update ICD-10 Codes", true ),
+    /**
+     * User changes password
+     */
+    CHANGE_PASSWORD ( 1100, "Password is changed by user", true ),
+    /**
+     * User resets password
+     */
+    RESET_PASSWORD ( 1101, "Password is reset by the user", true ),
+    /**
+     * HCP adds a diagnosis
+     */
     HCP_ADD_DIAGNOSIS ( 1000, "HCP adds a diagnosis", true ),
     /**
      * HCP or patient views a diagnosis
