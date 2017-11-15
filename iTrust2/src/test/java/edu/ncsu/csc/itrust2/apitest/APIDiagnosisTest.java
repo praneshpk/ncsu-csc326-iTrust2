@@ -1,8 +1,6 @@
 package edu.ncsu.csc.itrust2.apitest;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.Before;
@@ -52,14 +50,12 @@ public class APIDiagnosisTest {
      */
     @Test
     public void testDiagnosisAPI () throws Exception {
-        final Diagnosis d = new Diagnosis( "name1", "H1.1" );
+        final Diagnosis d = new Diagnosis( "name1", "H40.0" );
         mvc.perform( post( "/api/v1/creatediagnosis" ).contentType( MediaType.APPLICATION_JSON )
                 .content( TestUtils.asJsonString( d ) ) );
-        mvc.perform( get( "/api/v1/diagnosis/name1" ) ).andExpect( status().isOk() )
-                .andExpect( content().contentType( MediaType.APPLICATION_JSON_UTF8_VALUE ) );
-
-        // Cannot create same diagnosis twice
+        d.setName( "name2" );
+        // Should be able to just update the name
         mvc.perform( post( "/api/v1/creatediagnosis" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( d ) ) ).andExpect( status().isConflict() );
+                .content( TestUtils.asJsonString( d ) ) ).andExpect( status().isOk() );
     }
 }

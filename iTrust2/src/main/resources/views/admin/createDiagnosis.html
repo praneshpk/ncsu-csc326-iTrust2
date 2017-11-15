@@ -1,100 +1,132 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:include="layout :: head(title=~{::title},links=~{})">
-<title>Create Diagnosis</title>
+<title>Update ICD-10 Codes</title>
 </head>
 <body th:include="layout :: body" th:with="content=~{::content}">
+	
 	<div th:fragment="content">
-
 		<script th:inline="javascript">
 			/* Otherwise Thymeleaf tries to parse Javascript as XML and breaks itself sometimes.  Sigh */
 			/*<![CDATA[*/
 
 			var app = angular.module('myApp', []);
-			app
-					.controller(
-							'addDiagnosisCtrl',
+			app.controller(
+							'updateIcdCtrl',
 							function($scope, $http) {
 								
+								$scope.myself = /*[[${#httpServletRequest.remoteUser}]]*/null;
+								$scope.showAddMessage = false;
+								$scope.addMessage = "No message.";
+								$scope.showUpdateMessage = false;
+								$scope.updateMessage = "No message."
 								
-								$http.get("/iTrust2/api/v1/diagnoses").then(
-										function(response) {
-											$scope.diagnoses = response.data;
-										});
-
-								console.log($scope);
-
-								$scope.submit = function() {
-									$scope.errorMsg = "";
-									$scope.hasError = false;
-									$scope.hasMessage = false;
-									
-									if ($scope.diagnosis.name == null) {
-										$scope.errorMsg += "Please input a name. \n";
-										$scope.hasError = true;
-									}
-									
-									if ($scope.diagnosis.icdCode == null) {
-										$scope.errorMsg += "Please input an icd code.\n";
-										$scope.hasError = true;
-									}
-									
-
-									$http({
-										method : 'POST',
-										url : '/iTrust2/api/v1/creatediagnosis',
-										data : $scope.diagnosis
-									}).then(function(response) {
-										$scope.message="Diagnosis created successfully";
-										$scope.hasMessage = true;
-										console.log(response);
-									}, function(rejection) {
-										$scope.message="Error occurred creating diagnosis";
-										console.log(rejection);
-										$scope.hasMessage = true;
-									})
+								$scope.getICDCodes = function(){
+									$http.get("/iTrust2/api/v1/diagnoses").then(
+											function(response) {
+												$scope.diagnoses = response.data;
+											});
 								}
+								
+								$scope.addICD = function(){
+									
+									if ($scope.diagnosis.icdCode == "" || $scope.diagnosis.icdCode == null){
+										$scope.addMessage = "Please enter the ICD-10 code.";
+										$scope.showAddMessage = true;
+										return;
+									}
+									
+									if ($scope.diagnosis.name == "" || $scope.diagnosis.name == null){
+										$scope.addMessage = "Please enter the name of the ICD-10 code.";
+										$scope.showAddMessage = true;
+										return;
+									}
+										
+									
+									$http.post("/iTrust2/api/v1/creatediagnosis", $scope.diagnosis).then(
+											function(response) {
+												$scope.addMessage = "Successfully updated. Refresh to see changes.";
+												$scope.showAddMessage = true;
+												$scope.diagnosis.icdCode = "";
+												$scope.diagnosis.name = "";
+											},
+											function(errResponse) {
+												$scope.addMessage = "Error: Incorrect ICD-10 code format.";
+												$scope.showAddMessage = true;
+											});
+								}
+								
+								$scope.updateICD = function(){
+									
+									if ($scope.selectedICD.icdCode == "" || $scope.selectedICD.icdCode == null){
+										$scope.updateMessage = "Please select an ICD-10 code.";
+										$scope.showUpdateMessage = true;
+										return;
+									}
+									
+									if ($scope.selectedICD.name == "" || $scope.selectedICD.name == null){
+										$scope.updateMessage = "Please enter the new name of the ICD-10 code.";
+										$scope.showUpdateMessage = true;
+										return;
+									}
+										
+									
+									$http.post("/iTrust2/api/v1/creatediagnosis", $scope.selectedICD).then(
+											function(response) {
+												$scope.updateMessage = "Successfully updated. Refresh to see changes.";
+												$scope.showUpdateMessage = true;
+												$scope.selectedICD.icdCode = "";
+												$scope.selectedICD.name = "";
+											},
+											function(errResponse) {
+												$scope.updateMessage = "Error while updating ICD-10 code.";
+												$scope.showUpdateMessage = true;
+											});
+								}
+								
+								$scope.getICDCodes();
+								
 							});
 
 			/*]]>*/
 		</script>
 
-
-
-		<div ng-app="myApp" ng-controller="addDiagnosisCtrl as ctrl">
-			<h1>Edit ICD-10 Codes</h1>
-			<div style="float:left;padding: 3%">
-				<h3>Add or Update ICD-10 Code</h3>
-				<table>
-					<tr>
-						<td style="text-align:right;padding:5px"><b>Name:</b></td>
-						<td><input type="text" name="name" ng-model="diagnosis.name" required="true"/></td>
-					</tr>
-					<tr>
-						<td style="text-align:right;padding:5px"><b>ICD-10 Code:</b></td>
-						<td><input type="text" name="name" ng-model="diagnosis.icdCode" required="true"/></td>
-					</tr>
-				</table>
-				
-				<br />
-				
-				<button ng-click="submit()" name="submit">Submit</button>
-				
-				<div name="errorMsg" ng-show="hasError">{{errorMsg}}</div>
-
-				<div name="success" ng-show="hasMessage">{{message}}</div>
-				
-				<br />
-				<br />
-				
-				<h3>Current iTrust2 ICD-10 Codes</h3>
-				<select style="width: 300px;" size="15">
-				    <option  ng-repeat="d in diagnoses" name="diagnosis">{{d.name}} - {{d.icdCode}}</option>
-				</select>
-				
+		<div ng-app="myApp" ng-controller="updateIcdCtrl">
+			
+			<div>
+			<h3>Add ICD-10 Code</h3>
+			<p>ICD-10 Code</p>
+			<input ng-model="diagnosis.icdCode" name = "codeInput"> </input>
+			<p>Name of ICD-10 Code</p>
+			<input ng-model="diagnosis.name" name = "nameInput"> </input>
 			</div>
+			
+			<button type="button" ng-click="addICD()" name = "submitBtn">Add ICD-10 Code</button>
+			
+			<div ng-show="showAddMessage">{{addMessage}}</div>
+			
+			<h3>ICD-10 codes in iTrust2</h3>
+						<ul>
+							<li ng-repeat="currentICD in diagnoses">
+								<label><input type="radio" ng-model="$parent.selectedICD.icdCode" name="selectedICD"
+									value="{{currentICD.icdCode}}"/> {{currentICD.icdCode}} - {{currentICD.name}}
+								</label>
+							</li>
+						</ul>
+						
+			<div ng-if="diagnoses.length == 0">None</div>
+			
+			<div>
+			<h3>Update Selected ICD-10 Code</h3>
+			<p>New Name of ICD-10 Code</p>
+			<input ng-model="selectedICD.name" name = "updateNameInput"> </input>
+			</div>
+			
+			<button type="button" ng-click="updateICD()" name = "submitUpdateBtn">Update ICD-10 Code</button>
+			
+			<div ng-show="showUpdateMessage">{{updateMessage}}</div>
 
+			
 		</div>
-
 	</div>
 </body>
 </html>

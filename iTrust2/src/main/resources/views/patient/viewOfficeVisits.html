@@ -82,6 +82,11 @@
 											$scope.selectedVisit.date = $scope.getDate($scope.visits[i].date);
 											$scope.selectedVisit.id = $scope.visits[i].id;
 											$scope.selectedVisit.metrics = $scope.visits[i].basicHealthMetrics;
+											$scope.diagnosed = false;
+											$scope.selectedVisit.diagnosis = $scope.visits[i].diagnosis;
+											if($scope.selectedVisit.diagnosis) {
+												$scope.diagnosed = true;
+											}
 											console.log($scope.selectedVisit.metrics);
 										     $scope.three = false;
 										     $scope.threeAndUp = false;
@@ -141,8 +146,6 @@
 						<ul class="dropdown-menu">
 							<li><a href="/iTrust2/patient/editDemographics"
 								id="editdemographics">Edit Demographics</a></li>
-							<li><a href="/iTrust2/changePassword"
-								id="changepassword">Change Password</a></li>
 						</ul></li>
 				</ul>
 			</div>
@@ -155,7 +158,7 @@
 								<ul>
 										<li ng-repeat="visit in visits"><h4> <!-- https://stackoverflow.com/questions/32051486/how-to-call-javascript-function-on-radio-button-click-not-on-focus -->
 												<label><input type="radio" ng-model="$parent.selectedVisitID"
-												ng-click="populateVisit()" name="name" value="{{visit.id}}"
+												ng-click="populateVisit()" name="{{visit.formattedDate}}" value="{{visit.id}}" id="{{visit.id}}"
 												required="true" />{{visit.type}} on {{visit.formattedDate}} at {{getTime(visit.date)}}</label>
 										</h4></li>
 									</ul>
@@ -225,6 +228,13 @@
 					<td style="text-align:right;padding:5px">
 						{{selectedVisit.metrics.patientSmokingStatus}}
 					</td>
+				</tr>
+			</table>
+			<h2 ng-show="diagnosed">Diagnosis</h2>
+			<table ng-show="diagnosed">
+				<tr>
+					<td style="text-align:right;padding:5px"><b>Diagnosis:</b></td>
+					<td>{{selectedVisit.diagnosis.name}}</td>
 				</tr>
 			</table>
 			</div>
