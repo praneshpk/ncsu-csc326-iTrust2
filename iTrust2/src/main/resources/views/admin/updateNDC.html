@@ -47,10 +47,11 @@
 									
 									$http.post("/iTrust2/api/v1/ndccodes", $scope.ndccode).then(
 											function(response) {
-												$scope.addMessage = "Successfully updated. Refresh to see changes.";
+												$scope.addMessage = "Successfully added.";
 												$scope.showAddMessage = true;
 												$scope.ndccode.id = "";
 												$scope.ndccode.name = "";
+												$scope.getNDCCodes();
 											},
 											function(errResponse) {
 												$scope.addMessage = "Error: Incorrect NDC code format.";
@@ -75,10 +76,11 @@
 									
 									$http.post("/iTrust2/api/v1/ndccodes", $scope.selectedNDC).then(
 											function(response) {
-												$scope.updateMessage = "Successfully updated. Refresh to see changes.";
+												$scope.updateMessage = "Successfully updated.";
 												$scope.showUpdateMessage = true;
 												$scope.selectedNDC.id = "";
 												$scope.selectedNDC.name = "";
+												$scope.getNDCCodes();
 											},
 											function(errResponse) {
 												$scope.updateMessage = "Error while updating NDC code.";
