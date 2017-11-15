@@ -1,6 +1,7 @@
 package edu.ncsu.csc.itrust2.unit;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -20,10 +21,10 @@ public class PasswordResetTokenTest {
     @Test
     public void testCreatePasswordResetToken () {
         // Test the correct user is found for various roles
-        final String t = PasswordResetToken.generateToken( User.getByName( "antti" ) );
+        final User user = User.getByName( "patient" );
+        final String t = PasswordResetToken.generateToken( user );
         assertNotNull( t );
 
-        final String t1 = PasswordResetToken.generateToken( User.getByName( "patient" ) );
-        assertNotNull( t1 );
+        assertTrue( PasswordResetToken.validateToken( t, "patient" ) );
     }
 }

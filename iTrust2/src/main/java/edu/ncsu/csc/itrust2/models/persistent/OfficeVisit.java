@@ -205,7 +205,7 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
         setHospital( Hospital.getByName( ovf.getHospital() ) );
         setBasicHealthMetrics( new BasicHealthMetrics( ovf ) );
         setPrescriptions( new ArrayList<Prescription>() );
-        setDiagnosis( Diagnosis.getByName( ovf.getDiagnosis() ) );
+        setDiagnosis( Diagnosis.getByCode( ovf.getDiagnosis() ) );
 
         final Patient p = Patient.getPatient( patient );
         if ( p == null || p.getDateOfBirth() == null ) {

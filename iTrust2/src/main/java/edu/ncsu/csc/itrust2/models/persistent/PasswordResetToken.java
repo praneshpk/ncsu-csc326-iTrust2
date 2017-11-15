@@ -103,7 +103,7 @@ public class PasswordResetToken extends DomainObject<PasswordResetToken> {
     }
 
     /**
-     * Create a password reset token and return it
+     * Create a password reset token and return the UUID
      *
      * @param user
      *            user to create reset token for
@@ -117,14 +117,44 @@ public class PasswordResetToken extends DomainObject<PasswordResetToken> {
         final String uuid = UUID.randomUUID().toString();
         final Calendar exp = Calendar.getInstance();
         exp.add( Calendar.MINUTE, ALLOWED_MINS );
-        final PasswordEncoder pe = new BCryptPasswordEncoder();
-        final PasswordResetToken token = new PasswordResetToken( user, pe.encode( uuid ), exp );
+        final PasswordResetToken token = new PasswordResetToken( user, uuid, exp );
         token.save();
         return uuid;
     }
 
     /**
-     * Private constructor for reset tokens
+     * Validate a token
+     *
+     * @param token
+     *            token to validate
+     * @param username
+     *            user to validate
+     * @return whether or not the token was validated
+     */
+    public static boolean validateToken ( final String token, final String username ) {
+        final PasswordEncoder pe = new BCryptPasswordEncoder();
+        final List<PasswordResetToken> tokens = getWhere( "self_id = '" + username + "'" );
+        if ( !tokens.isEmpty() ) {
+            for ( int i = tokens.size() - 1; i >= 0; i-- ) {
+                final PasswordResetToken current = tokens.get( i );
+                if ( pe.matches( token, current.getToken() )
+                        && current.getExpiration().after( Calendar.getInstance() ) ) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Empty constructor
+     */
+    public PasswordResetToken () {
+    }
+
+    /**
+     * constructor for reset tokens
      *
      * @param user
      *            user requesting reset
@@ -133,9 +163,10 @@ public class PasswordResetToken extends DomainObject<PasswordResetToken> {
      * @param expiration
      *            expiration time of token
      */
-    private PasswordResetToken ( final User user, final String token, final Calendar expiration ) {
+    public PasswordResetToken ( final User user, final String token, final Calendar expiration ) {
         this.user = user;
-        this.token = token;
+        final PasswordEncoder pe = new BCryptPasswordEncoder();
+        this.token = pe.encode( token );
         this.expiration = expiration;
     }
 

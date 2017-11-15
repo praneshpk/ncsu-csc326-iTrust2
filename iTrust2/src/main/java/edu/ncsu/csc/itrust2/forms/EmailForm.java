@@ -7,12 +7,12 @@ import org.hibernate.validator.constraints.NotEmpty;
  *
  * @author WillGlas
  */
-public class PasswordResetForm {
+public class EmailForm {
 
     /**
      * Empty constructor
      */
-    public PasswordResetForm () {
+    public EmailForm () {
     }
 
     /**
