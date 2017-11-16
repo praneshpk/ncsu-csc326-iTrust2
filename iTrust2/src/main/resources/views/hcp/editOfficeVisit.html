@@ -61,6 +61,11 @@
 									$scope.types = response.data;
 								});
 								
+								$http.get("/iTrust2/api/v1/diagnoses")
+								.then(function(response) {
+									$scope.diagnoses = response.data;
+								});
+								
 								$http.get("/iTrust2/api/v1/housesmoking")
 								.then(function(response) {
 									$scope.housesmoking = response.data;
@@ -118,6 +123,11 @@
 											$scope.selectedVisit.tri = $scope.visits[i].basicHealthMetrics.tri;
 											$scope.selectedVisit.houseSmokingStatus = $scope.visits[i].basicHealthMetrics.houseSmokingStatus;
 											$scope.selectedVisit.patientSmokingStatus = $scope.visits[i].basicHealthMetrics.patientSmokingStatus;
+											$scope.selectedVisit.diagnosis = $scope.visits[i].diagnosis;
+											
+											console.log($scope.diagnoses);
+											console.log($scope.selectedVisit);
+											
 										     $scope.three = false;
 										     $scope.threeAndUp = false;
 										     $scope.twelveAndUp = false;
@@ -416,11 +426,22 @@
 					</td>
 				</tr>
 			</table>
-						<button ng-click="submit()" name="submit">Edit Office
-				Visit</button>
-				<div name="errorMsg"><pre>{{errorMsg}}</pre></div>
-							<div name="success">{{message}}</div>
+			<h2>Diagnosis</h2>
+			<table>
+				<tr>
+					<td style="text-align:left;padding:5px">
+					    <select id="repeatDiagnoses" style="width:300px" ng-model="selectedVisit.diagnosis" 
+					    	ng-options="d.name + ' - ' + d.icdCode for d in diagnoses track by d.icdCode" size="15">
+					    </select>
+					</td>
+				</tr>
+			</table>
+			
+			<button ng-click="submit()" name="submit">Edit Office Visit</button>
+			<div name="errorMsg"><pre>{{errorMsg}}</pre></div>
+			<div name="success">{{message}}</div>
 			</div>
+			
 			</div>
 
 			<br />

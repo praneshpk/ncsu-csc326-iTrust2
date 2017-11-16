@@ -531,12 +531,7 @@
 <h2>Select Diagnosis</h2>
 			<table>
 				<tr>
-
 					<td style="text-align:left;padding:5px">
-						<!-- <select id="repeatDiagnoses" style="width:300px" ng-model ="visit.diagnosis" size="15">    
-								<option id="noDiagnosis" ng-value="" selected>--Select, if applicable--</option>                           
-					            <option id="diagnosis" ng-repeat="d in diagnoses" ng-value="{{d.name}}">{{d.name}} - {{d.icdCode}}</option>
-					    </select> -->
 					    <select id="repeatDiagnoses" style="width:300px" ng-model="visit.diagnosis" 
 					    	ng-options="d.name as d.name + ' - ' + d.icdCode for d in diagnoses" size="15">
 					    	<option value="">--Select option, if applicable--</option>
