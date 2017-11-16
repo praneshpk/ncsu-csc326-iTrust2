@@ -80,18 +80,18 @@ public class OfficeVisitTest {
         }
         // If no diagnosis exist in database then skip
         if ( d == null ) {
-            final Diagnosis dCreated = new Diagnosis( "testName", "H101.1" );
+            final Diagnosis dCreated = new Diagnosis( "testName", "H40.1" );
             dCreated.save();
             d = Diagnosis.getDiagnoses().get( 0 );
         }
         if ( d != null ) {
-            final String diagnosisName = d.getName();
+            final String diagnosisCode = d.getIcdCode();
             of.setDiagnosis( d );
             assertEquals( d, of.getDiagnosis() );
-            form.setDiagnosis( diagnosisName );
-            assertEquals( d.getName(), diagnosisName );
-            // Test getting from db by the name
-            final Diagnosis dFinal = Diagnosis.getByName( diagnosisName );
+            form.setDiagnosis( diagnosisCode );
+            assertEquals( d.getId(), diagnosisCode );
+            // Test getting from db by the id
+            final Diagnosis dFinal = Diagnosis.getByCode( diagnosisCode );
             if ( dFinal == null ) {
                 fail();
             }

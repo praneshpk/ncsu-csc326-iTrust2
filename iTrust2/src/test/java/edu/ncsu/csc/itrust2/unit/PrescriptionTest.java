@@ -88,7 +88,7 @@ public class PrescriptionTest {
         visit.setPatient( "AliceThirteen" );
         visit.setNotes( "Test office visit" );
         visit.setType( AppointmentType.GENERAL_CHECKUP.toString() );
-        visit.setHospital( "General Hostpital" );
+        visit.setHospital( "General Hospital" );
         visit.setDiastolic( 10 );
         visit.setSystolic( 10 );
         visit.setHouseSmokingStatus( HouseholdSmokingStatus.INDOOR );
