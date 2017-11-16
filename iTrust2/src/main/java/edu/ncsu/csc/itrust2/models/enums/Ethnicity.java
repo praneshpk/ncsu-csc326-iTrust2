@@ -1,12 +1,14 @@
 package edu.ncsu.csc.itrust2.models.enums;
 
+import java.io.Serializable;
+
 /**
  * Enum representing possible ethnicities known by the system.
  *
  * @author Kai Presler-Marshall
  *
  */
-public enum Ethnicity {
+public enum Ethnicity implements Serializable {
 
     /**
      * Caucasian
@@ -15,7 +17,8 @@ public enum Ethnicity {
     /**
      * African-American
      */
-    AfricanAmerican ( "African American" ),
+    AfricanAmerican ( "African American" ), // <- no idea how to get this text
+                                            // value for drop down menus
     /**
      * Hispanic
      */
@@ -74,7 +77,8 @@ public enum Ethnicity {
      */
     public static Ethnicity parse ( final String ethnicityStr ) {
         for ( final Ethnicity ethnicity : values() ) {
-            if ( ethnicity.getName().equals( ethnicityStr ) ) {
+            if ( ethnicity.getName().equals( ethnicityStr )
+                    || ethnicity.getName().replaceAll( "\\s", "" ).equals( ethnicityStr ) ) {
                 return ethnicity;
             }
         }

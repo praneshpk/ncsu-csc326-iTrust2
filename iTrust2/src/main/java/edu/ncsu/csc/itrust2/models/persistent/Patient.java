@@ -207,6 +207,10 @@ public class Patient extends DomainObject<Patient> implements Serializable {
         setPrescriptions( new ArrayList<Prescription>() );
 
         setId( form.getId() );
+        if(getSelf() != null) {
+        	cache.put( getSelf().getUsername(), this );
+        }
+        
     }
 
     /**
@@ -729,7 +733,7 @@ public class Patient extends DomainObject<Patient> implements Serializable {
     public void setGender ( final Gender gender ) {
         this.gender = gender;
     }
-
+  
     /**
      * Get the list of prescriptions
      *

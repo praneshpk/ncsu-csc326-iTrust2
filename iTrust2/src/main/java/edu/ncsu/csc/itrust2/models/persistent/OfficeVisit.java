@@ -205,6 +205,7 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
         setHospital( Hospital.getByName( ovf.getHospital() ) );
         setBasicHealthMetrics( new BasicHealthMetrics( ovf ) );
         setPrescriptions( new ArrayList<Prescription>() );
+        setDiagnosis( Diagnosis.getByCode( ovf.getDiagnosis() ) );
 
         final Patient p = Patient.getPatient( patient );
         if ( p == null || p.getDateOfBirth() == null ) {
@@ -474,6 +475,25 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
     }
 
     /**
+     * Gets the diagnoses for this office visit.
+     *
+     * @return the diagnoses
+     */
+    public Diagnosis getDiagnosis () {
+        return diagnosis;
+    }
+
+    /**
+     * Sets the diagnoses for this office visit.
+     *
+     * @param diagnosis
+     *            the diagnoses to set
+     */
+    public void setDiagnosis ( final Diagnosis diagnosis ) {
+        this.diagnosis = diagnosis;
+    }
+
+    /**
      * The patient of this office visit
      */
     @NotNull
@@ -541,6 +561,13 @@ public class OfficeVisit extends DomainObject<OfficeVisit> {
     @OneToOne
     @JoinColumn ( name = "appointment_id" )
     private AppointmentRequest appointment;
+
+    /**
+     * The diagnoses given to the patient
+     */
+    @ManyToOne
+    @JoinColumn ( name = "diagnosis_id" )
+    private Diagnosis          diagnosis;
 
     /**
      * Overrides the basic domain object save in order to save basic health

@@ -48,7 +48,7 @@ public enum BloodType {
     /**
      * Name of the BloodType
      */
-    private String name;
+    public String name;
 
     /**
      * Constructor for Enum.
@@ -87,7 +87,8 @@ public enum BloodType {
      */
     public static BloodType parse ( final String typeStr ) {
         for ( final BloodType type : values() ) {
-            if ( type.getName().equals( typeStr ) ) {
+        	//type.to
+            if ( type.name().equals( typeStr ) || type.getName().equals(typeStr) ) {
                 return type;
             }
         }

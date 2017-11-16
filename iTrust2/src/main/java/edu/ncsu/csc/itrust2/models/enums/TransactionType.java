@@ -138,9 +138,31 @@ public enum TransactionType {
     /**
      * Prescription is renewed for a patient by an HCP
      */
-    PRESCRIPTION_RENEW ( 910, "Prescription is renewed for a patient", true )
-
-    ;
+    PRESCRIPTION_RENEW ( 910, "Prescription is renewed for a patient", true ),
+    /**
+     * HCP adds a diagnosis
+     */
+    CREATE_DIAGNOSIS ( 1000, "Update ICD-10 Codes", true ),
+    /**
+     * User changes password
+     */
+    CHANGE_PASSWORD ( 1100, "Password is changed by user", true ),
+    /**
+     * User resets password
+     */
+    RESET_PASSWORD ( 1101, "Password is reset by the user", true ),
+    /**
+     * HCP adds a diagnosis
+     */
+    HCP_ADD_DIAGNOSIS ( 1000, "HCP adds a diagnosis", true ),
+    /**
+     * HCP or patient views a diagnosis
+     */
+    VIEW_DIAGNOSIS ( 1001, "The diagnosis was viewed", true ),
+    /**
+     * Admin creates or updates a diagnosis
+     */
+    UPDATE_ICD_CODE ( 1002, "Update ICD-10 Codes", false );
 
     /**
      * Creates a TransactionType for logging events
