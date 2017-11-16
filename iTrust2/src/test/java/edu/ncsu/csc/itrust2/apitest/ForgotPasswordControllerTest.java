@@ -67,6 +67,7 @@ public class ForgotPasswordControllerTest {
     public void testPasswordRecovery () throws Exception {
         final User u = new User( "pwtest", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.",
                 Role.ROLE_HCP, 1 );
+        u.save();
 
         final PersonnelForm pForm = new PersonnelForm();
         pForm.setFirstName( "bad" );
