@@ -7,22 +7,38 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.support.ui.Select;
 
+import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import io.github.bonigarcia.wdm.PhantomJsDriverManager;
 
 public class EditMyDemographicsStepDefs {
 
-    private final WebDriver driver  = new HtmlUnitDriver( true );
-    private final String    baseUrl = "http://localhost:8080/iTrust2";
+    private WebDriver    driver;
+    private final String baseUrl = "http://localhost:8080/iTrust2";
+
+    @Before
+    public void setUp () {
+        PhantomJsDriverManager.getInstance().setup();
+        driver = new PhantomJSDriver();
+    }
+
+    @After
+    public void teardown () {
+        driver.close();
+    }
 
     @Given ( "A patient exists in the system" )
     public void patientExists () {
         // All tests can safely assume the existence of the 'hcp', 'admin', and
         // 'patient' users
+        PhantomJsDriverManager.getInstance().setup();
+        driver = new PhantomJSDriver();
     }
 
     @When ( "I log in as a patient" )

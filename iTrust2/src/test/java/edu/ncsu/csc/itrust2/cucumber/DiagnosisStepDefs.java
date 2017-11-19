@@ -7,16 +7,16 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
+import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -26,6 +26,7 @@ import edu.ncsu.csc.itrust2.models.enums.PatientSmokingStatus;
 import edu.ncsu.csc.itrust2.models.persistent.BasicHealthMetrics;
 import edu.ncsu.csc.itrust2.mvc.config.WebMvcConfiguration;
 import edu.ncsu.csc.itrust2.utils.HibernateDataGenerator;
+import io.github.bonigarcia.wdm.PhantomJsDriverManager;
 
 @ContextConfiguration ( classes = { RootConfiguration.class, WebMvcConfiguration.class } )
 @WebAppConfiguration
@@ -36,12 +37,21 @@ public class DiagnosisStepDefs {
     @Autowired
     private WebApplicationContext context;
 
-    private final WebDriver       driver  = new HtmlUnitDriver( true );
+    private WebDriver             driver;
     private final String          baseUrl = "http://localhost:8080/iTrust2";
 
     BasicHealthMetrics            expectedBhm;
 
-    WebDriverWait                 wait    = new WebDriverWait( driver, 2 );
+    @Before
+    public void setUp () {
+        PhantomJsDriverManager.getInstance().setup();
+        driver = new PhantomJSDriver();
+    }
+
+    @After
+    public void teardown () {
+        driver.close();
+    }
 
     @Given ( "^Facilities exist$" )
     public void personnelExists () throws Exception {
@@ -54,15 +64,14 @@ public class DiagnosisStepDefs {
         HibernateDataGenerator.refreshDB();
 
         /* Create patient record */
-
         driver.get( baseUrl );
-        WebElement username = driver.findElement( By.name( "username" ) );
+        final WebElement username = driver.findElement( By.name( "username" ) );
         username.clear();
         username.sendKeys( "patient" );
-        WebElement password = driver.findElement( By.name( "password" ) );
+        final WebElement password = driver.findElement( By.name( "password" ) );
         password.clear();
         password.sendKeys( "123456" );
-        WebElement submit = driver.findElement( By.className( "btn" ) );
+        final WebElement submit = driver.findElement( By.className( "btn" ) );
         submit.click();
         ( (JavascriptExecutor) driver ).executeScript( "document.getElementById('editdemographics').click();" );
         try {
@@ -165,19 +174,19 @@ public class DiagnosisStepDefs {
 
     /**
      * Puts a diagnosis in the database
-     * 
+     *
      * @param name
      *            of the diagnosis
      * @param code
      *            of the diagnosis
      */
     @Given ( "^The diagnosis exists with the name (.+) and the code (.+)" )
-    public void insetDiagnosis ( String name, String code ) {
+    public void insetDiagnosis ( final String name, final String code ) {
         HibernateDataGenerator.generateDiagnosis( name, code );
     }
 
     @Given ( "^An office visit has been created with a diagnosis of (.+)$" )
-    public void createOfficeVisit ( String name ) {
+    public void createOfficeVisit ( final String name ) {
         HibernateDataGenerator.generateOfficeVist( name );
     }
 
@@ -189,7 +198,6 @@ public class DiagnosisStepDefs {
     @Given ( "^HCP filled in information on the office visit$" )
     public void documentOV () {
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "notes" ) ) );
         final WebElement notes = driver.findElement( By.name( "notes" ) );
         notes.clear();
         notes.sendKeys( "Patient appears pretty much alive" );
@@ -211,49 +219,38 @@ public class DiagnosisStepDefs {
         time.clear();
         time.sendKeys( "9:30 AM" );
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "height" ) ) );
         final WebElement heightElement = driver.findElement( By.name( "height" ) );
         heightElement.clear();
         heightElement.sendKeys( "120" );
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "weight" ) ) );
         final WebElement weightElement = driver.findElement( By.name( "weight" ) );
         weightElement.clear();
         weightElement.sendKeys( "120" );
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "systolic" ) ) );
         final WebElement systolicElement = driver.findElement( By.name( "systolic" ) );
         systolicElement.clear();
         systolicElement.sendKeys( "100" );
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "diastolic" ) ) );
         final WebElement diastolicElement = driver.findElement( By.name( "diastolic" ) );
         diastolicElement.clear();
         diastolicElement.sendKeys( "100" );
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "hdl" ) ) );
         final WebElement hdlElement = driver.findElement( By.name( "hdl" ) );
         hdlElement.clear();
         hdlElement.sendKeys( "90" );
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "ldl" ) ) );
         final WebElement ldlElement = driver.findElement( By.name( "ldl" ) );
         ldlElement.clear();
         ldlElement.sendKeys( "100" );
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "tri" ) ) );
         final WebElement triElement = driver.findElement( By.name( "tri" ) );
         triElement.clear();
         triElement.sendKeys( "100" );
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated(
-                By.cssSelector( "input[value=\"" + HouseholdSmokingStatus.NONSMOKING.toString() + "\"]" ) ) );
         final WebElement houseSmokeElement = driver.findElement(
                 By.cssSelector( "input[value=\"" + HouseholdSmokingStatus.NONSMOKING.toString() + "\"]" ) );
         houseSmokeElement.click();
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated(
-                By.cssSelector( "input[value=\"" + PatientSmokingStatus.NEVER.toString() + "\"]" ) ) );
         final WebElement patientSmokeElement = driver
                 .findElement( By.cssSelector( "input[value=\"" + PatientSmokingStatus.NEVER.toString() + "\"]" ) );
         patientSmokeElement.click();
@@ -265,14 +262,13 @@ public class DiagnosisStepDefs {
         final Select diagnosis = new Select( driver.findElement( By.id( "repeatDiagnoses" ) ) );
         diagnosis.selectByVisibleText( diagnosisName + " - " + diagnosisCode );
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "submit" ) ) );
         final WebElement submit = driver.findElement( By.name( "submit" ) );
         submit.click();
     }
 
     @When ( "^The HCP submits the office visit$" )
     public void submitDiagnosis () {
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "submit" ) ) );
+
         final WebElement submit = driver.findElement( By.name( "submit" ) );
         submit.click();
     }
@@ -293,7 +289,6 @@ public class DiagnosisStepDefs {
         codeOfDiagnosis.clear();
         codeOfDiagnosis.sendKeys( diagnosisCode );
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "submit" ) ) );
         final WebElement submit = driver.findElement( By.name( "submit" ) );
         submit.click();
     }
@@ -305,14 +300,14 @@ public class DiagnosisStepDefs {
 
     @Then ( "^The patient can successfully see their diagnosis of (.+)$" )
     public void seeCorrectDiagnosis ( final String correctDiagnosis ) {
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "11/11/2200" ) ) );
+
         final WebElement visits = driver.findElement( By.name( "11/11/2200" ) );
         visits.click();
 
         try {
             Thread.sleep( 500 );
         }
-        catch ( InterruptedException e ) {
+        catch ( final InterruptedException e ) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -322,7 +317,7 @@ public class DiagnosisStepDefs {
 
     @Then ( "^Office visit is documented successfully$" )
     public void documentedSuccessfully () {
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "success" ) ) );
+
         final WebElement message = driver.findElement( By.name( "success" ) );
 
         assertFalse( message.getText().contains( "Error occurred creating office visit" ) );
@@ -335,7 +330,7 @@ public class DiagnosisStepDefs {
             assertTrue( driver.getPageSource().contains( "Diagnosis created successfully" ) );
 
         }
-        catch ( InterruptedException e ) {
+        catch ( final InterruptedException e ) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -350,7 +345,7 @@ public class DiagnosisStepDefs {
                     || driver.getPageSource().contains( "Please input an idc code" ) );
 
         }
-        catch ( InterruptedException e ) {
+        catch ( final InterruptedException e ) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

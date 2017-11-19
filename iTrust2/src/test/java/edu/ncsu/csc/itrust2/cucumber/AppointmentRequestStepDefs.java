@@ -10,8 +10,10 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 
+import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -20,14 +22,28 @@ import edu.ncsu.csc.itrust2.models.enums.Role;
 import edu.ncsu.csc.itrust2.models.enums.Status;
 import edu.ncsu.csc.itrust2.models.persistent.AppointmentRequest;
 import edu.ncsu.csc.itrust2.models.persistent.User;
+import io.github.bonigarcia.wdm.PhantomJsDriverManager;
 
 public class AppointmentRequestStepDefs {
 
-    private final WebDriver driver  = new HtmlUnitDriver( true );
-    private final String    baseUrl = "http://localhost:8080/iTrust2";
+    private WebDriver    driver;
+    private final String baseUrl = "http://localhost:8080/iTrust2";
+
+    @Before
+    public void setUp () {
+        PhantomJsDriverManager.getInstance().setup();
+        driver = new PhantomJSDriver();
+    }
+
+    @After
+    public void teardown () {
+        driver.close();
+    }
 
     @Given ( "There is a sample HCP and sample Patient in the database" )
     public void startingUsers () {
+        PhantomJsDriverManager.getInstance().setup();
+        driver = new PhantomJSDriver();
         final User hcp = new User( "hcp", "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.", Role.ROLE_HCP,
                 1 );
         hcp.save();
@@ -155,4 +171,5 @@ public class AppointmentRequestStepDefs {
         // assertTrue( driver.getPageSource().contains( dateString ) );
         assertTrue( driver.getPageSource().contains( "patient" ) );
     }
+
 }
