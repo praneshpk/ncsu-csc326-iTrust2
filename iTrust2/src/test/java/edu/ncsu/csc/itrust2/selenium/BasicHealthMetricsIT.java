@@ -11,12 +11,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import edu.ncsu.csc.itrust2.models.persistent.Patient;
 import edu.ncsu.csc.itrust2.models.persistent.User;
 import edu.ncsu.csc.itrust2.mvc.config.WebMvcConfiguration;
 import edu.ncsu.csc.itrust2.utils.HibernateDataGenerator;
+import io.github.bonigarcia.wdm.PhantomJsDriverManager;
 
 @ContextConfiguration ( classes = { RootConfiguration.class, WebMvcConfiguration.class } )
 @WebAppConfiguration
@@ -43,7 +45,7 @@ public class BasicHealthMetricsIT {
     @Autowired
     private WebApplicationContext context;
 
-    private final WebDriver       driver       = new HtmlUnitDriver( true );
+    private WebDriver             driver;
     private final String          baseUrl      = "http://localhost:8080/iTrust2";
     // Hash for 123456 Password
     private final String          passwordHash = "$2a$10$EblZqNptyYvcLm/VwDCVAuBjzZOI7khzdyGPBr08PpIi0na624b8.";
@@ -84,6 +86,8 @@ public class BasicHealthMetricsIT {
 
     @Before
     public void setUp () throws ParseException, InterruptedException {
+        PhantomJsDriverManager.getInstance().setup();
+        driver = new PhantomJSDriver();
         HibernateDataGenerator.refreshDB();
         createHcp( "Shelly", "Vang", "svang", passwordHash );
         createHcp( "John", "Smith", "jsmith", passwordHash );
@@ -93,6 +97,11 @@ public class BasicHealthMetricsIT {
         createPatient( "Daria", "Griffin", "dgriffin", passwordHash, "10/25/1997" );
         createPatient( "Thane", "Ross", "tross", passwordHash, "01/03/1993" );
         createHospital( hospitalName );
+    }
+
+    @After
+    public void teardown () {
+        driver.close();
     }
 
     private void login ( final String usernameString, final String passwordString ) {
@@ -126,7 +135,7 @@ public class BasicHealthMetricsIT {
         final WebElement hospital = driver.findElement( By.cssSelector( "input[value=\"" + hospitalName + "\"]" ) );
         hospital.click();
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "type" ) ) );
+        
         final WebElement type = driver.findElement( By.name( "type" ) );
         type.click();
 
@@ -135,74 +144,74 @@ public class BasicHealthMetricsIT {
         final WebElement patient = driver.findElement( By.cssSelector( "input[value=\"" + patientUsername + "\"]" ) );
         patient.click();
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "time" ) ) );
+        
         final WebElement time = driver.findElement( By.name( "time" ) );
         time.clear();
         time.sendKeys( "12:00 pm" );
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "date" ) ) );
+        
         final WebElement date = driver.findElement( By.name( "date" ) );
         date.clear();
         date.sendKeys( dateString );
 
         if ( note != null ) {
-            wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "notes" ) ) );
+            
             final WebElement notesElement = driver.findElement( By.name( "notes" ) );
             notesElement.clear();
             notesElement.sendKeys( note );
         }
 
         if ( weight != null ) {
-            wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "weight" ) ) );
+            
             final WebElement weightElement = driver.findElement( By.name( "weight" ) );
             weightElement.clear();
             weightElement.sendKeys( weight );
         }
 
         if ( heightLength != null ) {
-            wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "height" ) ) );
+            
             final WebElement heightElement = driver.findElement( By.name( "height" ) );
             heightElement.clear();
             heightElement.sendKeys( heightLength );
         }
 
         if ( headCircumference != null ) {
-            wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "head" ) ) );
+            
             final WebElement headElement = driver.findElement( By.name( "head" ) );
             headElement.clear();
             headElement.sendKeys( headCircumference );
         }
 
         if ( systolic != null ) {
-            wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "systolic" ) ) );
+            
             final WebElement systolicElement = driver.findElement( By.name( "systolic" ) );
             systolicElement.clear();
             systolicElement.sendKeys( systolic );
         }
 
         if ( diastolic != null ) {
-            wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "diastolic" ) ) );
+            
             final WebElement diastolicElement = driver.findElement( By.name( "diastolic" ) );
             diastolicElement.clear();
             diastolicElement.sendKeys( diastolic );
         }
 
         if ( hdl != null ) {
-            wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "hdl" ) ) );
+            
             final WebElement hdlElement = driver.findElement( By.name( "hdl" ) );
             hdlElement.clear();
             hdlElement.sendKeys( hdl );
         }
 
         if ( ldl != null ) {
-            wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "ldl" ) ) );
+            
             final WebElement ldlElement = driver.findElement( By.name( "ldl" ) );
             ldlElement.clear();
             ldlElement.sendKeys( ldl );
         }
 
         if ( tri != null ) {
-            wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "tri" ) ) );
+            
             final WebElement triElement = driver.findElement( By.name( "tri" ) );
             triElement.clear();
             triElement.sendKeys( tri );
@@ -224,7 +233,7 @@ public class BasicHealthMetricsIT {
             patientSmokeElement.click();
         }
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "submit" ) ) );
+        
         final WebElement submit = driver.findElement( By.name( "submit" ) );
         submit.click();
         // Give the data time to save to the database
@@ -237,7 +246,7 @@ public class BasicHealthMetricsIT {
     }
 
     private void verifyTest ( final int existingSize ) {
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "success" ) ) );
+        
         final WebElement message = driver.findElement( By.name( "success" ) );
 
         assertFalse( message.getText().contains( "Error occurred creating office visit" ) );
@@ -246,7 +255,7 @@ public class BasicHealthMetricsIT {
     }
 
     private void verifyTestUnsuccessful ( final int existingSize ) {
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "success" ) ) );
+        
         final WebElement message = driver.findElement( By.name( "success" ) );
 
         assertTrue( message.getText().contains( "Error occurred creating office visit" ) );
