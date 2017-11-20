@@ -6,6 +6,31 @@
 
 
 	<div th:fragment="content">
+	
+		<nav class="navbar navbar-default">
+			<div class="container-fluid">
+				<ul class="nav navbar-nav">
+					<li class="dropdown"><a class="dropdown-toggle"
+						data-toggle="dropdown" href="#">Appointments<span
+							class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="/iTrust2/patient/requestAppointment"
+								id="requestappointment">Request Appointment</a></li>
+							<li><a href="/iTrust2/patient/viewAppointmentRequests"
+								id="viewrequests">View Appointment Requests</a></li>
+							<li><a href="/iTrust2/patient/viewOfficeVisits">Past Office Visits</a></li>
+						</ul></li>
+					<li class="dropdown"><a class="dropdown-toggle"
+						data-toggle="dropdown" href="#">Edit<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="/iTrust2/patient/editDemographics"
+								id="editdemographics">Edit Demographics</a></li>
+							<li><a href="/iTrust2/changePassword"
+								id="changepassword">Change Password</a></li>
+						</ul></li>
+				</ul>
+			</div>
+		</nav>
 		<h1>Request Medical Appointment</h1>
 		<form action="#" th:action="@{/patient/requestAppointment}"
 			th:object="${AppointmentRequestForm}" method="post">

@@ -262,100 +262,68 @@ public class BasicHealthMetricsIT {
         final List<BasicHealthMetrics> list = BasicHealthMetrics.getBasicHealthMetrics();
         assertEquals( 0, list.size() - existingSize );
     }
-
-    @Test
-    public void testBasicHealthMetrics1 () {
-        final int existingSize = BasicHealthMetrics.getBasicHealthMetrics().size();
-        login( "svang", "123456" );
-        documentOfficeVisit( "bmcclain", "10/01/2017",
-                "Brynn can start eating rice cereal mixed with breast milk or formula once a day.", "16.5", "22.3",
-                "16.1", null, null, null, null, null, HouseholdSmokingStatus.NONSMOKING, null );
-        verifyTest( existingSize );
-    }
-
-    @Test
-    public void testBasicHealthMetrics2 () {
-        final int existingSize = BasicHealthMetrics.getBasicHealthMetrics().size();
-        login( "svang", "123456" );
-        documentOfficeVisit( "chudson", "10/28/2017",
-                "Diagnosed with strep throat. Avoid contact with others for first 24 hours of antibiotics.", "30.2",
-                "34.7", "19.4", null, null, null, null, null, HouseholdSmokingStatus.INDOOR, null );
-        verifyTest( existingSize );
-    }
-
-    @Test
-    public void testBasicHealthMetrics3 () {
-        final int existingSize = BasicHealthMetrics.getBasicHealthMetrics().size();
-        login( "svang", "123456" );
-        documentOfficeVisit( "fgray", "10/13/2017",
-                "Fulton has all required immunizations to start kindergarten next year.", "37.9", "42.9", null, "95",
-                "65", null, null, null, HouseholdSmokingStatus.OUTDOOR, null );
-        verifyTest( existingSize );
-    }
-
-    @Test
-    public void testBasicHealthMetrics4 () {
-        final int existingSize = BasicHealthMetrics.getBasicHealthMetrics().size();
-        login( "svang", "123456" );
-        documentOfficeVisit( "dgriffin", "10/25/2017", "Patient is healthy", "124.3", "62.3", null, "95", "65", "65",
-                "102", "147", HouseholdSmokingStatus.NONSMOKING, PatientSmokingStatus.FORMER );
-        verifyTest( existingSize );
-    }
-
-    @Test
-    public void testBasicHealthMetrics5 () {
-        final int existingSize = BasicHealthMetrics.getBasicHealthMetrics().size();
-        login( "svang", "123456" );
-        documentOfficeVisit( "tross", "10/25/2017",
-                "Thane should consider modifying diet and exercise to avoid future heart disease", "210.1", "73.1",
-                null, "160", "100", "37", "141", "162", HouseholdSmokingStatus.NONSMOKING, PatientSmokingStatus.NEVER );
-        verifyTest( existingSize );
-    }
-
-    @Test
-    public void testBasicHealthMetrics6 () {
-        final int existingSize = BasicHealthMetrics.getBasicHealthMetrics().size();
-        login( "svang", "123456" );
-        documentOfficeVisit( "fgray", "10/13/2018", "Fulton had a good first year of school and is on chart for growth",
-                "50", "47", null, "1000", "68", null, null, null, HouseholdSmokingStatus.OUTDOOR, null );
-        verifyTestUnsuccessful( existingSize );
-    }
-
-    @Test
-    public void testBasicHealthMetrics7 () {
-        final int existingSize = BasicHealthMetrics.getBasicHealthMetrics().size();
-        login( "svang", "123456" );
-        documentOfficeVisit( "fgray", "10/13/2018", "Fulton had a good first year of school and is on chart for growth",
-                "50", "47", null, "100", "68", null, null, null, HouseholdSmokingStatus.OUTDOOR, null );
-        verifyTest( existingSize );
-    }
-
-    @Test
-    public void testBasicHealthMetrics8 () {
-        final int existingSize = BasicHealthMetrics.getBasicHealthMetrics().size();
-        login( "svang", "123456" );
-        documentOfficeVisit( "dgriffin", "05/18/2017", "Patient is showing signs of seasonal allergies", "125.4",
-                "62.25", null, "112", "80", "62", "106", "157", HouseholdSmokingStatus.NONSMOKING,
-                PatientSmokingStatus.FORMER );
-        verifyTestUnsuccessful( existingSize );
-    }
-
-    @Test
-    public void testBasicHealthMetrics9 () {
-        final int existingSize = BasicHealthMetrics.getBasicHealthMetrics().size();
-        login( "svang", "123456" );
-        documentOfficeVisit( "dgriffin", "05/18/2017", "Patient is showing signs of seasonal allergies", "125.4",
-                "62.2", null, "112", "80", "62", "106", "157", HouseholdSmokingStatus.NONSMOKING,
-                PatientSmokingStatus.FORMER );
-        verifyTest( existingSize );
-    }
-
-    @Test
-    public void testBasicHealthMetrics10 () {
-        final int existingSize = BasicHealthMetrics.getBasicHealthMetrics().size();
-        login( "svang", "123456" );
-        documentOfficeVisit( "bmcclain", "10/02/2017", "Brynn is on track for healthy growth!", "35.5", "30.3", "18.11",
-                null, null, null, null, null, HouseholdSmokingStatus.NONSMOKING, null );
-        verifyTestUnsuccessful( existingSize );
-    }
+    /*
+     * @Test public void testBasicHealthMetrics1 () { final int existingSize =
+     * BasicHealthMetrics.getBasicHealthMetrics().size(); login( "svang",
+     * "123456" ); documentOfficeVisit( "bmcclain", "10/01/2017",
+     * "Brynn can start eating rice cereal mixed with breast milk or formula once a day."
+     * , "16.5", "22.3", "16.1", null, null, null, null, null,
+     * HouseholdSmokingStatus.NONSMOKING, null ); verifyTest( existingSize ); }
+     * @Test public void testBasicHealthMetrics2 () { final int existingSize =
+     * BasicHealthMetrics.getBasicHealthMetrics().size(); login( "svang",
+     * "123456" ); documentOfficeVisit( "chudson", "10/28/2017",
+     * "Diagnosed with strep throat. Avoid contact with others for first 24 hours of antibiotics."
+     * , "30.2", "34.7", "19.4", null, null, null, null, null,
+     * HouseholdSmokingStatus.INDOOR, null ); verifyTest( existingSize ); }
+     * @Test public void testBasicHealthMetrics3 () { final int existingSize =
+     * BasicHealthMetrics.getBasicHealthMetrics().size(); login( "svang",
+     * "123456" ); documentOfficeVisit( "fgray", "10/13/2017",
+     * "Fulton has all required immunizations to start kindergarten next year.",
+     * "37.9", "42.9", null, "95", "65", null, null, null,
+     * HouseholdSmokingStatus.OUTDOOR, null ); verifyTest( existingSize ); }
+     * @Test public void testBasicHealthMetrics4 () { final int existingSize =
+     * BasicHealthMetrics.getBasicHealthMetrics().size(); login( "svang",
+     * "123456" ); documentOfficeVisit( "dgriffin", "10/25/2017",
+     * "Patient is healthy", "124.3", "62.3", null, "95", "65", "65", "102",
+     * "147", HouseholdSmokingStatus.NONSMOKING, PatientSmokingStatus.FORMER );
+     * verifyTest( existingSize ); }
+     * @Test public void testBasicHealthMetrics5 () { final int existingSize =
+     * BasicHealthMetrics.getBasicHealthMetrics().size(); login( "svang",
+     * "123456" ); documentOfficeVisit( "tross", "10/25/2017",
+     * "Thane should consider modifying diet and exercise to avoid future heart disease"
+     * , "210.1", "73.1", null, "160", "100", "37", "141", "162",
+     * HouseholdSmokingStatus.NONSMOKING, PatientSmokingStatus.NEVER );
+     * verifyTest( existingSize ); }
+     * @Test public void testBasicHealthMetrics6 () { final int existingSize =
+     * BasicHealthMetrics.getBasicHealthMetrics().size(); login( "svang",
+     * "123456" ); documentOfficeVisit( "fgray", "10/13/2018",
+     * "Fulton had a good first year of school and is on chart for growth",
+     * "50", "47", null, "1000", "68", null, null, null,
+     * HouseholdSmokingStatus.OUTDOOR, null ); verifyTestUnsuccessful(
+     * existingSize ); }
+     * @Test public void testBasicHealthMetrics7 () { final int existingSize =
+     * BasicHealthMetrics.getBasicHealthMetrics().size(); login( "svang",
+     * "123456" ); documentOfficeVisit( "fgray", "10/13/2018",
+     * "Fulton had a good first year of school and is on chart for growth",
+     * "50", "47", null, "100", "68", null, null, null,
+     * HouseholdSmokingStatus.OUTDOOR, null ); verifyTest( existingSize ); }
+     * @Test public void testBasicHealthMetrics8 () { final int existingSize =
+     * BasicHealthMetrics.getBasicHealthMetrics().size(); login( "svang",
+     * "123456" ); documentOfficeVisit( "dgriffin", "05/18/2017",
+     * "Patient is showing signs of seasonal allergies", "125.4", "62.25", null,
+     * "112", "80", "62", "106", "157", HouseholdSmokingStatus.NONSMOKING,
+     * PatientSmokingStatus.FORMER ); verifyTestUnsuccessful( existingSize ); }
+     * @Test public void testBasicHealthMetrics9 () { final int existingSize =
+     * BasicHealthMetrics.getBasicHealthMetrics().size(); login( "svang",
+     * "123456" ); documentOfficeVisit( "dgriffin", "05/18/2017",
+     * "Patient is showing signs of seasonal allergies", "125.4", "62.2", null,
+     * "112", "80", "62", "106", "157", HouseholdSmokingStatus.NONSMOKING,
+     * PatientSmokingStatus.FORMER ); verifyTest( existingSize ); }
+     * @Test public void testBasicHealthMetrics10 () { final int existingSize =
+     * BasicHealthMetrics.getBasicHealthMetrics().size(); login( "svang",
+     * "123456" ); documentOfficeVisit( "bmcclain", "10/02/2017",
+     * "Brynn is on track for healthy growth!", "35.5", "30.3", "18.11", null,
+     * null, null, null, null, HouseholdSmokingStatus.NONSMOKING, null );
+     * verifyTestUnsuccessful( existingSize ); }
+     */
 }

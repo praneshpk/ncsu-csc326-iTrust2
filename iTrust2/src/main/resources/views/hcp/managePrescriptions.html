@@ -23,6 +23,7 @@
           $http.get("/iTrust2/api/v1/prescriptions/" + $scope.prescription.patient)
                     .then(function(response) {
                       $scope.prescriptions = response.data;
+                      console.log(response.data);
                     });
         }
                 $http.get("/iTrust2/api/v1/patients").then(
@@ -42,6 +43,7 @@
                   }).then(function(response) {
                     $scope.message="Prescription renewed successfully";
                     console.log(response);
+                    $scope.update();
                   }, function(rejection) {
                     $scope.message="Error occurred renewing prescription";
                     console.log(rejection);

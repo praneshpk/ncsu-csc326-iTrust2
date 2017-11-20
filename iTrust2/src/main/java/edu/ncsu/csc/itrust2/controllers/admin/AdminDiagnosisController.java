@@ -54,9 +54,6 @@ public class AdminDiagnosisController {
         Diagnosis d = null;
         try {
             d = new Diagnosis( form );
-            if ( Diagnosis.getByName( d.getName() ) != null ) {
-                result.rejectValue( "name", "name.notvalid", "A diagnosis with this name already exists" );
-            }
         }
         catch ( final Exception e ) {
             throw new IllegalArgumentException(

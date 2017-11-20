@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author Kai Presler-Marshall
  *
  */
-public enum Ethnicity implements Serializable{
+public enum Ethnicity implements Serializable {
 
     /**
      * Caucasian
@@ -17,7 +17,8 @@ public enum Ethnicity implements Serializable{
     /**
      * African-American
      */
-    AfricanAmerican ( "African American" ), //<- no idea how to get this text value for drop down menus
+    AfricanAmerican ( "African American" ), // <- no idea how to get this text
+                                            // value for drop down menus
     /**
      * Hispanic
      */
@@ -39,7 +40,7 @@ public enum Ethnicity implements Serializable{
      * Name of the Ethnicity
      */
     private String name;
-    
+
     /**
      * Constructor for Ethnicity.
      *
@@ -76,7 +77,8 @@ public enum Ethnicity implements Serializable{
      */
     public static Ethnicity parse ( final String ethnicityStr ) {
         for ( final Ethnicity ethnicity : values() ) {
-            if ( ethnicity.getName().equals( ethnicityStr ) || ethnicity.getName().replaceAll("\\s","").equals(ethnicityStr) ) {
+            if ( ethnicity.getName().equals( ethnicityStr )
+                    || ethnicity.getName().replaceAll( "\\s", "" ).equals( ethnicityStr ) ) {
                 return ethnicity;
             }
         }

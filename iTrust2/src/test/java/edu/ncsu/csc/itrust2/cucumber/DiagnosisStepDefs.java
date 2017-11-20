@@ -281,11 +281,12 @@ public class DiagnosisStepDefs {
     @When ( "^The admin creates a diagnosis with the name (.*) and the code (.*)$" )
     public void createDiagnosis ( final String diagnosisName, final String diagnosisCode ) {
 
-        final WebElement nameOfDiagnosis = driver.findElement( By.name( "name" ) );
+        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "nameInput" ) ) );
+        final WebElement nameOfDiagnosis = driver.findElement( By.name( "nameInput" ) );
         nameOfDiagnosis.clear();
         nameOfDiagnosis.sendKeys( diagnosisName );
 
-        final WebElement codeOfDiagnosis = driver.findElement( By.name( "code" ) );
+        final WebElement codeOfDiagnosis = driver.findElement( By.name( "codeInput" ) );
         codeOfDiagnosis.clear();
         codeOfDiagnosis.sendKeys( diagnosisCode );
 
@@ -327,7 +328,7 @@ public class DiagnosisStepDefs {
     public void diagnosisCreationSuccessful () {
         try {
             Thread.sleep( 500 );
-            assertTrue( driver.getPageSource().contains( "Diagnosis created successfully" ) );
+            assertTrue( driver.getPageSource().contains( "Successfully updated." ) );
 
         }
         catch ( final InterruptedException e ) {
@@ -340,7 +341,7 @@ public class DiagnosisStepDefs {
     public void diagnosisCreationUnsuccessful () {
         try {
             Thread.sleep( 500 );
-            assertTrue( driver.getPageSource().contains( "Error occurred creating diagnosis" )
+            assertTrue( driver.getPageSource().contains( "Error" )
                     || driver.getPageSource().contains( "Please input a name" )
                     || driver.getPageSource().contains( "Please input an idc code" ) );
 
