@@ -23,7 +23,7 @@ iTrust2's current functionality is:
 ## Extra Credit
 UI Updates
  * The global typography has been changed to a modern Google font, "Montserrat"
- * The login screen page has an updated background image and an elegent login window
+ * The login screen page has an updated background image and an elegant login window
  * The landing pages for every user has a card layout for available actions
  * The autoreload functionality on form submit
  * Fun easter eggs!
