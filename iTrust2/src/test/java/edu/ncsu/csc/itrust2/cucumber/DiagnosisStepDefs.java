@@ -281,7 +281,6 @@ public class DiagnosisStepDefs {
     @When ( "^The admin creates a diagnosis with the name (.*) and the code (.*)$" )
     public void createDiagnosis ( final String diagnosisName, final String diagnosisCode ) {
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "nameInput" ) ) );
         final WebElement nameOfDiagnosis = driver.findElement( By.name( "nameInput" ) );
         nameOfDiagnosis.clear();
         nameOfDiagnosis.sendKeys( diagnosisName );
