@@ -9,9 +9,11 @@ import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.support.ui.Select;
 
+import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -21,21 +23,22 @@ import edu.ncsu.csc.itrust2.models.persistent.NDCCode;
 import edu.ncsu.csc.itrust2.models.persistent.Patient;
 import edu.ncsu.csc.itrust2.models.persistent.Prescription;
 import edu.ncsu.csc.itrust2.models.persistent.User;
+import io.github.bonigarcia.wdm.PhantomJsDriverManager;
 
 public class PrescriptionStepDefs {
 
-    private final By        codeInput   = By.name( "codeInput" );
-    private final By        nameInput   = By.name( "nameInput" );
-    private final By        submitBtn   = By.name( "submitBtn" );
-    private final By        editInput   = By.name( "updateNameInput" );
-    private final By        editBtn     = By.name( "submitUpdateBtn" );
+    private final By     codeInput   = By.name( "codeInput" );
+    private final By     nameInput   = By.name( "nameInput" );
+    private final By     submitBtn   = By.name( "submitBtn" );
+    private final By     editInput   = By.name( "updateNameInput" );
+    private final By     editBtn     = By.name( "submitUpdateBtn" );
 
-    private final WebDriver driver      = new HtmlUnitDriver( true );
-    private final String    baseUrl     = "http://localhost:8080/iTrust2";
-    private String          currentCode = "";
-    private String          currentName = "";
-    private String          newname     = "";
-    private Prescription    currentPres;
+    private WebDriver    driver;
+    private final String baseUrl     = "http://localhost:8080/iTrust2";
+    private String       currentCode = "";
+    private String       currentName = "";
+    private String       newname     = "";
+    private Prescription currentPres;
 
     private void addUserHelper ( final String username, final Role role ) {
         final User u = User.getByName( username );
@@ -44,6 +47,17 @@ public class PrescriptionStepDefs {
                     1 );
             admin.save();
         }
+    }
+
+    @Before
+    public void setUp () {
+        PhantomJsDriverManager.getInstance().setup();
+        driver = new PhantomJSDriver();
+    }
+
+    @After
+    public void teardown () {
+        driver.close();
     }
 
     @Given ( "^an admin has logged into the system$" )
