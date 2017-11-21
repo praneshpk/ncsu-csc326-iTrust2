@@ -40,7 +40,7 @@ public class EditDemographicsIT {
 
     @After
     public void teardown () {
-        driver.close();
+        driver.quit()();
     }
 
     /**

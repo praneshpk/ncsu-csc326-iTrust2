@@ -39,7 +39,7 @@ public class PasswordStepDefs {
 
     @After
     public void teardown () {
-        driver.close();
+        driver.quit()();
     }
     
     @Given ("^an admin exists in the system$")

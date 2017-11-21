@@ -55,7 +55,7 @@ public class DocumentOfficeVisitStepDefs {
 
     @After
     public void teardown () {
-        driver.close();
+        driver.quit()();
     }
 
     @Given ( "The required facilities exist" )
