@@ -246,7 +246,7 @@ public class PrescriptionStepDefs {
     public void prescriptionCreationSuccess () {
         try {
             Thread.sleep( 500 );
-            Assert.assertTrue( driver.getPageSource().contains( "Successfully updated. Refresh to see changes." ) );
+            Assert.assertTrue( driver.getPageSource().contains( "Successfully added." ) );
             driver.navigate().refresh();
             Thread.sleep( 2000 );
             Assert.assertTrue( driver.getPageSource().contains( currentCode + " - " + currentName ) );
@@ -274,7 +274,7 @@ public class PrescriptionStepDefs {
     public void editSuccess () {
         try {
             Thread.sleep( 500 );
-            Assert.assertTrue( driver.getPageSource().contains( "Successfully updated. Refresh to see changes." ) );
+            Assert.assertTrue( driver.getPageSource().contains( "Successfully updated." ) );
             driver.navigate().refresh();
             Thread.sleep( 500 );
             Assert.assertTrue( !driver.getPageSource().contains( currentCode + " - " + currentName ) ); // these
