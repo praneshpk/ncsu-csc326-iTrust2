@@ -24,6 +24,7 @@ import edu.ncsu.csc.itrust2.config.RootConfiguration;
 import edu.ncsu.csc.itrust2.models.enums.HouseholdSmokingStatus;
 import edu.ncsu.csc.itrust2.models.enums.PatientSmokingStatus;
 import edu.ncsu.csc.itrust2.models.persistent.BasicHealthMetrics;
+import edu.ncsu.csc.itrust2.models.persistent.User;
 import edu.ncsu.csc.itrust2.mvc.config.WebMvcConfiguration;
 import edu.ncsu.csc.itrust2.utils.HibernateDataGenerator;
 import io.github.bonigarcia.wdm.PhantomJsDriverManager;
@@ -192,18 +193,26 @@ public class DiagnosisStepDefs {
 
     @Given ( "^HCP navigated to the Document Office Visit page$" )
     public void navigateDocumentOV () {
-        ( (JavascriptExecutor) driver ).executeScript( "document.getElementById('documentOfficeVisit').click();" );
+        //( (JavascriptExecutor) driver ).executeScript( "document.getElementById('documentOfficeVisit').click();" );
+    	driver.get(baseUrl + "/hcp/documentOfficeVisit.html");
     }
 
     @Given ( "^HCP filled in information on the office visit$" )
-    public void documentOV () {
-
+    public void documentOV () throws InterruptedException {
+    	
+    	HibernateDataGenerator.generateUsers();
+    	driver.navigate().refresh();
+    	
+    	final WebElement patient = driver.findElement(By.name("AliceThirteen"));
+    	//final WebElement patient = driver.findElement(By.xpath("//*[contains(text(),'AliceThirteen')]"));
+        patient.click();
+        
+        Thread.sleep(200);
+    	
         final WebElement notes = driver.findElement( By.name( "notes" ) );
         notes.clear();
         notes.sendKeys( "Patient appears pretty much alive" );
 
-        final WebElement patient = driver.findElement( By.name( "name" ) );
-        patient.click();
 
         final WebElement type = driver.findElement( By.name( "type" ) );
         type.click();
@@ -218,6 +227,8 @@ public class DiagnosisStepDefs {
         final WebElement time = driver.findElement( By.name( "time" ) );
         time.clear();
         time.sendKeys( "9:30 AM" );
+        
+        Thread.sleep(200);
 
         final WebElement heightElement = driver.findElement( By.name( "height" ) );
         heightElement.clear();
@@ -289,7 +300,7 @@ public class DiagnosisStepDefs {
         codeOfDiagnosis.clear();
         codeOfDiagnosis.sendKeys( diagnosisCode );
 
-        final WebElement submit = driver.findElement( By.name( "submit" ) );
+        final WebElement submit = driver.findElement( By.name( "submitUpdateBtn" ) );
         submit.click();
     }
 

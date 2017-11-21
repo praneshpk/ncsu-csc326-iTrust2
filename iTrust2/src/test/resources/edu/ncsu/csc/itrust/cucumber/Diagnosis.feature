@@ -5,32 +5,6 @@ Feature: Diagnosis
 	I want to be able to interact with diagnosis
 	So that they can be recorded for patients
 
-Scenario Outline: Create Diagnosis Correctly
-	Given Facilities exist
-	Given The user is logged in to iTrust2 as admin
-	When The admin navigates to the Create Diagnosis page
-	When The admin creates a diagnosis with the name <diagnosisName> and the code <diagnosisCode>
-	Then The diagnosis is successfully added to the system
-	
-Examples:
-	| diagnosisName |  diagnosisCode |
-	| Attacked by maccaw | R32 |
-	| Jumped by young people | L01.32 |
-	| Something really bad | E34.542r |
-	
-Scenario Outline: Create Diagnosis Incorrectly
-	Given Facilities exist
-	Given The user is logged in to iTrust2 as admin
-	When The admin navigates to the Create Diagnosis page
-	When The admin creates a diagnosis with the name <diagnosisName> and the code <diagnosisCode>
-	Then The diagnosis is not added to the system
-	
-Examples:
-	| diagnosisName |  diagnosisCode |
-	| Nahh | 22222222 |
-	|  | L01 |
-	| Cooties |  |
-	|  |  |
 	
 Scenario Outline: Give Diagnosis
 	Given Facilities exist
