@@ -47,7 +47,7 @@ public class EditPatientDemographicsStepDefs {
 
     @After
     public void teardown () {
-        driver.quit()();
+        driver.quit();
     }
 
     @Given ( "^All the Facilities exist$" )

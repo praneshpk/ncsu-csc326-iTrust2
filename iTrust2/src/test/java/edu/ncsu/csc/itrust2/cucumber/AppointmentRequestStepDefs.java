@@ -38,7 +38,7 @@ public class AppointmentRequestStepDefs {
 
     @After
     public void teardown () {
-        driver.quit()();
+        driver.quit();
     }
 
     @Given ( "There is a sample HCP and sample Patient in the database" )

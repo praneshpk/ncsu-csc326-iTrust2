@@ -36,7 +36,7 @@ public class AddUserStepDefs {
 
     @After
     public void teardown () {
-        driver.quit()();
+        driver.quit();
     }
 
     /**

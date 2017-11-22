@@ -30,7 +30,7 @@ public class EditMyDemographicsStepDefs {
 
     @After
     public void teardown () {
-        driver.quit()();
+        driver.quit();
     }
 
     @Given ( "A patient exists in the system" )

@@ -54,7 +54,7 @@ public class DiagnosisStepDefs {
 
     @After
     public void teardown () {
-        driver.quit()();
+        driver.quit();
     }
 
     @Given ( "^Facilities exist$" )

@@ -101,7 +101,7 @@ public class BasicHealthMetricsIT {
 
     @After
     public void teardown () {
-        driver.quit()();
+        driver.quit();
     }
 
     private void login ( final String usernameString, final String passwordString ) {

@@ -57,7 +57,7 @@ public class PrescriptionStepDefs {
 
     @After
     public void teardown () {
-        driver.quit()();
+        driver.quit();
     }
 
     @Given ( "^an admin has logged into the system$" )
