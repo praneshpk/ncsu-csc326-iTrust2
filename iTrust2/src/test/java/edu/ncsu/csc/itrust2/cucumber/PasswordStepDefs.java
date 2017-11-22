@@ -24,9 +24,9 @@ public class PasswordStepDefs {
 	private WebDriver driver;
 	private final PasswordEncoder pe    = new BCryptPasswordEncoder();
     private final String    baseUrl     = "http://localhost:8080/iTrust2";
-    private final By oldPassword        = By.id("oldPassword");
-    private final By newPassword        = By.id("newPassword");
-    private final By confirmPassword        = By.id("confirm");
+    private final By oldPassword        = By.name("oldPassword");
+    private final By newPassword        = By.name("newPassword");
+    private final By confirmPassword        = By.name("confirm");
     private String currentPassword;
     private String currentUsername;
 	
@@ -39,36 +39,29 @@ public class PasswordStepDefs {
 
     @After
     public void teardown () {
-        driver.close();
+        driver.quit();
     }
     
     @Given ("^an admin exists in the system$")
     public void ensureAdminUser() {
-    	if(User.getByName("admin") == null) {
-    		HibernateDataGenerator.generateUsers();
-        	HibernateDataGenerator.refreshDB();
-    	}
-    	this.currentPassword = User.getByName("admin").getPassword();
+    	HibernateDataGenerator.generateUsers();
+        HibernateDataGenerator.refreshDB();
     	this.currentUsername = "admin";
     }
     
     @Given ("^a patient exists in the system$")
     public void ensurePatientUser() {
-    	if(User.getByName("patient") == null) {
-    		HibernateDataGenerator.generateUsers();
-        	HibernateDataGenerator.refreshDB();
-    	}
-    	this.currentPassword = User.getByName("patient").getPassword();
+    	HibernateDataGenerator.generateUsers();
+        HibernateDataGenerator.refreshDB();
+    	//this.currentPassword = User.getByName("patient").getPassword();
     	this.currentUsername = "patient";
     }
     
     @Given ("^a HCP exists in the system$")
     public void ensureHCPUser() {
-    	if(User.getByName("hcp") == null) {
-    		HibernateDataGenerator.generateUsers();
-        	HibernateDataGenerator.refreshDB();
-    	}
-    	this.currentPassword = User.getByName("hcp").getPassword();
+    	HibernateDataGenerator.generateUsers();
+        HibernateDataGenerator.refreshDB();
+    	//this.currentPassword = User.getByName("hcp").getPassword();
     	this.currentUsername = "hcp";
     }
     
@@ -80,7 +73,7 @@ public class PasswordStepDefs {
             usernameField.sendKeys( this.currentUsername );
             final WebElement passwordField = driver.findElement( By.name( "password" ) );
             passwordField.clear();
-            passwordField.sendKeys( this.currentPassword );
+            passwordField.sendKeys( "123456" );
             final WebElement submit = driver.findElement( By.className( "btn" ) );
             submit.click();
         }
@@ -88,15 +81,19 @@ public class PasswordStepDefs {
     
     @When ("^the user changes their password to (.+)$")
     public void adminChangePassword(String password) throws InterruptedException {
-    	driver.get(baseUrl);
+    	//driver.get(baseUrl);
     	ensureLogin();
     	driver.get(baseUrl + "/changePassword");
     	//Thread.sleep(500);
+    	//Assert.assertTrue(driver.getCurrentUrl().equals(baseUrl + "/changePassword"));
+    	//System.out.println("=======================================================================");
+    	Thread.sleep(500);
+    	System.out.println(driver.getCurrentUrl());
     	//WebDriverWait wait = new WebDriverWait(driver, 5);
     	//wait.until(ExpectedConditions.visibilityOfElementLocated(oldPassword));
     	final WebElement oldPasswordField = driver.findElement(oldPassword);
     	oldPasswordField.clear();
-    	oldPasswordField.sendKeys(this.currentPassword);
+    	oldPasswordField.sendKeys("123456");
     	final WebElement newPasswordField = driver.findElement(newPassword);
     	newPasswordField.clear();
     	newPasswordField.sendKeys(password);
@@ -109,7 +106,23 @@ public class PasswordStepDefs {
     }
     
     @Then ("^their password will be changed$")
-    public void passwordChangeSuccess() {
-    	Assert.assertTrue(User.getByName(this.currentUsername).getPassword().equals(pe.encode(this.currentPassword)));
+    public void passwordChangeSuccess() throws InterruptedException {
+    	//Assert.assertTrue(User.getByName(this.currentUsername).getPassword().equals(pe.encode(this.currentPassword)));
+    	final WebElement logoutButton = driver.findElement(By.id("logout"));
+    	logoutButton.click();
+    	Thread.sleep(100);
+    	driver.get( baseUrl );
+        final WebElement usernameField = driver.findElement( By.name( "username" ) );
+        usernameField.clear();
+        usernameField.sendKeys( this.currentUsername );
+        final WebElement passwordField = driver.findElement( By.name( "password" ) );
+        passwordField.clear();
+        passwordField.sendKeys( this.currentPassword );
+        final WebElement submit = driver.findElement( By.className( "btn" ) );
+        submit.click();
+        Thread.sleep(500);
+        Assert.assertTrue(driver.getPageSource().contains( currentUsername ));
+    	User.getByName(this.currentUsername).setPassword(pe.encode("123456")); //set back to 123456
+    	User.getByName(this.currentUsername).save();
     }
 }

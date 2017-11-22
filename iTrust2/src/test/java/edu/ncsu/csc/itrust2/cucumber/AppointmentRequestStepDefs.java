@@ -23,6 +23,7 @@ import edu.ncsu.csc.itrust2.models.enums.Status;
 import edu.ncsu.csc.itrust2.models.persistent.AppointmentRequest;
 import edu.ncsu.csc.itrust2.models.persistent.User;
 import io.github.bonigarcia.wdm.PhantomJsDriverManager;
+import junit.framework.Assert;
 
 public class AppointmentRequestStepDefs {
 
@@ -37,7 +38,7 @@ public class AppointmentRequestStepDefs {
 
     @After
     public void teardown () {
-        driver.close();
+        driver.quit();
     }
 
     @Given ( "There is a sample HCP and sample Patient in the database" )
@@ -67,13 +68,16 @@ public class AppointmentRequestStepDefs {
     }
 
     @When ( "I navigate to the Request Appointment page" )
-    public void requestPage () {
-        ( (JavascriptExecutor) driver ).executeScript( "document.getElementById('requestappointment').click();" );
+    public void requestPage () throws InterruptedException {
+       // ( (JavascriptExecutor) driver ).executeScript( "document.getElementById('requestappointment').click();" );
+    	driver.get(baseUrl + "/patient/requestAppointment");
+    	Thread.sleep(200);
     }
 
     @When ( "I fill in values in the Appointment Request Fields" )
     public void fillFields () {
-        final WebElement date = driver.findElement( By.id( "date" ) );
+    	//Assert.assertTrue(driver.getCurrentUrl().equals(baseUrl + "/"));
+        final WebElement date = driver.findElement( By.name( "date" ) );
         date.clear();
         final SimpleDateFormat sdf = new SimpleDateFormat( "MM/dd/yyyy", Locale.ENGLISH );
         final Long value = Calendar.getInstance().getTimeInMillis()
@@ -81,10 +85,10 @@ public class AppointmentRequestStepDefs {
         final Calendar future = Calendar.getInstance();
         future.setTimeInMillis( value );
         date.sendKeys( sdf.format( future.getTime() ) );
-        final WebElement time = driver.findElement( By.id( "time" ) );
+        final WebElement time = driver.findElement( By.name( "time" ) );
         time.clear();
         time.sendKeys( "11:59 PM" );
-        final WebElement comments = driver.findElement( By.id( "comments" ) );
+        final WebElement comments = driver.findElement( By.name( "comments" ) );
         comments.clear();
         comments.sendKeys( "Test appointment please ignore" );
         driver.findElement( By.className( "btn" ) ).click();
@@ -97,10 +101,11 @@ public class AppointmentRequestStepDefs {
     }
 
     @Then ( "The appointment can be found in the list" )
-    public void findAppointment () {
-        driver.findElement( By.linkText( "iTrust2" ) ).click();
-        ( (JavascriptExecutor) driver ).executeScript( "document.getElementById('viewrequests').click();" );
-
+    public void findAppointment () throws InterruptedException {
+       // driver.findElement( By.linkText( "iTrust2" ) ).click();
+       // ( (JavascriptExecutor) driver ).executeScript( "document.getElementById('viewrequests').click();" );
+    	driver.get(baseUrl + "/patient/viewAppointmentRequests");
+    	Thread.sleep(200);
         final SimpleDateFormat sdf = new SimpleDateFormat( "MM/dd/yyyy", Locale.ENGLISH );
         final Long value = Calendar.getInstance().getTimeInMillis()
                 + 1000 * 60 * 60 * 24 * 14; /* Two weeks */
@@ -141,9 +146,10 @@ public class AppointmentRequestStepDefs {
     }
 
     @When ( "I navigate to the View Requests page" )
-    public void viewRequests () {
-        ( (JavascriptExecutor) driver ).executeScript( "document.getElementById('viewrequests').click();" );
-
+    public void viewRequests () throws InterruptedException {
+       // ( (JavascriptExecutor) driver ).executeScript( "document.getElementById('viewrequests').click();" );
+    	driver.get(baseUrl + "/hcp/viewAppointmentRequests");
+    	Thread.sleep(200);
     }
 
     @When ( "I approve the Appointment Request" )
@@ -159,9 +165,9 @@ public class AppointmentRequestStepDefs {
 
     @Then ( "The appointment is in the list of upcoming events" )
     public void upcomingEvents () {
-        driver.findElement( By.linkText( "iTrust2" ) ).click();
-        ( (JavascriptExecutor) driver ).executeScript( "document.getElementById('upcomingrequests').click();" );
-
+      //  driver.findElement( By.linkText( "iTrust2" ) ).click();
+      //  ( (JavascriptExecutor) driver ).executeScript( "document.getElementById('upcomingrequests').click();" );
+    	driver.get(baseUrl + "/hcp/viewAppointments");
         final SimpleDateFormat sdf = new SimpleDateFormat( "MM/dd/yyyy", Locale.ENGLISH );
         final Long value = Calendar.getInstance().getTimeInMillis()
                 + 1000 * 60 * 60 * 24 * 14; /* Two weeks */

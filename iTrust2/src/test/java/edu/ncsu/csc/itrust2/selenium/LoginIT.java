@@ -34,7 +34,7 @@ public class LoginIT {
 
     @After
     public void teardown () {
-        driver.close();
+        driver.quit();
     }
 
     private void testLogin ( final String role ) {

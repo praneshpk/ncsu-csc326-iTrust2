@@ -30,7 +30,7 @@ public class PersonnelEditDemographicsStepDefs {
 
     @After
     public void teardown () {
-        driver.close();
+        driver.quit();
     }
 
     @Given ( "An admin exists in the system" )

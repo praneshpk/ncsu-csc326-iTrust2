@@ -47,21 +47,21 @@
 
 				<tr>
 					<td>Date:</td>
-					<td><input type="text" th:field="*{date}" /></td>
+					<td><input type="text" name="date" th:field="*{date}" /></td>
 					<td th:if="${#fields.hasErrors('date')}" th:errors="*{date}">Invalid
 						date or date format</td>
 				</tr>
 
 				<tr>
 					<td>Time:</td>
-					<td><input type="text" th:field="*{time}" /></td>
+					<td><input type="text" name="time" th:field="*{time}" /></td>
 					<td th:if="${#fields.hasErrors('time')}" th:errors="*{time}">Invalid
 						time</td>
 				</tr>
 
 				<tr>
 					<td>Comments:</td>
-					<td><input type="text" th:field="*{comments}" /></td>
+					<td><input type="text" name="comments" th:field="*{comments}" /></td>
 				</tr>
 
 				<tr>

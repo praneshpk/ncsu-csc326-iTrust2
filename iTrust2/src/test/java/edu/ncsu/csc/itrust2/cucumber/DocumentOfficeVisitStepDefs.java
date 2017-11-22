@@ -55,7 +55,7 @@ public class DocumentOfficeVisitStepDefs {
 
     @After
     public void teardown () {
-        driver.close();
+        driver.quit();
     }
 
     @Given ( "The required facilities exist" )
@@ -199,7 +199,8 @@ public class DocumentOfficeVisitStepDefs {
         notes.clear();
         notes.sendKeys( "Patient appears pretty much alive" );
 
-        final WebElement patient = driver.findElement( By.name( "name" ) );
+        final WebElement patient = driver.findElement( By.id( "patient" ) );
+        //final WebElement patient = driver.findElement(By.xpath("//*[text()[contains(.,'AliceThirteen')]]"));
         patient.click();
 
         final WebElement type = driver.findElement( By.name( "type" ) );
@@ -225,29 +226,34 @@ public class DocumentOfficeVisitStepDefs {
         weightElement.sendKeys( "120" );
 
         final WebElement systolicElement = driver.findElement( By.name( "systolic" ) );
-        systolicElement.clear();
-        systolicElement.sendKeys( "100" );
+        ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='100';", systolicElement );
+        //systolicElement.clear();
+        //systolicElement.sendKeys( "100" );
 
         final WebElement diastolicElement = driver.findElement( By.name( "diastolic" ) );
-        diastolicElement.clear();
-        diastolicElement.sendKeys( "100" );
+        ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='100';", diastolicElement );
+        // diastolicElement.clear();
+        //diastolicElement.sendKeys( "100" );
 
         final WebElement hdlElement = driver.findElement( By.name( "hdl" ) );
         if ( hdlElement.isDisplayed() ) {
-            hdlElement.clear();
-            hdlElement.sendKeys( "90" );
+        	 ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='90';", hdlElement );
+           // hdlElement.clear();
+           // hdlElement.sendKeys( "90" );
         }
 
         final WebElement ldlElement = driver.findElement( By.name( "ldl" ) );
         if ( ldlElement.isDisplayed() ) {
-            ldlElement.clear();
-            ldlElement.sendKeys( "100" );
+        	( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='100';", ldlElement );
+           // ldlElement.clear();
+           // ldlElement.sendKeys( "100" );
         }
 
         final WebElement triElement = driver.findElement( By.name( "tri" ) );
         if ( triElement.isDisplayed() ) {
-            triElement.clear();
-            triElement.sendKeys( "100" );
+        	( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='100';", triElement );
+           // triElement.clear();
+           // triElement.sendKeys( "100" );
         }
 
         final WebElement houseSmokeElement = driver.findElement(
@@ -257,6 +263,7 @@ public class DocumentOfficeVisitStepDefs {
         final WebElement patientSmokeElement = driver
                 .findElement( By.cssSelector( "input[value=\"" + PatientSmokingStatus.NEVER.toString() + "\"]" ) );
         if ( patientSmokeElement.isDisplayed() ) {
+        	( (JavascriptExecutor) driver ).executeScript( "arguments[0].click();", patientSmokeElement );
             patientSmokeElement.click();
         }
 
@@ -496,8 +503,9 @@ public class DocumentOfficeVisitStepDefs {
         expectedBhm = new BasicHealthMetrics();
 
         final WebElement head = driver.findElement( By.name( "head" ) );
-        head.clear();
-        head.sendKeys( headString );
+        ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='" + headString + "';", head);
+       // head.clear();
+       // head.sendKeys( headString );
         try {
             expectedBhm.setHeadCircumference( Float.parseFloat( headString ) );
         }
@@ -603,8 +611,9 @@ public class DocumentOfficeVisitStepDefs {
         expectedBhm = new BasicHealthMetrics();
 
         final WebElement sysElem = driver.findElement( By.name( "systolic" ) );
-        sysElem.clear();
-        sysElem.sendKeys( sys );
+        ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='" + sys + "';", sysElem );
+       // sysElem.clear();
+      //  sysElem.sendKeys( sys );
         try {
             expectedBhm.setSystolic( Integer.parseInt( sys ) );
         }
@@ -616,8 +625,9 @@ public class DocumentOfficeVisitStepDefs {
         }
 
         final WebElement diaElem = driver.findElement( By.name( "diastolic" ) );
-        diaElem.clear();
-        diaElem.sendKeys( dia );
+        ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='" + dia + "';", diaElem );
+       // diaElem.clear();
+       // diaElem.sendKeys( dia );
         try {
             expectedBhm.setDiastolic( Integer.parseInt( dia ) );
         }
@@ -732,8 +742,9 @@ public class DocumentOfficeVisitStepDefs {
         expectedBhm = new BasicHealthMetrics();
 
         final WebElement sysElem = driver.findElement( By.name( "systolic" ) );
-        sysElem.clear();
-        sysElem.sendKeys( sys );
+        ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='" + sys + "';", sysElem );
+       // sysElem.clear();
+       // sysElem.sendKeys( sys );
         try {
             expectedBhm.setSystolic( Integer.parseInt( sys ) );
         }
@@ -745,8 +756,9 @@ public class DocumentOfficeVisitStepDefs {
         }
 
         final WebElement diaElem = driver.findElement( By.name( "diastolic" ) );
-        diaElem.clear();
-        diaElem.sendKeys( dia );
+        ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='" + dia + "';", diaElem );
+       // diaElem.clear();
+       // diaElem.sendKeys( dia );
         try {
             expectedBhm.setDiastolic( Integer.parseInt( dia ) );
         }
@@ -798,7 +810,8 @@ public class DocumentOfficeVisitStepDefs {
         try {
             final WebElement smoking = driver.findElement( By.cssSelector(
                     "input[value=\"" + PatientSmokingStatus.getName( Integer.parseInt( patientSmoke ) ) + "\"]" ) );
-            smoking.click();
+            //smoking.click();
+            ( (JavascriptExecutor) driver ).executeScript( "arguments[0].click();", smoking );
             expectedBhm.setPatientSmokingStatus( PatientSmokingStatus.parseValue( Integer.parseInt( patientSmoke ) ) );
         }
         catch ( final Exception e ) {
@@ -810,8 +823,9 @@ public class DocumentOfficeVisitStepDefs {
         }
 
         final WebElement hdlElem = driver.findElement( By.name( "hdl" ) );
-        hdlElem.clear();
-        hdlElem.sendKeys( hdl );
+        ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='" + hdl + "';", hdlElem );
+        //hdlElem.clear();
+       // hdlElem.sendKeys( hdl );
         try {
             expectedBhm.setHdl( Integer.parseInt( hdl ) );
         }
@@ -823,8 +837,9 @@ public class DocumentOfficeVisitStepDefs {
         }
 
         final WebElement ldlElem = driver.findElement( By.name( "ldl" ) );
-        ldlElem.clear();
-        ldlElem.sendKeys( ldl );
+        ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='" + ldl + "';", ldlElem );
+        //ldlElem.clear();
+       // ldlElem.sendKeys( ldl );
         try {
             expectedBhm.setLdl( Integer.parseInt( ldl ) );
         }
@@ -836,8 +851,9 @@ public class DocumentOfficeVisitStepDefs {
         }
 
         final WebElement triElem = driver.findElement( By.name( "tri" ) );
-        triElem.clear();
-        triElem.sendKeys( tri );
+        ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='" + tri + "';", triElem );
+        //triElem.clear();
+        //triElem.sendKeys( tri );
         try {
             expectedBhm.setTri( Integer.parseInt( tri ) );
         }

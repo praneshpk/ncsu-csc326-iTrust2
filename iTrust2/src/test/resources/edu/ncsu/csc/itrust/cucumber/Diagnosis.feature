@@ -31,7 +31,7 @@ Examples:
 	|  | L01 |
 	| Cooties |  |
 	|  |  |
-	
+
 Scenario Outline: Give Diagnosis
 	Given Facilities exist
 	Given The diagnosis exists with the name <name> and the code <code>
@@ -65,4 +65,3 @@ Scenario Outline: View Diagnosis
 Examples:
 	| name | code |
 	| Microwaved Cup of Noodles when told not to on the package | F01 |
-	| Left handed person used an appliance intended for a right handed person | R43 |
