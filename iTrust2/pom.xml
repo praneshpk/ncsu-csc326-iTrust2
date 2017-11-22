@@ -42,18 +42,6 @@
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
-	<!-- Phantom JS Driver -->
-		<dependency>
- 			<groupId>com.github.detro.ghostdriver</groupId>
- 			<artifactId>phantomjsdriver</artifactId>
- 			<version>1.0.4</version>
-		</dependency>
-		<dependency>
- 			<groupId>io.github.bonigarcia</groupId>
- 			<artifactId>webdrivermanager</artifactId>
- 			<version>1.7.2</version>
- 		</dependency>
- 	<!-- END -->
 		<dependency>
 			<groupId>javax.servlet.jsp.jstl</groupId>
 			<artifactId>javax.servlet.jsp.jstl-api</artifactId>
@@ -339,6 +327,18 @@
 			<artifactId>spring-session</artifactId>
 			<version>1.2.1.RELEASE</version>
 		</dependency>
+		<!-- Phantom JS Driver -->
+		<dependency>
+ 			<groupId>com.github.detro.ghostdriver</groupId>
+ 			<artifactId>phantomjsdriver</artifactId>
+ 			<version>1.0.4</version>
+		</dependency>
+		<dependency>
+ 			<groupId>io.github.bonigarcia</groupId>
+ 			<artifactId>webdrivermanager</artifactId>
+ 			<version>1.7.2</version>
+ 		</dependency>
+ 		<!-- END -->
 
 	</dependencies>
 
