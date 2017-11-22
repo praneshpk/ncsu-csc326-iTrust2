@@ -12,16 +12,16 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
+import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -30,6 +30,7 @@ import edu.ncsu.csc.itrust2.models.enums.HouseholdSmokingStatus;
 import edu.ncsu.csc.itrust2.models.enums.PatientSmokingStatus;
 import edu.ncsu.csc.itrust2.models.persistent.BasicHealthMetrics;
 import edu.ncsu.csc.itrust2.mvc.config.WebMvcConfiguration;
+import io.github.bonigarcia.wdm.PhantomJsDriverManager;
 
 @ContextConfiguration ( classes = { RootConfiguration.class, WebMvcConfiguration.class } )
 @WebAppConfiguration
@@ -40,13 +41,22 @@ public class DocumentOfficeVisitStepDefs {
     @Autowired
     private WebApplicationContext context;
 
-    private final WebDriver       driver       = new HtmlUnitDriver( true );
+    private WebDriver             driver;
     private final String          baseUrl      = "http://localhost:8080/iTrust2";
 
     private final String          hospitalName = "Office Visit Hospital" + ( new Random() ).nextInt();
     BasicHealthMetrics            expectedBhm;
 
-    WebDriverWait                 wait         = new WebDriverWait( driver, 2 );
+    @Before
+    public void setUp () {
+        PhantomJsDriverManager.getInstance().setup();
+        driver = new PhantomJSDriver();
+    }
+
+    @After
+    public void teardown () {
+        driver.quit();
+    }
 
     @Given ( "The required facilities exist" )
     public void personnelExists () throws Exception {
@@ -185,12 +195,12 @@ public class DocumentOfficeVisitStepDefs {
     @When ( "^I fill in information on the office visit$" )
     public void documentOV () {
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "notes" ) ) );
         final WebElement notes = driver.findElement( By.name( "notes" ) );
         notes.clear();
         notes.sendKeys( "Patient appears pretty much alive" );
 
-        final WebElement patient = driver.findElement( By.name( "name" ) );
+        final WebElement patient = driver.findElement( By.id( "patient" ) );
+        //final WebElement patient = driver.findElement(By.xpath("//*[text()[contains(.,'AliceThirteen')]]"));
         patient.click();
 
         final WebElement type = driver.findElement( By.name( "type" ) );
@@ -207,46 +217,45 @@ public class DocumentOfficeVisitStepDefs {
         time.clear();
         time.sendKeys( "9:30 AM" );
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "height" ) ) );
         final WebElement heightElement = driver.findElement( By.name( "height" ) );
         heightElement.clear();
         heightElement.sendKeys( "120" );
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "weight" ) ) );
         final WebElement weightElement = driver.findElement( By.name( "weight" ) );
         weightElement.clear();
         weightElement.sendKeys( "120" );
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "systolic" ) ) );
         final WebElement systolicElement = driver.findElement( By.name( "systolic" ) );
-        systolicElement.clear();
-        systolicElement.sendKeys( "100" );
+        ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='100';", systolicElement );
+        //systolicElement.clear();
+        //systolicElement.sendKeys( "100" );
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "diastolic" ) ) );
         final WebElement diastolicElement = driver.findElement( By.name( "diastolic" ) );
-        diastolicElement.clear();
-        diastolicElement.sendKeys( "100" );
+        ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='100';", diastolicElement );
+        // diastolicElement.clear();
+        //diastolicElement.sendKeys( "100" );
 
         final WebElement hdlElement = driver.findElement( By.name( "hdl" ) );
         if ( hdlElement.isDisplayed() ) {
-            hdlElement.clear();
-            hdlElement.sendKeys( "90" );
+        	 ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='90';", hdlElement );
+           // hdlElement.clear();
+           // hdlElement.sendKeys( "90" );
         }
 
         final WebElement ldlElement = driver.findElement( By.name( "ldl" ) );
         if ( ldlElement.isDisplayed() ) {
-            ldlElement.clear();
-            ldlElement.sendKeys( "100" );
+        	( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='100';", ldlElement );
+           // ldlElement.clear();
+           // ldlElement.sendKeys( "100" );
         }
 
         final WebElement triElement = driver.findElement( By.name( "tri" ) );
         if ( triElement.isDisplayed() ) {
-            triElement.clear();
-            triElement.sendKeys( "100" );
+        	( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='100';", triElement );
+           // triElement.clear();
+           // triElement.sendKeys( "100" );
         }
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated(
-                By.cssSelector( "input[value=\"" + HouseholdSmokingStatus.NONSMOKING.toString() + "\"]" ) ) );
         final WebElement houseSmokeElement = driver.findElement(
                 By.cssSelector( "input[value=\"" + HouseholdSmokingStatus.NONSMOKING.toString() + "\"]" ) );
         houseSmokeElement.click();
@@ -254,10 +263,10 @@ public class DocumentOfficeVisitStepDefs {
         final WebElement patientSmokeElement = driver
                 .findElement( By.cssSelector( "input[value=\"" + PatientSmokingStatus.NEVER.toString() + "\"]" ) );
         if ( patientSmokeElement.isDisplayed() ) {
+        	( (JavascriptExecutor) driver ).executeScript( "arguments[0].click();", patientSmokeElement );
             patientSmokeElement.click();
         }
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "submit" ) ) );
         final WebElement submit = driver.findElement( By.name( "submit" ) );
         submit.click();
 
@@ -265,7 +274,7 @@ public class DocumentOfficeVisitStepDefs {
 
     @Then ( "The office visit is documented successfully" )
     public void documentedSuccessfully () {
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "success" ) ) );
+
         final WebElement message = driver.findElement( By.name( "success" ) );
 
         assertFalse( message.getText().contains( "Error occurred creating office visit" ) );
@@ -362,7 +371,7 @@ public class DocumentOfficeVisitStepDefs {
      */
     @Then ( "The office visit is not documented" )
     public void notDocumented () {
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "success" ) ) );
+
         final WebElement message = driver.findElement( By.name( "success" ) );
 
         assertTrue( message.getText().contains( "Error occurred creating office visit" ) );
@@ -468,20 +477,17 @@ public class DocumentOfficeVisitStepDefs {
     public void documentOVWithSpecificInformation ( final String dateString, final String weightString,
             final String lengthString, final String headString, final String smokingStatus, final String note )
             throws InterruptedException {
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "notes" ) ) );
+
         final WebElement notes = driver.findElement( By.name( "notes" ) );
         notes.clear();
         notes.sendKeys( note );
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.cssSelector( "input[value=\"patient\"]" ) ) );
         final WebElement patient = driver.findElement( By.cssSelector( "input[value=\"patient\"]" ) );
         patient.click();
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "type" ) ) );
         final WebElement type = driver.findElement( By.name( "type" ) );
         type.click();
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "hospital" ) ) );
         final WebElement hospital = driver.findElement( By.name( "hospital" ) );
         hospital.click();
 
@@ -496,10 +502,10 @@ public class DocumentOfficeVisitStepDefs {
 
         expectedBhm = new BasicHealthMetrics();
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "head" ) ) );
         final WebElement head = driver.findElement( By.name( "head" ) );
-        head.clear();
-        head.sendKeys( headString );
+        ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='" + headString + "';", head);
+       // head.clear();
+       // head.sendKeys( headString );
         try {
             expectedBhm.setHeadCircumference( Float.parseFloat( headString ) );
         }
@@ -548,7 +554,7 @@ public class DocumentOfficeVisitStepDefs {
              * Intentionally ignoring.
              */
         }
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "submit" ) ) );
+
         final WebElement submit = driver.findElement( By.name( "submit" ) );
         submit.click();
         // Give the data time to save to the database
@@ -579,20 +585,17 @@ public class DocumentOfficeVisitStepDefs {
     public void documentOVWithSpecificInformation3To12 ( final String dateString, final String weightString,
             final String heightString, final String sys, final String dia, final String smokingStatus,
             final String note ) throws InterruptedException {
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "notes" ) ) );
+
         final WebElement notes = driver.findElement( By.name( "notes" ) );
         notes.clear();
         notes.sendKeys( note );
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.cssSelector( "input[value=\"patient\"]" ) ) );
         final WebElement patient = driver.findElement( By.cssSelector( "input[value=\"patient\"]" ) );
         patient.click();
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "type" ) ) );
         final WebElement type = driver.findElement( By.name( "type" ) );
         type.click();
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "hospital" ) ) );
         final WebElement hospital = driver.findElement( By.name( "hospital" ) );
         hospital.click();
 
@@ -607,10 +610,10 @@ public class DocumentOfficeVisitStepDefs {
 
         expectedBhm = new BasicHealthMetrics();
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "systolic" ) ) );
         final WebElement sysElem = driver.findElement( By.name( "systolic" ) );
-        sysElem.clear();
-        sysElem.sendKeys( sys );
+        ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='" + sys + "';", sysElem );
+       // sysElem.clear();
+      //  sysElem.sendKeys( sys );
         try {
             expectedBhm.setSystolic( Integer.parseInt( sys ) );
         }
@@ -621,10 +624,10 @@ public class DocumentOfficeVisitStepDefs {
              */
         }
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "diastolic" ) ) );
         final WebElement diaElem = driver.findElement( By.name( "diastolic" ) );
-        diaElem.clear();
-        diaElem.sendKeys( dia );
+        ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='" + dia + "';", diaElem );
+       // diaElem.clear();
+       // diaElem.sendKeys( dia );
         try {
             expectedBhm.setDiastolic( Integer.parseInt( dia ) );
         }
@@ -673,7 +676,7 @@ public class DocumentOfficeVisitStepDefs {
              * Intentionally ignoring.
              */
         }
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "submit" ) ) );
+
         final WebElement submit = driver.findElement( By.name( "submit" ) );
         submit.click();
         // Give the data time to save to the database
@@ -713,20 +716,17 @@ public class DocumentOfficeVisitStepDefs {
             final String heightString, final String sys, final String dia, final String houseSmoke,
             final String patientSmoke, final String hdl, final String ldl, final String tri, final String note )
             throws InterruptedException {
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "notes" ) ) );
+
         final WebElement notes = driver.findElement( By.name( "notes" ) );
         notes.clear();
         notes.sendKeys( note );
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.cssSelector( "input[value=\"patient\"]" ) ) );
         final WebElement patient = driver.findElement( By.cssSelector( "input[value=\"patient\"]" ) );
         patient.click();
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "type" ) ) );
         final WebElement type = driver.findElement( By.name( "type" ) );
         type.click();
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "hospital" ) ) );
         final WebElement hospital = driver.findElement( By.name( "hospital" ) );
         hospital.click();
 
@@ -741,10 +741,10 @@ public class DocumentOfficeVisitStepDefs {
 
         expectedBhm = new BasicHealthMetrics();
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "systolic" ) ) );
         final WebElement sysElem = driver.findElement( By.name( "systolic" ) );
-        sysElem.clear();
-        sysElem.sendKeys( sys );
+        ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='" + sys + "';", sysElem );
+       // sysElem.clear();
+       // sysElem.sendKeys( sys );
         try {
             expectedBhm.setSystolic( Integer.parseInt( sys ) );
         }
@@ -755,10 +755,10 @@ public class DocumentOfficeVisitStepDefs {
              */
         }
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "diastolic" ) ) );
         final WebElement diaElem = driver.findElement( By.name( "diastolic" ) );
-        diaElem.clear();
-        diaElem.sendKeys( dia );
+        ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='" + dia + "';", diaElem );
+       // diaElem.clear();
+       // diaElem.sendKeys( dia );
         try {
             expectedBhm.setDiastolic( Integer.parseInt( dia ) );
         }
@@ -810,7 +810,8 @@ public class DocumentOfficeVisitStepDefs {
         try {
             final WebElement smoking = driver.findElement( By.cssSelector(
                     "input[value=\"" + PatientSmokingStatus.getName( Integer.parseInt( patientSmoke ) ) + "\"]" ) );
-            smoking.click();
+            //smoking.click();
+            ( (JavascriptExecutor) driver ).executeScript( "arguments[0].click();", smoking );
             expectedBhm.setPatientSmokingStatus( PatientSmokingStatus.parseValue( Integer.parseInt( patientSmoke ) ) );
         }
         catch ( final Exception e ) {
@@ -821,10 +822,10 @@ public class DocumentOfficeVisitStepDefs {
              */
         }
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "hdl" ) ) );
         final WebElement hdlElem = driver.findElement( By.name( "hdl" ) );
-        hdlElem.clear();
-        hdlElem.sendKeys( hdl );
+        ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='" + hdl + "';", hdlElem );
+        //hdlElem.clear();
+       // hdlElem.sendKeys( hdl );
         try {
             expectedBhm.setHdl( Integer.parseInt( hdl ) );
         }
@@ -835,10 +836,10 @@ public class DocumentOfficeVisitStepDefs {
              */
         }
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "ldl" ) ) );
         final WebElement ldlElem = driver.findElement( By.name( "ldl" ) );
-        ldlElem.clear();
-        ldlElem.sendKeys( ldl );
+        ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='" + ldl + "';", ldlElem );
+        //ldlElem.clear();
+       // ldlElem.sendKeys( ldl );
         try {
             expectedBhm.setLdl( Integer.parseInt( ldl ) );
         }
@@ -849,10 +850,10 @@ public class DocumentOfficeVisitStepDefs {
              */
         }
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "tri" ) ) );
         final WebElement triElem = driver.findElement( By.name( "tri" ) );
-        triElem.clear();
-        triElem.sendKeys( tri );
+        ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='" + tri + "';", triElem );
+        //triElem.clear();
+        //triElem.sendKeys( tri );
         try {
             expectedBhm.setTri( Integer.parseInt( tri ) );
         }
@@ -863,7 +864,6 @@ public class DocumentOfficeVisitStepDefs {
              */
         }
 
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "submit" ) ) );
         final WebElement submit = driver.findElement( By.name( "submit" ) );
         submit.click();
         // Give the data time to save to the database

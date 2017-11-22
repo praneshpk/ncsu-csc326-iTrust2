@@ -327,7 +327,7 @@
 			<!-- Information on how labels wor from here: https://stackoverflow.com/questions/7863251/clicking-the-text-to-select-corresponding-radio-button -->
 							<li ng-repeat="patient in patients | filter:searchFilter"><h4><label>
 									<input type="radio" ng-model="$parent.visit.patient"
-									name="name" value="{{patient.self.username}}" required="true"
+									id="{{patient.self.username}}" value="{{patient.self.username}}" required="true"
 									ng-change='patientSelect(patient)' />&nbsp;{{patient.self.username}}</label>
 							</h4></li>
 						</ul>

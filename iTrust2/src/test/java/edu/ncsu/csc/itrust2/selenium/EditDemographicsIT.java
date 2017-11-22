@@ -4,16 +4,18 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import edu.ncsu.csc.itrust2.models.persistent.Patient;
+import io.github.bonigarcia.wdm.PhantomJsDriverManager;
 
 /**
  * Verifies that editing demographics doesn't create a new patient.
@@ -23,11 +25,22 @@ import edu.ncsu.csc.itrust2.models.persistent.Patient;
  */
 public class EditDemographicsIT {
 
-    private final WebDriver     driver   = new HtmlUnitDriver();
-    private final String        baseUrl  = "http://localhost:8080/iTrust2";
-    private static final String HOME_URL = "http://localhost:8080/iTrust2/ROLE/index";
+    private WebDriver    driver;
+    private final String baseUrl = "http://localhost:8080/iTrust2";
 
-    WebDriverWait               wait     = new WebDriverWait( driver, 10 );
+    WebDriverWait        wait;
+
+    @Before
+    public void setUp () {
+        PhantomJsDriverManager.getInstance().setup();
+        driver = new PhantomJSDriver();
+        wait = new WebDriverWait( driver, 10 );
+    }
+
+    @After
+    public void teardown () {
+        driver.quit();
+    }
 
     /**
      * Verify that editing demographics doesn't create a second Patient.
@@ -38,7 +51,7 @@ public class EditDemographicsIT {
         driver.get( baseUrl + "/login" );
         System.out.println( driver.getCurrentUrl() );
         System.out.println( driver.getPageSource() );
-        wait.until( ExpectedConditions.visibilityOfElementLocated( By.name( "username" ) ) );
+
         final WebElement username = driver.findElement( By.name( "username" ) );
         username.clear();
         username.sendKeys( "patient" );
@@ -49,7 +62,7 @@ public class EditDemographicsIT {
         submit.click();
         driver.get( baseUrl + "/patient/editDemographics" );
         try {
-            wait.until( ExpectedConditions.visibilityOfElementLocated( By.id( "firstName" ) ) );
+
             final WebElement firstName = driver.findElement( By.id( "firstName" ) );
             firstName.clear();
             firstName.sendKeys( "Karl" );
@@ -103,8 +116,8 @@ public class EditDemographicsIT {
             /*  */
         }
         finally {
-            wait.until( ExpectedConditions.visibilityOfElementLocated( By.id( "logout" ) ) );
-            driver.findElement( By.id( "logout" ) ).click();
+
+            // driver.findElement( By.id( "logout" ) ).click();
         }
 
         final List<Patient> patientList = Patient.getWhere( "self_id = 'patient'" );
@@ -114,7 +127,7 @@ public class EditDemographicsIT {
     private void attemptLogout () {
         try {
             driver.get( baseUrl );
-            wait.until( ExpectedConditions.visibilityOfElementLocated( By.id( "logout" ) ) );
+
             driver.findElement( By.id( "logout" ) ).click();
         }
         catch ( final Exception e ) {

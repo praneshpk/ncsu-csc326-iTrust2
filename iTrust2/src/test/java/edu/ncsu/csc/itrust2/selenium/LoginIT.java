@@ -2,14 +2,16 @@ package edu.ncsu.csc.itrust2.selenium;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 
 import edu.ncsu.csc.itrust2.utils.HibernateDataGenerator;
+import io.github.bonigarcia.wdm.PhantomJsDriverManager;
 
 public class LoginIT {
 
@@ -24,9 +26,15 @@ public class LoginIT {
      */
     @Before
     public void setUp () throws Exception {
-        driver = new HtmlUnitDriver();
+        PhantomJsDriverManager.getInstance().setup();
+        driver = new PhantomJSDriver();
         baseUrl = "http://localhost:8080/iTrust2";
         HibernateDataGenerator.refreshDB();
+    }
+
+    @After
+    public void teardown () {
+        driver.quit();
     }
 
     private void testLogin ( final String role ) {
