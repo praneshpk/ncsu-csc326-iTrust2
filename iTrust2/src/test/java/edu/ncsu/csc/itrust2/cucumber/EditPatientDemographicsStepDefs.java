@@ -146,15 +146,17 @@ public class EditPatientDemographicsStepDefs {
 
     @Given ( "^HCP really has navigated to the Document Office Visit page$" )
     public void navigateDocumentOV () {
-        ( (JavascriptExecutor) driver ).executeScript( "document.getElementById('documentOfficeVisit').click();" );
+        //( (JavascriptExecutor) driver ).executeScript( "document.getElementById('documentOfficeVisit').click();" );
+    	driver.get(baseUrl + "/hcp/documentOfficeVisit.html");
     }
 
     @When ( "^The HCP modifies the (.+) demographics to (.+) in the office visit$" )
     public void documentOV ( final String demNumber, final String newValue ) {
 
-        final WebElement patient = driver.findElement( By.name( "name" ) );
-        patient.click();
-
+       // final WebElement patient = driver.findElement( By.name( "name" ) );
+    	final WebElement patient = driver.findElement(By.xpath("//*[text()[contains(.,'patient')]]"));
+    	( (JavascriptExecutor) driver ).executeScript( "arguments[0].click();", patient);
+    	
         if ( demNumber.equals( "1" ) ) {
 
             final WebElement email = driver.findElement( By.id( "email" ) );
@@ -249,32 +251,38 @@ public class EditPatientDemographicsStepDefs {
         weightElement.sendKeys( "120" );
 
         final WebElement systolicElement = driver.findElement( By.name( "systolic" ) );
-        systolicElement.clear();
-        systolicElement.sendKeys( "100" );
+        ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='100';", systolicElement );
+        //systolicElement.clear();
+        //systolicElement.sendKeys( "100" );
 
         final WebElement diastolicElement = driver.findElement( By.name( "diastolic" ) );
-        diastolicElement.clear();
-        diastolicElement.sendKeys( "100" );
+        ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='100';", diastolicElement );
+        //diastolicElement.clear();
+       // diastolicElement.sendKeys( "100" );
 
         final WebElement hdlElement = driver.findElement( By.name( "hdl" ) );
-        hdlElement.clear();
-        hdlElement.sendKeys( "90" );
+        ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='90';", hdlElement );
+       // hdlElement.clear();
+       // hdlElement.sendKeys( "90" );
 
         final WebElement ldlElement = driver.findElement( By.name( "ldl" ) );
-        ldlElement.clear();
-        ldlElement.sendKeys( "100" );
+        ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='100';", ldlElement );
+        // ldlElement.clear();
+       // ldlElement.sendKeys( "100" );
 
         final WebElement triElement = driver.findElement( By.name( "tri" ) );
-        triElement.clear();
-        triElement.sendKeys( "100" );
+        ( (JavascriptExecutor) driver ).executeScript( "arguments[0].value='100';", triElement );
+        //triElement.clear();
+        //triElement.sendKeys( "100" );
 
         final WebElement houseSmokeElement = driver.findElement(
                 By.cssSelector( "input[value=\"" + HouseholdSmokingStatus.NONSMOKING.toString() + "\"]" ) );
         houseSmokeElement.click();
 
         final WebElement patientSmokeElement = driver
-                .findElement( By.cssSelector( "input[value=\"" + PatientSmokingStatus.NEVER.toString() + "\"]" ) );
-        patientSmokeElement.click();
+               .findElement( By.cssSelector( "input[value=\"" + PatientSmokingStatus.NEVER.toString() + "\"]" ) );
+        ( (JavascriptExecutor) driver ).executeScript( "arguments[0].click();", patientSmokeElement );
+      //  patientSmokeElement.click();
 
         final Select diagnosis = new Select( driver.findElement( By.id( "repeatDiagnoses" ) ) );
         diagnosis.selectByVisibleText( "Sick - S00" );
